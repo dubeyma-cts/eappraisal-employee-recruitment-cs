@@ -12,6 +12,19 @@ This contains information about the folder.
 
 ## Details
 
+<details>
+<summary> 
+   
+   ## 1. Requirement Analysis 
+</summary>
+   
+### 1.1 Functional & Non-Functional
+
+[ArchitectureRequirementAnalysisDesign/UseCases_Functional_eAppraisal.md](ArchitectureRequirementAnalysisDesign/UseCases_Functional_eAppraisal.md)
+
+
+</details>
 
 ## Technical Information
+
 
