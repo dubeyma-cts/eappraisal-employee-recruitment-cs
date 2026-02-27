@@ -21,10 +21,12 @@ This contains information about the folder.
 ### 1.1 Functional & Non-Functional
 
 [ArchitectureRequirementAnalysisDesign/UseCases_Functional_eAppraisal.md](ArchitectureRequirementAnalysisDesign/UseCases_Functional_eAppraisal.md)
-
+[ArchitectureRequirementAnalysisDesign/UseCases_NFR_eAppraisal.md](ArchitectureRequirementAnalysisDesign/UseCases_NFR_eAppraisal.md)
+[ArchitectureRequirementAnalysisDesign/Clarification_Questions_FR_NFR_eAppraisal.md](Requirement Clarification Questions)
 
 </details>
 
 ## Technical Information
+
 
 
