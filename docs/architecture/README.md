@@ -15,7 +15,7 @@ This contains information about the folder.
 <details>
 <summary> 
    
-   ## 1. Requirement Analysis 
+   ## 1. Use-Cases & Requirement Analysis 
 </summary>
    
 ### 1.1 Functional & Non-Functional
@@ -152,7 +152,18 @@ This contains information about the folder.
 
 </details>
 
+<details>
+<summary> 
+   
+   ## 14.  Azure DDL Schema
+</summary>
+
+[ArchitectureRequirementAnalysisDesign/DDL_Azure_Sql_eApproval.sql](ArchitectureRequirementAnalysisDesign/DDL_Azure_Sql_eApproval.sql)
+
+</details>
+
 ## Technical Information
+
 
 
 
