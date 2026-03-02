@@ -1,0 +1,15 @@
+C:\dev\repo\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Shared\obj\Debug\net9.0\eAppraisal.Shared.csproj.AssemblyReference.cache
+C:\dev\repo\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Shared\obj\Debug\net9.0\eAppraisal.Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\dev\repo\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Shared\obj\Debug\net9.0\eAppraisal.Shared.AssemblyInfoInputs.cache
+C:\dev\repo\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Shared\obj\Debug\net9.0\eAppraisal.Shared.AssemblyInfo.cs
+C:\dev\repo\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Shared\obj\Debug\net9.0\eAppraisal.Shared.csproj.CoreCompileInputs.cache
+C:\dev\repo\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Shared\obj\Debug\net9.0\eAppraisal.Shared.sourcelink.json
+C:\dev\repo\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Shared\bin\Debug\net9.0\eAppraisal.Shared.deps.json
+C:\dev\repo\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Shared\bin\Debug\net9.0\eAppraisal.Shared.runtimeconfig.json
+C:\dev\repo\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Shared\bin\Debug\net9.0\eAppraisal.Shared.dll
+C:\dev\repo\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Shared\bin\Debug\net9.0\eAppraisal.Shared.pdb
+C:\dev\repo\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Shared\obj\Debug\net9.0\eAppraisal.Shared.dll
+C:\dev\repo\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Shared\obj\Debug\net9.0\refint\eAppraisal.Shared.dll
+C:\dev\repo\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Shared\obj\Debug\net9.0\eAppraisal.Shared.pdb
+C:\dev\repo\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Shared\obj\Debug\net9.0\eAppraisal.Shared.genruntimeconfig.cache
+C:\dev\repo\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Shared\obj\Debug\net9.0\ref\eAppraisal.Shared.dll

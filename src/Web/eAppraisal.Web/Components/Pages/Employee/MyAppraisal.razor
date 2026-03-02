@@ -1,0 +1,142 @@
+@page "/employee/my-appraisal"
+@rendermode InteractiveServer
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = AppRoles.Employee)]
+@inject AppraisalService AppraisalSvc
+
+<PageTitle>My Appraisal — Employee</PageTitle>
+
+<div class="container py-3" style="max-width:700px">
+    <h3 class="mb-4"><i class="bi bi-person-check me-2 text-success"></i>My Appraisals</h3>
+
+    @if (_loading)
+    {
+        <div class="text-center py-5"><span class="spinner-border text-success"></span></div>
+    }
+    else if (_appraisals.Count == 0)
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>No appraisals found for your account.
+        </div>
+    }
+    else
+    {
+        @foreach (var a in _appraisals)
+        {
+            <div class="card shadow-sm mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">Appraisal @a.Year</span>
+                    <span class="badge @StatusBadge(a.Status)">@a.Status</span>
+                </div>
+                <div class="card-body">
+                    <div class="row small mb-3">
+                        <div class="col-6"><strong>Manager:</strong> @a.ManagerName</div>
+                        <div class="col-6"><strong>Department:</strong> @a.EmployeeDepartment</div>
+                        <div class="col-6"><strong>Initiated:</strong> @a.InitiatedAt.ToString("dd MMM yyyy")</div>
+                        @if (a.CompletedAt.HasValue)
+                        {
+                            <div class="col-6"><strong>Completed:</strong> @a.CompletedAt.Value.ToString("dd MMM yyyy")</div>
+                        }
+                    </div>
+
+                    <!-- Manager comments (visible to employee) -->
+                    @if (!string.IsNullOrEmpty(a.ManagerComments))
+                    {
+                        <div class="border rounded p-3 bg-warning bg-opacity-10 mb-3">
+                            <strong><i class="bi bi-chat-quote me-1 text-warning"></i>Manager's Comments:</strong>
+                            <p class="mb-0 mt-1 small" style="white-space:pre-wrap">@a.ManagerComments</p>
+                        </div>
+                    }
+
+                    <!-- Self-assessment input -->
+                    @if (a.Status == "AwaitingEmployeeInput" && _activeAppraisalId == a.Id)
+                    {
+                        @if (!string.IsNullOrEmpty(_message))
+                        {
+                            <div class="alert @(_success ? "alert-success" : "alert-danger") small d-flex gap-2">
+                                <i class="bi @(_success ? "bi-check-circle" : "bi-exclamation-triangle")"></i>@_message
+                            </div>
+                        }
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Your Self-Assessment</label>
+                            <textarea @bind="_selfInput" class="form-control" rows="6"
+                                      placeholder="Describe your achievements, challenges, and goals for the year..."></textarea>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success" @onclick="() => SubmitAsync(a.Id)" disabled="@_saving">
+                                @if (_saving) { <span class="spinner-border spinner-border-sm me-1"></span> }
+                                <i class="bi bi-send me-1"></i>Submit Self-Assessment
+                            </button>
+                            <button class="btn btn-outline-secondary" @onclick="() => _activeAppraisalId = null">
+                                Cancel
+                            </button>
+                        </div>
+                    }
+                    else if (a.Status == "AwaitingEmployeeInput")
+                    {
+                        <button class="btn btn-success mt-1" @onclick="() => OpenInput(a.Id)">
+                            <i class="bi bi-pencil me-1"></i>Submit Self-Assessment
+                        </button>
+                    }
+
+                    <!-- Submitted self-assessment (read-only) -->
+                    @if (!string.IsNullOrEmpty(a.SelfAssessmentInput) && a.Status != "AwaitingEmployeeInput")
+                    {
+                        <div class="border rounded p-3 bg-info bg-opacity-10 mb-3">
+                            <strong><i class="bi bi-person me-1 text-info"></i>Your Self-Assessment (Submitted):</strong>
+                            <p class="mb-0 mt-1 small" style="white-space:pre-wrap">@a.SelfAssessmentInput</p>
+                        </div>
+                    }
+
+                    <!-- Final assessment -->
+                    @if (!string.IsNullOrEmpty(a.FinalAssessment))
+                    {
+                        <div class="border rounded p-3 bg-success bg-opacity-10">
+                            <strong><i class="bi bi-award me-1 text-success"></i>Final Assessment:</strong>
+                            <p class="mb-1 mt-1 small" style="white-space:pre-wrap">@a.FinalAssessment</p>
+                            @if (a.Rating.HasValue)
+                            {
+                                <span class="badge bg-warning text-dark">Rating: @a.Rating/5 ⭐</span>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private List<AppraisalDto> _appraisals = [];
+    private bool _loading = true;
+    private string _message = string.Empty;
+    private bool _success, _saving;
+    private string _selfInput = string.Empty;
+    private int? _activeAppraisalId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _appraisals = await AppraisalSvc.GetMineAsync();
+        _loading = false;
+    }
+
+    private void OpenInput(int id) { _activeAppraisalId = id; _selfInput = string.Empty; _message = string.Empty; }
+
+    private async Task SubmitAsync(int id)
+    {
+        if (string.IsNullOrWhiteSpace(_selfInput)) { _message = "Self-assessment cannot be empty."; _success = false; return; }
+        _saving = true;
+        var (ok, msg) = await AppraisalSvc.SubmitSelfAssessmentAsync(id, _selfInput);
+        _message = msg; _success = ok;
+        if (ok) { _appraisals = await AppraisalSvc.GetMineAsync(); _activeAppraisalId = null; }
+        _saving = false;
+    }
+
+    private static string StatusBadge(string s) => s switch
+    {
+        "AwaitingManagerComment"  => "bg-warning text-dark",
+        "AwaitingEmployeeInput"   => "bg-success",
+        "AwaitingFinalAssessment" => "bg-primary",
+        "Completed"               => "bg-success",
+        _                         => "bg-secondary"
+    };
+}

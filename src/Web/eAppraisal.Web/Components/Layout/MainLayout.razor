@@ -1,0 +1,48 @@
+﻿@inherits LayoutComponentBase
+@inject AuthService AuthSvc
+@inject BlazorAuthStateProvider AuthState
+@inject NavigationManager Nav
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4 d-flex align-items-center justify-content-between">
+            <span class="text-muted small">
+                <i class="bi bi-building me-1"></i> Nano Technologies — eAppraisal Portal
+            </span>
+            <AuthorizeView>
+                <Authorized>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="badge bg-secondary">@context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
+                        <span class="small fw-bold">@context.User.Identity?.Name</span>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="LogoutAsync">
+                            <i class="bi bi-box-arrow-right me-1"></i>Logout
+                        </button>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+@code {
+    private async Task LogoutAsync()
+    {
+        AuthSvc.Logout();
+        Nav.NavigateTo("/login", forceLoad: false);
+        await Task.CompletedTask;
+    }
+}

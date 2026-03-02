@@ -1,0 +1,95 @@
+@page "/hr/initiate"
+@rendermode InteractiveServer
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = AppRoles.HR)]
+@inject EmployeeService EmpSvc
+@inject AppraisalService AppraisalSvc
+@inject NavigationManager Nav
+
+<PageTitle>Initiate Appraisal — HR</PageTitle>
+
+<div class="container py-3" style="max-width:600px">
+    <h3 class="mb-4"><i class="bi bi-clipboard-plus me-2 text-success"></i>Initiate Appraisal Cycle</h3>
+
+    @if (!string.IsNullOrEmpty(_message))
+    {
+        <div class="alert @(_success ? "alert-success" : "alert-danger") d-flex gap-2 align-items-center">
+            <i class="bi @(_success ? "bi-check-circle" : "bi-exclamation-triangle")"></i>@_message
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Employee *</label>
+                <InputSelect @bind-Value="_employeeId" class="form-select">
+                    <option value="0">— Select Employee —</option>
+                    @foreach (var e in _employees)
+                    {
+                        <option value="@e.Id">@e.Name (@e.Department, @e.City)</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Manager (Appraiser) *</label>
+                <InputSelect @bind-Value="_managerId" class="form-select">
+                    <option value="0">— Select Manager —</option>
+                    @foreach (var m in _managers)
+                    {
+                        <option value="@m.Id">@m.Name (@m.Department)</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Appraisal Year *</label>
+                <InputSelect @bind-Value="_year" class="form-select">
+                    @for (int y = DateTime.Now.Year; y >= DateTime.Now.Year - 2; y--)
+                    {
+                        <option value="@y">@y</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-success px-4" @onclick="InitiateAsync" disabled="@_saving">
+                    @if (_saving) { <span class="spinner-border spinner-border-sm me-1"></span> }
+                    <i class="bi bi-play-fill me-1"></i>Initiate Appraisal
+                </button>
+                <a href="/hr/appraisals" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-light border mt-4 small">
+        <i class="bi bi-info-circle me-1 text-info"></i>
+        Initiating an appraisal will notify the selected manager to add their comments.
+        The workflow is: <strong>HR → Manager → Employee → Manager (Final)</strong>
+    </div>
+</div>
+
+@code {
+    private List<EmployeeDto> _employees = [];
+    private List<EmployeeDto> _managers  = [];
+    private int  _employeeId, _managerId;
+    private int  _year = DateTime.Now.Year;
+    private string _message = string.Empty;
+    private bool _success, _saving;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _employees = await EmpSvc.GetAllAsync();
+        _managers  = await EmpSvc.GetManagersAsync();
+    }
+
+    private async Task InitiateAsync()
+    {
+        if (_employeeId == 0) { _message = "Please select an employee."; _success = false; return; }
+        if (_managerId  == 0) { _message = "Please select a manager.";   _success = false; return; }
+
+        _saving = true;
+        _message = string.Empty;
+        var (ok, msg) = await AppraisalSvc.InitiateAsync(_employeeId, _managerId, _year);
+        _message = msg;
+        _success = ok;
+        _saving = false;
+        if (ok) Nav.NavigateTo("/hr/appraisals");
+    }
+}

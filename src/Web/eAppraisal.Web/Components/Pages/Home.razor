@@ -1,0 +1,139 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@inject NavigationManager Nav
+@inject BlazorAuthStateProvider AuthState
+
+<PageTitle>eAppraisal — Dashboard</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <div class="container-fluid py-3">
+            <div class="row mb-4">
+                <div class="col">
+                    <h2 class="mb-1">
+                        <i class="bi bi-clipboard2-check me-2 text-primary"></i>
+                        Welcome, <strong>@context.User.Identity?.Name</strong>
+                    </h2>
+                    <p class="text-muted">Nano Technologies — eAppraisal System &nbsp;|&nbsp; FY 2025</p>
+                </div>
+            </div>
+
+            <AuthorizeView Roles="@AppRoles.HR" Context="hrCtx">
+                <Authorized>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <a href="/hr/employees" class="text-decoration-none">
+                                <div class="card border-primary h-100 shadow-sm">
+                                    <div class="card-body text-center py-4">
+                                        <i class="bi bi-people display-4 text-primary"></i>
+                                        <h5 class="mt-2 mb-1">Employees</h5>
+                                        <p class="text-muted small mb-0">View & manage employee records</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="/hr/initiate" class="text-decoration-none">
+                                <div class="card border-success h-100 shadow-sm">
+                                    <div class="card-body text-center py-4">
+                                        <i class="bi bi-clipboard-plus display-4 text-success"></i>
+                                        <h5 class="mt-2 mb-1">Initiate Appraisal</h5>
+                                        <p class="text-muted small mb-0">Start a new appraisal cycle</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="/hr/appraisals" class="text-decoration-none">
+                                <div class="card border-info h-100 shadow-sm">
+                                    <div class="card-body text-center py-4">
+                                        <i class="bi bi-bar-chart display-4 text-info"></i>
+                                        <h5 class="mt-2 mb-1">Appraisal Cycles</h5>
+                                        <p class="text-muted small mb-0">Track all active appraisals</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+
+            <AuthorizeView Roles="@AppRoles.Manager" Context="mgrCtx">
+                <Authorized>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <a href="/manager/my-team" class="text-decoration-none">
+                                <div class="card border-primary h-100 shadow-sm">
+                                    <div class="card-body text-center py-4">
+                                        <i class="bi bi-person-lines-fill display-4 text-primary"></i>
+                                        <h5 class="mt-2 mb-1">Team Appraisals</h5>
+                                        <p class="text-muted small mb-0">Review and submit assessments for your team</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+
+            <AuthorizeView Roles="@AppRoles.Employee" Context="empCtx">
+                <Authorized>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <a href="/employee/my-appraisal" class="text-decoration-none">
+                                <div class="card border-success h-100 shadow-sm">
+                                    <div class="card-body text-center py-4">
+                                        <i class="bi bi-person-check display-4 text-success"></i>
+                                        <h5 class="mt-2 mb-1">My Appraisal</h5>
+                                        <p class="text-muted small mb-0">Submit your self-assessment</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+
+            <AuthorizeView Roles="@AppRoles.ITAdmin" Context="adminCtx">
+                <Authorized>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <a href="/admin/users" class="text-decoration-none">
+                                <div class="card border-warning h-100 shadow-sm">
+                                    <div class="card-body text-center py-4">
+                                        <i class="bi bi-shield-lock display-4 text-warning"></i>
+                                        <h5 class="mt-2 mb-1">User Management</h5>
+                                        <p class="text-muted small mb-0">Manage accounts &amp; unlock users</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="/admin/audit" class="text-decoration-none">
+                                <div class="card border-secondary h-100 shadow-sm">
+                                    <div class="card-body text-center py-4">
+                                        <i class="bi bi-journal-text display-4 text-secondary"></i>
+                                        <h5 class="mt-2 mb-1">Audit Log</h5>
+                                        <p class="text-muted small mb-0">7-year append-only SIEM trail</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="container d-flex justify-content-center align-items-center" style="min-height:70vh">
+            <div class="text-center">
+                <i class="bi bi-clipboard2-check display-1 text-primary mb-3"></i>
+                <h1 class="fw-bold">eAppraisal Portal</h1>
+                <p class="lead text-muted">Nano Technologies — Online Appraisal System</p>
+                <a href="/login" class="btn btn-primary btn-lg mt-3">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                </a>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>

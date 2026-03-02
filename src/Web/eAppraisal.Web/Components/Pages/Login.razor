@@ -1,0 +1,136 @@
+@page "/login"
+@rendermode InteractiveServer
+@inject AuthService AuthSvc
+@inject NavigationManager Nav
+@inject BlazorAuthStateProvider AuthState
+
+<PageTitle>eAppraisal — Login</PageTitle>
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height:85vh">
+    <div class="card shadow-lg" style="width:420px">
+        <div class="card-header bg-primary text-white text-center py-4">
+            <i class="bi bi-clipboard2-check display-5 mb-2 d-block"></i>
+            <h4 class="mb-0 fw-bold">eAppraisal Portal</h4>
+            <small class="opacity-75">Nano Technologies</small>
+        </div>
+        <div class="card-body p-4">
+            @if (!string.IsNullOrEmpty(_errorMessage))
+            {
+                <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <span>@_errorMessage</span>
+                </div>
+            }
+
+            <EditForm Model="_model" OnValidSubmit="HandleLoginAsync">
+                <DataAnnotationsValidator />
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <InputText @bind-Value="_model.Username" class="form-control"
+                                   placeholder="e.g. hr@nano.com" autocomplete="off" />
+                    </div>
+                    <ValidationMessage For="@(() => _model.Username)" />
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <InputText @bind-Value="_model.Password" class="form-control"
+                                   type="password" placeholder="Password" autocomplete="new-password" />
+                    </div>
+                    <ValidationMessage For="@(() => _model.Password)" />
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" disabled="@_loading">
+                    @if (_loading)
+                    {
+                        <span class="spinner-border spinner-border-sm me-2"></span>
+                    }
+                    <i class="bi bi-box-arrow-in-right me-1"></i>Sign In
+                </button>
+            </EditForm>
+        </div>
+        <div class="card-footer py-3 bg-light">
+            <div class="text-center text-muted small mb-2">
+                <strong>Quick login</strong> &mdash; click a role to fill credentials
+            </div>
+            <div class="d-flex flex-wrap gap-1 justify-content-center">
+                <button type="button" class="btn btn-outline-danger btn-sm" @onclick='() => Fill("hr@nano.com")'>
+                    <i class="bi bi-person-badge me-1"></i>HR
+                </button>
+                <button type="button" class="btn btn-outline-primary btn-sm" @onclick='() => Fill("manager1@nano.com")'>
+                    <i class="bi bi-person-workspace me-1"></i>Manager 1
+                </button>
+                <button type="button" class="btn btn-outline-primary btn-sm" @onclick='() => Fill("manager2@nano.com")'>
+                    <i class="bi bi-person-workspace me-1"></i>Manager 2
+                </button>
+                <button type="button" class="btn btn-outline-success btn-sm" @onclick='() => Fill("emp1@nano.com")'>
+                    <i class="bi bi-person me-1"></i>Emp 1
+                </button>
+                <button type="button" class="btn btn-outline-success btn-sm" @onclick='() => Fill("emp2@nano.com")'>
+                    <i class="bi bi-person me-1"></i>Emp 2
+                </button>
+                <button type="button" class="btn btn-outline-success btn-sm" @onclick='() => Fill("emp3@nano.com")'>
+                    <i class="bi bi-person me-1"></i>Emp 3
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" @onclick='() => Fill("admin@nano.com")'>
+                    <i class="bi bi-shield-lock me-1"></i>IT Admin
+                </button>
+            </div>
+            <div class="text-center text-muted" style="font-size:0.72rem;margin-top:6px">All use password: <code>Demo@1234</code></div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
+
+    private readonly LoginModel _model = new();
+    private string _errorMessage = string.Empty;
+    private bool _loading = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && AuthState.CurrentUsername is not null)
+            Nav.NavigateTo(ReturnUrl ?? "/", forceLoad: false);
+        await Task.CompletedTask;
+    }
+
+    private async Task HandleLoginAsync()
+    {
+        if (_loading) return;   // guard against SSR→Interactive event replay
+        _loading = true;
+        _errorMessage = string.Empty;
+        try
+        {
+            var result = await AuthSvc.LoginAsync(_model.Username, _model.Password);
+            if (result.Success)
+                Nav.NavigateTo(ReturnUrl ?? "/", forceLoad: false);
+            else
+                _errorMessage = result.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private class LoginModel
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Username is required")]
+        public string Username { get; set; } = string.Empty;
+
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Password is required")]
+        public string Password { get; set; } = string.Empty;
+    }
+
+    private void Fill(string username)
+    {
+        _model.Username = username;
+        _model.Password = "Demo@1234";
+        _errorMessage   = string.Empty;
+    }
+}

@@ -1,0 +1,102 @@
+@page "/admin/audit"
+@rendermode InteractiveServer
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = $"{AppRoles.ITAdmin},{AppRoles.HR}")]
+@inject AppraisalService AppraisalSvc
+
+<PageTitle>Audit Log — eAppraisal</PageTitle>
+
+<div class="container-fluid py-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0"><i class="bi bi-journal-text me-2 text-secondary"></i>Audit Trail</h3>
+        <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-secondary" @onclick="LoadAsync">
+                <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+            </button>
+        </div>
+    </div>
+
+    <div class="alert alert-light border small mb-3">
+        <i class="bi bi-info-circle me-1 text-info"></i>
+        Append-only audit trail. Raw PAN is <strong>never</strong> logged. Retention: 7 years (SIEM-forwarded in production).
+    </div>
+
+    @if (_loading)
+    {
+        <div class="text-center py-5"><span class="spinner-border text-secondary"></span></div>
+    }
+    else if (_logs.Count == 0)
+    {
+        <div class="alert alert-info">No audit events recorded yet.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-sm table-hover table-bordered align-middle small">
+                <thead class="table-secondary">
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Actor</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                        <th>Details</th>
+                        <th>IP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var log in _logs)
+                    {
+                        <tr>
+                            <td class="text-nowrap text-muted">@log.Timestamp.ToString("dd MMM HH:mm:ss")</td>
+                            <td class="fw-semibold">@log.Actor</td>
+                            <td><span class="badge @RoleBadge(log.Role)">@log.Role</span></td>
+                            <td>
+                                <span class="badge @ActionBadge(log.Action)">
+                                    @log.Action
+                                </span>
+                            </td>
+                            <td>@log.Details</td>
+                            <td class="text-muted">@(log.IpAddress ?? "—")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <small class="text-muted">Showing last @_logs.Count events. No PAN or sensitive data stored in this trail.</small>
+    }
+</div>
+
+@code {
+    private List<eAppraisal.Shared.Models.AuditLog> _logs = [];
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _loading = true;
+        _logs = await AppraisalSvc.GetAuditLogsAsync(100);
+        _loading = false;
+    }
+
+    private static string RoleBadge(string r) => r switch
+    {
+        AppRoles.HR       => "bg-info text-dark",
+        AppRoles.Manager  => "bg-primary",
+        AppRoles.Employee => "bg-secondary",
+        AppRoles.ITAdmin  => "bg-danger",
+        _                 => "bg-light text-dark"
+    };
+
+    private static string ActionBadge(string a) => a switch
+    {
+        "LOGIN"                      => "bg-success",
+        "LOGOUT"                     => "bg-secondary",
+        "ACCOUNT_LOCKED"             => "bg-danger",
+        "ACCOUNT_UNLOCKED"           => "bg-warning text-dark",
+        "APPRAISAL_INITIATED"        => "bg-info text-dark",
+        "APPRAISAL_COMPLETED"        => "bg-success",
+        "MANAGER_COMMENT_SUBMITTED"  => "bg-primary",
+        "EMPLOYEE_INPUT_SUBMITTED"   => "bg-primary",
+        _                            => "bg-light text-dark border"
+    };
+}

@@ -1,0 +1,6 @@
+@eAppraisal.Api_HostAddress = http://localhost:5067
+
+GET {{eAppraisal.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

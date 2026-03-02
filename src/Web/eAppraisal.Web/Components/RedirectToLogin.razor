@@ -1,0 +1,12 @@
+@inject NavigationManager Nav
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Running under InteractiveServer (via Routes @rendermode), so auth state
+        // is always available here. Safe to redirect unconditionally.
+        var returnUrl = Uri.EscapeDataString(Nav.ToBaseRelativePath(Nav.Uri));
+        Nav.NavigateTo(returnUrl.Length > 0 ? $"/login?returnUrl={returnUrl}" : "/login",
+            forceLoad: false);
+    }
+}

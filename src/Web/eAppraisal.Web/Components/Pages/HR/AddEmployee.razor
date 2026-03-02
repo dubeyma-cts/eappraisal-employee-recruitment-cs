@@ -1,0 +1,182 @@
+@page "/hr/add-employee"
+@rendermode InteractiveServer
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = AppRoles.HR)]
+@inject EmployeeService EmpSvc
+@inject NavigationManager Nav
+
+<PageTitle>Add Employee — HR</PageTitle>
+
+<div class="container py-3" style="max-width:720px">
+    <h3 class="mb-4"><i class="bi bi-person-plus me-2 text-success"></i>Add New Employee</h3>
+
+    @if (!string.IsNullOrEmpty(_message))
+    {
+        <div class="alert @(_success ? "alert-success" : "alert-danger") d-flex gap-2 align-items-center">
+            <i class="bi @(_success ? "bi-check-circle" : "bi-exclamation-triangle")"></i>@_message
+        </div>
+    }
+
+    <EditForm Model="_model" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+        <div class="card shadow-sm">
+            <div class="card-header bg-light fw-semibold">Personal Information</div>
+            <div class="card-body row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Full Name *</label>
+                    <InputText @bind-Value="_model.Name" class="form-control" placeholder="Full name" />
+                    <ValidationMessage For="@(() => _model.Name)" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Email *</label>
+                    <InputText @bind-Value="_model.Email" class="form-control" placeholder="email@nano.com" />
+                    <ValidationMessage For="@(() => _model.Email)" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Mobile *</label>
+                    <InputText @bind-Value="_model.Mobile" class="form-control" placeholder="10-digit mobile" />
+                    <ValidationMessage For="@(() => _model.Mobile)" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Phone</label>
+                    <InputText @bind-Value="_model.PhoneNumber" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Date of Birth *</label>
+                    <InputDate @bind-Value="_model.DateOfBirth" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Gender *</label>
+                    <InputSelect @bind-Value="_model.Gender" class="form-select">
+                        <option value="">— Select —</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Other</option>
+                    </InputSelect>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Marital Status</label>
+                    <InputSelect @bind-Value="_model.MaritalStatus" class="form-select">
+                        <option value="">— Select —</option>
+                        <option>Single</option>
+                        <option>Married</option>
+                        <option>Other</option>
+                    </InputSelect>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Address</label>
+                    <InputText @bind-Value="_model.Address" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">City *</label>
+                    <InputText @bind-Value="_model.City" class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-3">
+            <div class="card-header bg-light fw-semibold">Employment Details</div>
+            <div class="card-body row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Date of Joining *</label>
+                    <InputDate @bind-Value="_model.DateOfJoining" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Department *</label>
+                    <InputText @bind-Value="_model.Department" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Work Experience (Years)</label>
+                    <InputNumber @bind-Value="_model.WorkExperienceYears" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">CTC (₹)</label>
+                    <InputNumber @bind-Value="_model.CTC" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Reports To (Manager)</label>
+                    <InputSelect @bind-Value="_model.ReportsToId" class="form-select">
+                        <option value="">— None —</option>
+                        @foreach (var m in _managers)
+                        {
+                            <option value="@m.Id">@m.Name (@m.Department)</option>
+                        }
+                    </InputSelect>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Passport No.</label>
+                    <InputText @bind-Value="_model.PassportNo" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">PAN No. * <small class="text-danger">(stored securely; never displayed raw)</small></label>
+                    <InputText @bind-Value="_model.PanNo" class="form-control" placeholder="ABCDE1234F" />
+                    <ValidationMessage For="@(() => _model.PanNo)" />
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-success px-4" disabled="@_saving">
+                @if (_saving) { <span class="spinner-border spinner-border-sm me-1"></span> }
+                <i class="bi bi-check-lg me-1"></i>Save Employee
+            </button>
+            <a href="/hr/employees" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    private readonly EmployeeFormModel _model = new();
+    private List<EmployeeDto> _managers = [];
+    private string _message = string.Empty;
+    private bool _success, _saving;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _managers = await EmpSvc.GetAllAsync();
+        _model.DateOfBirth    = new DateTime(1990, 1, 1);
+        _model.DateOfJoining  = DateTime.Today;
+    }
+
+    private async Task HandleSubmit()
+    {
+        _saving = true;
+        _message = string.Empty;
+        var req = new CreateEmployeeRequest(
+            _model.Name, _model.Address, _model.City,
+            _model.PhoneNumber, _model.Mobile, _model.Email,
+            _model.DateOfBirth, _model.Gender, _model.MaritalStatus,
+            _model.DateOfJoining, _model.PassportNo, _model.PanNo,
+            _model.WorkExperienceYears, _model.ReportsToId,
+            _model.Department, _model.CTC);
+
+        var (ok, msg) = await EmpSvc.CreateAsync(req);
+        _message = msg;
+        _success = ok;
+        if (ok) Nav.NavigateTo("/hr/employees");
+        _saving = false;
+    }
+
+    private class EmployeeFormModel
+    {
+        [System.ComponentModel.DataAnnotations.Required] public string Name { get; set; } = "";
+        public string Address { get; set; } = "";
+        [System.ComponentModel.DataAnnotations.Required] public string City { get; set; } = "";
+        public string PhoneNumber { get; set; } = "";
+        [System.ComponentModel.DataAnnotations.Required] public string Mobile { get; set; } = "";
+        [System.ComponentModel.DataAnnotations.Required, System.ComponentModel.DataAnnotations.EmailAddress]
+        public string Email { get; set; } = "";
+        public DateTime DateOfBirth { get; set; }
+        [System.ComponentModel.DataAnnotations.Required] public string Gender { get; set; } = "";
+        public string MaritalStatus { get; set; } = "";
+        public DateTime DateOfJoining { get; set; }
+        public string PassportNo { get; set; } = "";
+        [System.ComponentModel.DataAnnotations.Required,
+         System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{5}[0-9]{4}[A-Z]$",
+             ErrorMessage = "PAN format: ABCDE1234F")]
+        public string PanNo { get; set; } = "";
+        public int WorkExperienceYears { get; set; }
+        public int? ReportsToId { get; set; }
+        [System.ComponentModel.DataAnnotations.Required] public string Department { get; set; } = "";
+        public decimal CTC { get; set; }
+    }
+}

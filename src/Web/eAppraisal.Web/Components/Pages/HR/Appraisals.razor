@@ -1,0 +1,104 @@
+@page "/hr/appraisals"
+@rendermode InteractiveServer
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = AppRoles.HR)]
+@inject AppraisalService AppraisalSvc
+
+<PageTitle>Appraisal Cycles — HR</PageTitle>
+
+<div class="container-fluid py-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0"><i class="bi bi-bar-chart me-2 text-info"></i>Appraisal Cycles</h3>
+        <div class="d-flex gap-2 align-items-center">
+            <label class="form-label mb-0 fw-semibold">Year:</label>
+            <InputSelect @bind-Value="_year" class="form-select form-select-sm" style="width:100px">
+                @for (int y = DateTime.Now.Year; y >= DateTime.Now.Year - 2; y--)
+                {
+                    <option value="@y">@y</option>
+                }
+            </InputSelect>
+            <button class="btn btn-sm btn-primary" @onclick="LoadAsync">
+                <i class="bi bi-search me-1"></i>Load
+            </button>
+            <a href="/hr/initiate" class="btn btn-sm btn-success">
+                <i class="bi bi-plus"></i> Initiate
+            </a>
+        </div>
+    </div>
+
+    @if (_loading)
+    {
+        <div class="text-center py-5"><span class="spinner-border text-primary"></span></div>
+    }
+    else if (_appraisals.Count == 0)
+    {
+        <div class="alert alert-info">No appraisals found for @_year.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle">
+                <thead class="table-info">
+                    <tr>
+                        <th>#</th>
+                        <th>Employee</th>
+                        <th>Department</th>
+                        <th>Manager</th>
+                        <th>Year</th>
+                        <th>Status</th>
+                        <th>Initiated</th>
+                        <th>Completed</th>
+                        <th>Rating</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in _appraisals)
+                    {
+                        <tr>
+                            <td class="text-muted small">@a.Id</td>
+                            <td class="fw-semibold">@a.EmployeeName</td>
+                            <td><span class="badge bg-secondary">@a.EmployeeDepartment</span></td>
+                            <td>@a.ManagerName</td>
+                            <td>@a.Year</td>
+                            <td><span class="badge @StatusBadge(a.Status)">@a.Status</span></td>
+                            <td class="small">@a.InitiatedAt.ToString("dd MMM yy")</td>
+                            <td class="small">@(a.CompletedAt?.ToString("dd MMM yy") ?? "—")</td>
+                            <td class="text-center">
+                                @if (a.Rating.HasValue)
+                                {
+                                    <span class="badge bg-warning text-dark">@a.Rating/5 ⭐</span>
+                                }
+                                else { <span>—</span> }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <small class="text-muted">@_appraisals.Count appraisal(s) for @_year</small>
+    }
+</div>
+
+@code {
+    private List<AppraisalDto> _appraisals = [];
+    private bool _loading = false;
+    private int _year = DateTime.Now.Year;
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _loading = true;
+        _appraisals = await AppraisalSvc.GetAllAsync(_year);
+        _loading = false;
+    }
+
+    private static string StatusBadge(string status) => status switch
+    {
+        "Draft"                   => "bg-secondary",
+        "AwaitingManagerComment"  => "bg-warning text-dark",
+        "AwaitingEmployeeInput"   => "bg-info text-dark",
+        "AwaitingFinalAssessment" => "bg-primary",
+        "Completed"               => "bg-success",
+        _                         => "bg-light text-dark"
+    };
+}

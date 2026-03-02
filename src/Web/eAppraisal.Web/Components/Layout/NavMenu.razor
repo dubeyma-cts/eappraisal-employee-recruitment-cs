@@ -1,0 +1,102 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="">
+            <i class="bi bi-clipboard2-check me-1"></i>eAppraisal
+        </a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="nav flex-column">
+
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Dashboard
+                    </NavLink>
+                </div>
+
+                @* HR Links *@
+                <AuthorizeView Roles="@AppRoles.HR" Context="hrCtx">
+                    <Authorized>
+                        <div class="nav-section-header px-3 mt-2 text-uppercase small text-muted">HR</div>
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="/hr/employees">
+                                <span class="bi bi-people-fill-nav-menu" aria-hidden="true"></span> Employees
+                            </NavLink>
+                        </div>
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="/hr/add-employee">
+                                <span class="bi bi-person-plus-fill-nav-menu" aria-hidden="true"></span> Add Employee
+                            </NavLink>
+                        </div>
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="/hr/appraisals">
+                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Appraisal Cycles
+                            </NavLink>
+                        </div>
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="/hr/initiate">
+                                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Initiate Appraisal
+                            </NavLink>
+                        </div>
+                    </Authorized>
+                </AuthorizeView>
+
+                @* Manager Links *@
+                <AuthorizeView Roles="@AppRoles.Manager" Context="mgrCtx">
+                    <Authorized>
+                        <div class="nav-section-header px-3 mt-2 text-uppercase small text-muted">Manager</div>
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="/manager/my-team">
+                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> My Team Appraisals
+                            </NavLink>
+                        </div>
+                    </Authorized>
+                </AuthorizeView>
+
+                @* Employee Links *@
+                <AuthorizeView Roles="@AppRoles.Employee" Context="empCtx">
+                    <Authorized>
+                        <div class="nav-section-header px-3 mt-2 text-uppercase small text-muted">My Appraisal</div>
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="/employee/my-appraisal">
+                                <span class="bi bi-person-lines-fill-nav-menu" aria-hidden="true"></span> My Appraisal
+                            </NavLink>
+                        </div>
+                    </Authorized>
+                </AuthorizeView>
+
+                @* IT Admin Links *@
+                <AuthorizeView Roles="@AppRoles.ITAdmin" Context="adminCtx">
+                    <Authorized>
+                        <div class="nav-section-header px-3 mt-2 text-uppercase small text-muted">Admin</div>
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="/admin/users">
+                                <span class="bi bi-gear-fill-nav-menu" aria-hidden="true"></span> User Management
+                            </NavLink>
+                        </div>
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="/admin/audit">
+                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Audit Log
+                            </NavLink>
+                        </div>
+                    </Authorized>
+                </AuthorizeView>
+
+            </Authorized>
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/login">
+                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Login
+                    </NavLink>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+
+    </nav>
+</div>
+

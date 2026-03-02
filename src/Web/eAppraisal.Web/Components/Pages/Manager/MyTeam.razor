@@ -1,0 +1,85 @@
+@page "/manager/my-team"
+@rendermode InteractiveServer
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = AppRoles.Manager)]
+@inject AppraisalService AppraisalSvc
+@inject NavigationManager Nav
+
+<PageTitle>My Team Appraisals — Manager</PageTitle>
+
+<div class="container-fluid py-3">
+    <h3 class="mb-4"><i class="bi bi-person-lines-fill me-2 text-primary"></i>My Team Appraisals</h3>
+
+    @if (_loading)
+    {
+        <div class="text-center py-5"><span class="spinner-border text-primary"></span></div>
+    }
+    else if (_appraisals.Count == 0)
+    {
+        <div class="alert alert-info">No appraisals assigned to you yet.</div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var a in _appraisals)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm h-100 @CardBorder(a.Status)">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">@a.EmployeeName</span>
+                            <span class="badge @StatusBadge(a.Status)">@a.Status</span>
+                        </div>
+                        <div class="card-body small">
+                            <div class="mb-1"><i class="bi bi-building me-1 text-muted"></i>@a.EmployeeDepartment</div>
+                            <div class="mb-1"><i class="bi bi-calendar me-1 text-muted"></i>Year: @a.Year</div>
+                            <div class="mb-1"><i class="bi bi-clock me-1 text-muted"></i>Initiated: @a.InitiatedAt.ToString("dd MMM yyyy")</div>
+                            @if (a.Rating.HasValue)
+                            {
+                                <div class="mt-2"><span class="badge bg-warning text-dark">Rating: @a.Rating/5 ⭐</span></div>
+                            }
+                        </div>
+                        <div class="card-footer">
+                            @if (a.Status is "AwaitingManagerComment" or "AwaitingFinalAssessment")
+                            {
+                                <button class="btn btn-primary btn-sm w-100" @onclick="() => ReviewAppraisal(a.Id)">
+                                    <i class="bi bi-pencil me-1"></i>
+                                    @(a.Status == "AwaitingManagerComment" ? "Add Comment" : "Submit Final Assessment")
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-outline-secondary btn-sm w-100" @onclick="() => ReviewAppraisal(a.Id)">
+                                    <i class="bi bi-eye me-1"></i>View Details
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<AppraisalDto> _appraisals = [];
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _appraisals = await AppraisalSvc.GetMyTeamAsync();
+        _loading = false;
+    }
+
+    private static string StatusBadge(string s) => s switch
+    {
+        "AwaitingManagerComment"  => "bg-warning text-dark",
+        "AwaitingEmployeeInput"   => "bg-info text-dark",
+        "AwaitingFinalAssessment" => "bg-primary",
+        "Completed"               => "bg-success",
+        _                         => "bg-secondary"
+    };
+
+    private static string CardBorder(string s) => s is "AwaitingManagerComment" or "AwaitingFinalAssessment"
+        ? "border-primary" : "";
+
+    private void ReviewAppraisal(int id) => Nav.NavigateTo($"/manager/appraisal/{id}");
+}

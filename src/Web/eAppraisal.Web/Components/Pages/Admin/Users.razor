@@ -1,0 +1,110 @@
+@page "/admin/users"
+@rendermode InteractiveServer
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = AppRoles.ITAdmin)]
+@inject AuthService AuthSvc
+
+<PageTitle>User Management — IT Admin</PageTitle>
+
+<div class="container-fluid py-3">
+    <h3 class="mb-4"><i class="bi bi-shield-lock me-2 text-warning"></i>User Management</h3>
+
+    @if (!string.IsNullOrEmpty(_message))
+    {
+        <div class="alert @(_success ? "alert-success" : "alert-danger") d-flex gap-2 align-items-center">
+            <i class="bi @(_success ? "bi-check-circle" : "bi-exclamation-triangle")"></i>@_message
+        </div>
+    }
+
+    @if (_loading)
+    {
+        <div class="text-center py-5"><span class="spinner-border text-warning"></span></div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle">
+                <thead class="table-warning">
+                    <tr>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Failed Attempts</th>
+                        <th>Last Login</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var u in _users)
+                    {
+                        <tr class="@(u.IsLocked ? "table-danger" : "")">
+                            <td class="fw-semibold">@u.Username</td>
+                            <td><span class="badge @RoleBadge(u.Role)">@u.Role</span></td>
+                            <td>
+                                @if (u.IsLocked)
+                                {
+                                    <span class="badge bg-danger"><i class="bi bi-lock-fill me-1"></i>LOCKED</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success"><i class="bi bi-unlock-fill me-1"></i>Active</span>
+                                }
+                            </td>
+                            <td class="text-center @(u.FailedLoginAttempts > 0 ? "text-danger fw-bold" : "")">
+                                @u.FailedLoginAttempts
+                            </td>
+                            <td class="small text-muted">
+                                @(u.LastLoginAt?.ToString("dd MMM yyyy HH:mm") ?? "Never")
+                            </td>
+                            <td>
+                                @if (u.IsLocked)
+                                {
+                                    <button class="btn btn-sm btn-success" @onclick="() => UnlockAsync(u.Username)">
+                                        <i class="bi bi-unlock me-1"></i>Unlock
+                                    </button>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">—</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <small class="text-muted">@_users.Count user(s) total. Lock-out triggers after 3 failed login attempts.</small>
+    }
+</div>
+
+@code {
+    private List<UserSummaryDto> _users = [];
+    private bool _loading = true;
+    private string _message = string.Empty;
+    private bool _success;
+
+    protected override async Task OnInitializedAsync() => await RefreshAsync();
+
+    private async Task RefreshAsync()
+    {
+        _loading = true;
+        _users = await AuthSvc.GetUsersAsync();
+        _loading = false;
+    }
+
+    private async Task UnlockAsync(string username)
+    {
+        bool ok = await AuthSvc.UnlockUserAsync(username);
+        _message = ok ? $"Account '{username}' has been unlocked." : "Failed to unlock account.";
+        _success = ok;
+        await RefreshAsync();
+    }
+
+    private static string RoleBadge(string r) => r switch
+    {
+        AppRoles.HR       => "bg-info text-dark",
+        AppRoles.Manager  => "bg-primary",
+        AppRoles.Employee => "bg-secondary",
+        AppRoles.ITAdmin  => "bg-danger",
+        _                 => "bg-light text-dark"
+    };
+}

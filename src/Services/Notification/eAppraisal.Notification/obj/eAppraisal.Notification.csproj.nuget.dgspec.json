@@ -1,0 +1,152 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Services\\Notification\\eAppraisal.Notification\\eAppraisal.Notification.csproj": {}
+  },
+  "projects": {
+    "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Services\\Notification\\eAppraisal.Notification\\eAppraisal.Notification.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Services\\Notification\\eAppraisal.Notification\\eAppraisal.Notification.csproj",
+        "projectName": "eAppraisal.Notification",
+        "projectPath": "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Services\\Notification\\eAppraisal.Notification\\eAppraisal.Notification.csproj",
+        "packagesPath": "C:\\Users\\152170\\.nuget\\packages\\",
+        "outputPath": "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Services\\Notification\\eAppraisal.Notification\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\152170\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj": {
+                "projectPath": "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[9.0.13, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.311/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj",
+        "projectName": "eAppraisal.Shared",
+        "projectPath": "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj",
+        "packagesPath": "C:\\Users\\152170\\.nuget\\packages\\",
+        "outputPath": "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\152170\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.1.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.311/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+<ng-container *ngIf="!isAuthRoute(); else authView">
+	<div class="app-shell">
+		<header class="app-header">
+			<div class="brand">
+				<span class="brand-mark"></span>
+				<span>eAppraisal</span>
+			</div>
+			<div class="breadcrumb">
+				{{ breadcrumb() }}
+			</div>
+			<button class="logout-btn" type="button" (click)="onLogout()">
+				Logout
+			</button>
+		</header>
+
+		<div class="app-body">
+			<aside class="side-nav">
+				<div class="user-card">
+					<div class="avatar">{{ userInitials() }}</div>
+					<div class="user-meta">
+						<p class="name">{{ userName() }}</p>
+						<p class="role">{{ userRoleLabel() }}</p>
+					</div>
+				</div>
+				<nav>
+					 <a *ngFor="let item of navItems()"
+						 [routerLink]="item.route"
+						 [queryParams]="item.queryParams ?? null"
+						 [class.active]="isNavActive(item)">
+						{{ item.label }}
+					</a>
+				</nav>
+			</aside>
+
+			<main class="content">
+				<div class="content-frame">
+					<router-outlet></router-outlet>
+				</div>
+			</main>
+		</div>
+	</div>
+</ng-container>
+
+<ng-template #authView>
+	<router-outlet></router-outlet>
+</ng-template>
