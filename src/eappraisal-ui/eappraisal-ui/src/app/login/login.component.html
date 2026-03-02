@@ -1,0 +1,65 @@
+<section class="login-shell">
+  <div class="login-panel">
+    <p class="eyebrow">HR ACCESS</p>
+    <h1>Sign in</h1>
+    <p class="copy">Use your corporate credentials.</p>
+
+    <form class="login-form" *ngIf="!showReset" (ngSubmit)="login()">
+      <label>
+        Email
+        <input type="email" [(ngModel)]="email" name="email" placeholder="name@company.com" required />
+      </label>
+
+      <label>
+        Password
+        <input type="password" [(ngModel)]="password" name="password" placeholder="••••••••" required />
+      </label>
+
+      <button type="submit" [disabled]="loading">
+        {{ loading ? 'Signing in…' : 'Sign in' }}
+      </button>
+
+      <button type="button" class="link-btn" (click)="toggleReset()" [disabled]="loading">
+        Reset Password
+      </button>
+
+      <p class="message" *ngIf="message">{{ message }}</p>
+      <p class="error" *ngIf="error">{{ error }}</p>
+    </form>
+
+    <form class="login-form reset-form" *ngIf="showReset" (ngSubmit)="submitReset()">
+      <p class="copy">Reset your password</p>
+
+      <label>
+        Email
+        <input type="email" [(ngModel)]="resetEmail" name="resetEmail" placeholder="name@company.com" required />
+      </label>
+
+      <label>
+        New Password
+        <input type="password" [(ngModel)]="resetPassword" name="resetPassword" placeholder="••••••••" required />
+      </label>
+
+      <label>
+        Confirm Password
+        <input type="password" [(ngModel)]="resetConfirmPassword" name="resetConfirmPassword" placeholder="••••••••" required />
+      </label>
+
+      <button type="submit" [disabled]="resetLoading">
+        {{ resetLoading ? 'Updating…' : 'Update Password' }}
+      </button>
+
+      <button type="button" class="link-btn" (click)="toggleReset()" [disabled]="resetLoading">
+        Back to Sign in
+      </button>
+
+      <p class="message" *ngIf="message">{{ message }}</p>
+      <p class="error" *ngIf="error">{{ error }}</p>
+    </form>
+  </div>
+
+  <div class="login-aside">
+    <div class="marquee">e-Appraisal</div>
+    <p class="aside-copy">People-first performance decisions in a single monochrome command center.</p>
+  </div>
+</section>
