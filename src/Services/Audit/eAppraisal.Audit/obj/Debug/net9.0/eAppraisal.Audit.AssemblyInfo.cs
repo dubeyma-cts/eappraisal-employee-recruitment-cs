@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("eAppraisal.Audit")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c4e05ffce12e280632649336c89d0e2317638bfd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a4af0858333146fd365c453facc5ca46a79c948b")]
 [assembly: System.Reflection.AssemblyProductAttribute("eAppraisal.Audit")]
 [assembly: System.Reflection.AssemblyTitleAttribute("eAppraisal.Audit")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

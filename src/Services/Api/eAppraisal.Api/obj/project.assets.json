@@ -3950,8 +3950,8 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj": {
-              "projectPath": "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj"
+            "c:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj": {
+              "projectPath": "c:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj"
             }
           }
         }

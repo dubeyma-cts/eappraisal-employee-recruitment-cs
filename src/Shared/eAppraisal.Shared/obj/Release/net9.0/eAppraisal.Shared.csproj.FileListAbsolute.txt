@@ -1,0 +1,2 @@
+c:\dev\repo\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Shared\obj\Release\net9.0\eAppraisal.Shared.csproj.AssemblyReference.cache
+c:\dev\repo\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Shared\obj\Release\net9.0\eAppraisal.Shared.GeneratedMSBuildEditorConfig.editorconfig

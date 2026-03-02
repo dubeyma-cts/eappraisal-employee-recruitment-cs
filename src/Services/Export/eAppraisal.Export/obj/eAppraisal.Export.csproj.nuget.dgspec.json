@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Services\\Export\\eAppraisal.Export\\eAppraisal.Export.csproj": {}
+    "c:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Services\\Export\\eAppraisal.Export\\eAppraisal.Export.csproj": {}
   },
   "projects": {
-    "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Services\\Export\\eAppraisal.Export\\eAppraisal.Export.csproj": {
+    "c:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Services\\Export\\eAppraisal.Export\\eAppraisal.Export.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Services\\Export\\eAppraisal.Export\\eAppraisal.Export.csproj",
+        "projectUniqueName": "c:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Services\\Export\\eAppraisal.Export\\eAppraisal.Export.csproj",
         "projectName": "eAppraisal.Export",
-        "projectPath": "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Services\\Export\\eAppraisal.Export\\eAppraisal.Export.csproj",
+        "projectPath": "c:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Services\\Export\\eAppraisal.Export\\eAppraisal.Export.csproj",
         "packagesPath": "C:\\Users\\152170\\.nuget\\packages\\",
-        "outputPath": "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Services\\Export\\eAppraisal.Export\\obj\\",
+        "outputPath": "c:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Services\\Export\\eAppraisal.Export\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\152170\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -26,8 +26,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj": {
-                "projectPath": "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj"
+              "c:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj": {
+                "projectPath": "c:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj"
               }
             }
           }
@@ -73,14 +73,14 @@
         }
       }
     },
-    "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj": {
+    "c:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj",
+        "projectUniqueName": "c:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj",
         "projectName": "eAppraisal.Shared",
-        "projectPath": "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj",
+        "projectPath": "c:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\eAppraisal.Shared.csproj",
         "packagesPath": "C:\\Users\\152170\\.nuget\\packages\\",
-        "outputPath": "C:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\obj\\",
+        "outputPath": "c:\\dev\\repo\\eappraisal-employee-recruitment-cs\\src\\Shared\\eAppraisal.Shared\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\152170\\AppData\\Roaming\\NuGet\\NuGet.Config"
