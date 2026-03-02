@@ -1,0 +1,27 @@
+@model List<AppraisalDto>
+@{ ViewData["Title"] = "My Appraisals"; }
+<h2>My Appraisals</h2>
+<table class="table table-striped mt-3">
+    <thead class="table-dark">
+        <tr><th>Cycle</th><th>Manager</th><th>Status</th><th>Created</th><th>Finalised</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var a in Model)
+        {
+            <tr>
+                <td>@a.CycleName</td>
+                <td>@a.ManagerName</td>
+                <td><span class="badge @(a.Status == "Final" ? "bg-success" : "bg-warning text-dark")">@a.Status</span></td>
+                <td>@a.CreatedAt.ToString("yyyy-MM-dd")</td>
+                <td>@a.FinalisedAt?.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <a href="/Employee/ViewAppraisal/@a.AppraisalId" class="btn btn-sm btn-outline-info">View</a>
+                    @if (a.Status == "ManagerCommented")
+                    {
+                        <a href="/Employee/SubmitFeedback/@a.AppraisalId" class="btn btn-sm btn-outline-primary">Submit Feedback</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

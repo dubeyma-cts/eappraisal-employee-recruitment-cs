@@ -1,0 +1,49 @@
+@{
+    var role = Context.Session.GetString("UserRole") ?? "";
+    var fullName = Context.Session.GetString("UserFullName") ?? "User";
+}
+<nav class="sidebar d-flex flex-column">
+    <div class="sidebar-header">
+        <strong>e-Appraisal</strong>
+    </div>
+    <div class="px-3 py-2 text-light small">
+        Logged in as: <strong>@fullName</strong><br />
+        <span class="badge bg-info">@role</span>
+    </div>
+    <hr class="text-secondary mx-3" />
+    <ul class="nav flex-column">
+        @if (role == "Admin")
+        {
+            <li class="nav-item"><a class="nav-link" href="/Admin">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="/Admin/Users">User Management</a></li>
+            <li class="nav-item"><a class="nav-link" href="/Admin/CreateUser">Create User</a></li>
+            <li class="nav-item"><a class="nav-link" href="/Reports">Reports</a></li>
+        }
+        @if (role == "HR")
+        {
+            <li class="nav-item"><a class="nav-link" href="/HR">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="/HR/Employees">Employees</a></li>
+            <li class="nav-item"><a class="nav-link" href="/HR/Cycles">Appraisal Cycles</a></li>
+            <li class="nav-item"><a class="nav-link" href="/HR/UpcomingAppraisals">Assign Appraisals</a></li>
+            <li class="nav-item"><a class="nav-link" href="/Reports">Reports</a></li>
+        }
+        @if (role == "Manager")
+        {
+            <li class="nav-item"><a class="nav-link" href="/Manager">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="/Manager/MyAppraisals">My Appraisals</a></li>
+            <li class="nav-item"><a class="nav-link" href="/Reports">Reports</a></li>
+        }
+        @if (role == "Employee")
+        {
+            <li class="nav-item"><a class="nav-link" href="/Employee">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="/Employee/MyProfile">My Profile</a></li>
+            <li class="nav-item"><a class="nav-link" href="/Employee/MyAppraisal">My Appraisals</a></li>
+            <li class="nav-item"><a class="nav-link" href="/Reports">Reports</a></li>
+        }
+    </ul>
+    <div class="mt-auto p-3">
+        <form method="post" asp-controller="Account" asp-action="Logout">
+            <button type="submit" class="btn btn-outline-light btn-sm w-100">Logout</button>
+        </form>
+    </div>
+</nav>

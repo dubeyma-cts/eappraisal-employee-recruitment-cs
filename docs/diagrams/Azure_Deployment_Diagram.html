@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eAppraisal - Azure Deployment Diagram</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; color: #333; }
+        .header { background: linear-gradient(135deg, #0078d4, #005a9e); color: white; padding: 30px 40px; text-align: center; }
+        .header h1 { font-size: 28px; margin-bottom: 6px; }
+        .header p { font-size: 14px; opacity: 0.85; }
+        .nav { background: white; padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 50; }
+        .nav a { padding: 7px 16px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600; color: #0078d4; border: 2px solid #0078d4; transition: all 0.2s; }
+        .nav a:hover { background: #0078d4; color: white; }
+        .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+        h2 { color: #0078d4; font-size: 22px; margin-bottom: 16px; padding-top: 10px; }
+        h3 { color: #005a9e; font-size: 17px; margin: 24px 0 12px; }
+        .mermaid { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); overflow-x: auto; }
+        .legend { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 16px 0; padding: 14px; background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; }
+        .legend-color { width: 18px; height: 18px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.2); }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 20px; }
+        th { background: #0078d4; color: white; padding: 12px 16px; text-align: left; font-size: 13px; }
+        td { padding: 10px 16px; border-bottom: 1px solid #f0f0f0; font-size: 13px; vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f0f7ff; }
+        td code { background: #f5f5f5; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: 'Cascadia Code','Consolas',monospace; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .card { background: white; border-radius: 12px; padding: 20px 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border-left: 5px solid; }
+        .card h4 { font-size: 16px; margin-bottom: 6px; }
+        .card .card-desc { font-size: 13px; color: #555; line-height: 1.6; }
+        .card .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+        .tag { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+        .tag.blue { background: #e3f2fd; color: #0d47a1; }
+        .tag.green { background: #e8f5e9; color: #1b5e20; }
+        .tag.orange { background: #fff3e0; color: #e65100; }
+        .tag.purple { background: #f3e5f5; color: #6a1b9a; }
+        .tag.red { background: #fce4ec; color: #c62828; }
+        .tag.teal { background: #e0f2f1; color: #004d40; }
+        .tag.gray { background: #eceff1; color: #37474f; }
+        .note-box { background: #e3f2fd; border: 1px solid #42a5f5; border-radius: 10px; padding: 14px 20px; margin: 16px 0; font-size: 13px; line-height: 1.6; }
+        .note-box strong { color: #0d47a1; }
+        .warn-box { background: #fff8e1; border: 1px solid #ffb300; border-radius: 10px; padding: 14px 20px; margin: 16px 0; font-size: 13px; line-height: 1.6; }
+        .warn-box strong { color: #e65100; }
+        .flow-box { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .flow-box h3 { margin-top: 0; }
+        .flow-arrow { display: flex; align-items: center; flex-wrap: wrap; gap: 0; justify-content: center; }
+        .flow-step { padding: 10px 18px; border-radius: 8px; font-size: 12px; font-weight: 600; color: white; text-align: center; min-width: 120px; }
+        .flow-connector { font-size: 22px; color: #666; padding: 0 4px; }
+        hr.divider { border: none; height: 2px; background: linear-gradient(to right, transparent, #90caf9, transparent); margin: 40px 0; }
+        .print-btn { position: fixed; bottom: 20px; right: 20px; background: #0078d4; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 100; }
+        .print-btn:hover { background: #005a9e; }
+        @media print { .print-btn, .nav { display: none; } body { background: white; } .header { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>eAppraisal System &mdash; Azure Cloud Deployment Diagram</h1>
+    <p>Nano Technologies Pvt. Ltd. | .NET 8 | Azure PaaS | 26 API Endpoints | 4 Roles | Clean Architecture</p>
+</div>
+
+<div class="nav">
+    <a href="#architecture">Architecture</a>
+    <a href="#network">Network</a>
+    <a href="#resources">Resource Groups</a>
+    <a href="#services">Service Details</a>
+    <a href="#security">Security</a>
+    <a href="#cicd">CI/CD Pipeline</a>
+    <a href="#scaling">Scaling</a>
+    <a href="#migration">Migration Map</a>
+    <a href="#env">Environments</a>
+    <a href="#cost">Cost Tiers</a>
+</div>
+
+<!-- ============================= ARCHITECTURE ============================= -->
+<div class="container" id="architecture">
+    <h2>Azure Cloud Architecture Overview</h2>
+    <p style="font-size:14px;color:#555;margin-bottom:16px;">Production-ready deployment on Azure PaaS services with managed security, monitoring, and auto-scaling.</p>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#4A90D9"></div> Internet / Users</div>
+        <div class="legend-item"><div class="legend-color" style="background:#00838F"></div> Azure Networking</div>
+        <div class="legend-item"><div class="legend-color" style="background:#68C5A5"></div> Web App Service</div>
+        <div class="legend-item"><div class="legend-color" style="background:#F5A623"></div> API App Service</div>
+        <div class="legend-item"><div class="legend-color" style="background:#3498DB"></div> Data Services</div>
+        <div class="legend-item"><div class="legend-color" style="background:#E74C3C"></div> Security / Identity</div>
+        <div class="legend-item"><div class="legend-color" style="background:#AB47BC"></div> Integration</div>
+        <div class="legend-item"><div class="legend-color" style="background:#78909C"></div> Monitoring</div>
+    </div>
+
+    <div class="mermaid">
+flowchart TB
+    subgraph INTERNET["INTERNET"]
+        Users["&#128101; Users<br/>(Admin, HR, Manager, Employee)<br/>Browser: Chrome / Edge"]
+        DNS["&#127760; Azure DNS<br/>eappraisal.nanotechnologies.com"]
+    end
+
+    subgraph AZURE["AZURE SUBSCRIPTION &mdash; Nano Technologies"]
+
+        subgraph EDGE["Edge &amp; Networking"]
+            FrontDoor["&#128737; Azure Front Door<br/>Global Load Balancer<br/>WAF Policy + SSL Offload<br/>DDoS Protection (L7)"]
+        end
+
+        subgraph RG_COMPUTE["Resource Group: rg-eappraisal-compute"]
+            subgraph ASP_WEB["App Service Plan: asp-web (B2 / S1)"]
+                WebApp["&#127760; eAppraisal.Web<br/>Azure App Service<br/>Linux / .NET 8<br/>6 MVC Controllers<br/>Razor Views + ApiClient<br/><br/>Deployment Slots:<br/>Production | Staging"]
+            end
+
+            subgraph ASP_API["App Service Plan: asp-api (B2 / S1)"]
+                ApiApp["&#9881; eAppraisal.Api<br/>Azure App Service<br/>Linux / .NET 8<br/>5 REST Controllers<br/>26 API Endpoints<br/>18 Injected Services<br/><br/>Deployment Slots:<br/>Production | Staging"]
+            end
+        end
+
+        subgraph RG_DATA["Resource Group: rg-eappraisal-data"]
+            AzureSQL[("&#128451; Azure SQL Database<br/>General Purpose - S2<br/>Server: sql-eappraisal<br/>DB: sqldb-eappraisal<br/>50 DTUs / 250 GB<br/>Geo-redundant Backup")]
+            Redis["&#9889; Azure Cache for Redis<br/>Basic C1 (1 GB)<br/>Session Storage<br/>API Response Caching"]
+            Blob["&#128193; Azure Blob Storage<br/>Hot Tier (LRS)<br/>Employee Documents<br/>Audit Log Archive"]
+        end
+
+        subgraph RG_SECURITY["Resource Group: rg-eappraisal-security"]
+            EntraID["&#128274; Microsoft Entra ID<br/>(Azure AD)<br/>SSO + MFA + RBAC<br/>4 App Roles:<br/>Admin | HR | Manager | Employee<br/>Conditional Access Policies"]
+            KeyVault["&#128273; Azure Key Vault<br/>vault-eappraisal<br/>Connection Strings<br/>API Keys &amp; Secrets<br/>TLS Certificates<br/>Managed Identity Access"]
+        end
+
+        subgraph RG_MONITOR["Resource Group: rg-eappraisal-monitor"]
+            AppInsights["&#128200; Application Insights<br/>APM + Distributed Tracing<br/>Live Metrics Stream<br/>Failure Analysis"]
+            LogAnalytics["&#128202; Log Analytics Workspace<br/>Centralized Logging<br/>KQL Queries<br/>30-day Retention"]
+            Alerts["&#128276; Azure Monitor Alerts<br/>Response Time &gt; 2s<br/>Error Rate &gt; 5%<br/>CPU &gt; 80%"]
+        end
+
+        subgraph RG_INTEGRATE["Resource Group: rg-eappraisal-integration"]
+            SendGrid["&#9993; SendGrid (Azure Addon)<br/>Email Notifications<br/>Appraisal Assigned<br/>Appraisal Finalized<br/>Account Locked/Unlocked"]
+            ServiceBus["&#128233; Azure Service Bus<br/>Async Event Queue<br/>notification-queue<br/>audit-event-queue"]
+            AppConfig["&#9881; Azure App Configuration<br/>Feature Flags<br/>Dynamic Settings<br/>Label: dev | staging | prod"]
+        end
+
+    end
+
+    Users --> DNS
+    DNS --> FrontDoor
+    FrontDoor -->|"HTTPS :443<br/>WAF Filtered"| WebApp
+    FrontDoor -->|"HTTPS :443<br/>WAF Filtered"| ApiApp
+    WebApp -->|"HTTPS (VNet)<br/>JSON + Cookie"| ApiApp
+    ApiApp -->|"TDS :1433<br/>Private Endpoint"| AzureSQL
+    ApiApp -->|":6380 SSL"| Redis
+    WebApp -->|":6380 SSL"| Redis
+    ApiApp -->|"OAuth 2.0 / OIDC"| EntraID
+    WebApp -->|"OAuth 2.0 / OIDC"| EntraID
+    ApiApp -->|"Managed Identity"| KeyVault
+    WebApp -->|"Managed Identity"| KeyVault
+    ApiApp -.->|"Telemetry"| AppInsights
+    WebApp -.->|"Telemetry"| AppInsights
+    AppInsights -.-> LogAnalytics
+    LogAnalytics -.-> Alerts
+    ApiApp -.->|"SMTP API"| SendGrid
+    ApiApp -.->|"AMQP"| ServiceBus
+    ApiApp -.-> AppConfig
+    WebApp -.-> AppConfig
+    ApiApp -.-> Blob
+
+    classDef userStyle fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px
+    classDef edgeStyle fill:#00838F,stroke:#006064,color:#fff,stroke-width:2px
+    classDef webStyle fill:#68C5A5,stroke:#3D8B6B,color:#000,stroke-width:2px
+    classDef apiStyle fill:#F5A623,stroke:#C47D12,color:#000,stroke-width:2px
+    classDef dataStyle fill:#3498DB,stroke:#2171A9,color:#fff,stroke-width:2px
+    classDef secStyle fill:#E74C3C,stroke:#C0392B,color:#fff,stroke-width:2px
+    classDef monStyle fill:#78909C,stroke:#455A64,color:#fff,stroke-width:2px
+    classDef intStyle fill:#AB47BC,stroke:#7B1FA2,color:#fff,stroke-width:2px
+
+    class Users,DNS userStyle
+    class FrontDoor edgeStyle
+    class WebApp webStyle
+    class ApiApp apiStyle
+    class AzureSQL,Redis,Blob dataStyle
+    class EntraID,KeyVault secStyle
+    class AppInsights,LogAnalytics,Alerts monStyle
+    class SendGrid,ServiceBus,AppConfig intStyle
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================= NETWORK ============================= -->
+<div class="container" id="network">
+    <h2>Network Architecture &amp; Data Flow</h2>
+
+    <div class="mermaid">
+flowchart LR
+    subgraph PUBLIC["Public Internet"]
+        Client["&#128101; User Browser"]
+    end
+
+    subgraph EDGE["Azure Edge"]
+        FD["Azure Front Door<br/>+ WAF Policy<br/>(OWASP 3.2 Rules)"]
+    end
+
+    subgraph VNET["Azure VNet: vnet-eappraisal (10.0.0.0/16)"]
+        subgraph SUBNET_WEB["Subnet: snet-web (10.0.1.0/24)"]
+            Web["eAppraisal.Web<br/>App Service<br/>VNet Integration"]
+        end
+        subgraph SUBNET_API["Subnet: snet-api (10.0.2.0/24)"]
+            Api["eAppraisal.Api<br/>App Service<br/>VNet Integration"]
+        end
+        subgraph SUBNET_DATA["Subnet: snet-data (10.0.3.0/24)"]
+            PE_SQL["Private Endpoint<br/>Azure SQL"]
+            PE_Redis["Private Endpoint<br/>Redis Cache"]
+            PE_Blob["Private Endpoint<br/>Blob Storage"]
+        end
+    end
+
+    subgraph DATA_SVC["Azure Data Services"]
+        SQL[("Azure SQL<br/>Database")]
+        RedisC["Azure Redis<br/>Cache"]
+        BlobS["Azure Blob<br/>Storage"]
+    end
+
+    Client -->|"HTTPS"| FD
+    FD -->|"HTTPS"| Web
+    FD -->|"HTTPS"| Api
+    Web -->|"Private VNet"| Api
+    Api -->|"Private Link"| PE_SQL
+    Api -->|"Private Link"| PE_Redis
+    Api -->|"Private Link"| PE_Blob
+    Web -->|"Private Link"| PE_Redis
+    PE_SQL --> SQL
+    PE_Redis --> RedisC
+    PE_Blob --> BlobS
+
+    classDef pubStyle fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px
+    classDef edgeStyle fill:#00838F,stroke:#006064,color:#fff,stroke-width:2px
+    classDef webStyle fill:#68C5A5,stroke:#3D8B6B,color:#000,stroke-width:2px
+    classDef apiStyle fill:#F5A623,stroke:#C47D12,color:#000,stroke-width:2px
+    classDef peStyle fill:#EF9A9A,stroke:#C62828,color:#333,stroke-width:2px
+    classDef dataStyle fill:#3498DB,stroke:#2171A9,color:#fff,stroke-width:2px
+
+    class Client pubStyle
+    class FD edgeStyle
+    class Web webStyle
+    class Api apiStyle
+    class PE_SQL,PE_Redis,PE_Blob peStyle
+    class SQL,RedisC,BlobS dataStyle
+    </div>
+
+    <h3>Request Flow (Login Example)</h3>
+    <div class="mermaid">
+sequenceDiagram
+    participant U as &#128101; User Browser
+    participant FD as Azure Front Door
+    participant W as eAppraisal.Web<br/>(App Service)
+    participant A as eAppraisal.Api<br/>(App Service)
+    participant AD as Entra ID
+    participant KV as Key Vault
+    participant SQL as Azure SQL
+    participant R as Redis Cache
+    participant AI as App Insights
+
+    U->>FD: HTTPS GET eappraisal.nanotechnologies.com/Account/Login
+    FD->>FD: WAF check + SSL termination
+    FD->>W: Forward request (HTTPS)
+    W-->>U: Login Page (HTML)
+
+    U->>FD: HTTPS POST /Account/Login (email + password)
+    FD->>W: Forward POST
+    W->>A: POST /api/auth/login (JSON + Cookie)
+    A->>KV: Get connection string (Managed Identity)
+    KV-->>A: Connection string
+    A->>SQL: Query AspNetUsers (EF Core)
+    SQL-->>A: User record
+    A->>A: Validate password (Identity)
+    A->>A: Check lockout (FailedLoginAttempts < 3)
+    A->>SQL: Reset FailedLoginAttempts = 0
+    A->>SQL: INSERT AuditEvent (Login Success)
+    A-->>W: 200 OK { success: true, role: "HR" } + Set-Cookie
+    W->>R: Store auth cookie in session
+    R-->>W: OK
+    W-->>U: 302 Redirect to /HR/Dashboard
+    W-.>>AI: Log request telemetry
+    A-.>>AI: Log request telemetry
+    </div>
+
+    <h3>Port &amp; Protocol Mapping</h3>
+    <table>
+        <thead><tr><th>From</th><th>To</th><th>Protocol</th><th>Port</th><th>Auth Method</th><th>Network Path</th></tr></thead>
+        <tbody>
+            <tr><td>User Browser</td><td>Azure Front Door</td><td>HTTPS (TLS 1.3)</td><td>443</td><td>None (public)</td><td>Public Internet</td></tr>
+            <tr><td>Front Door</td><td>Web App Service</td><td>HTTPS</td><td>443</td><td>Front Door ID header</td><td>Microsoft Backbone</td></tr>
+            <tr><td>Front Door</td><td>API App Service</td><td>HTTPS</td><td>443</td><td>Front Door ID header</td><td>Microsoft Backbone</td></tr>
+            <tr><td>Web App</td><td>API App</td><td>HTTPS</td><td>443</td><td>Cookie forwarding</td><td>VNet (private)</td></tr>
+            <tr><td>API App</td><td>Azure SQL</td><td>TDS (encrypted)</td><td>1433</td><td>Managed Identity / SQL Auth</td><td>Private Endpoint</td></tr>
+            <tr><td>Web/API App</td><td>Redis Cache</td><td>Redis SSL</td><td>6380</td><td>Access Key (from Key Vault)</td><td>Private Endpoint</td></tr>
+            <tr><td>Web/API App</td><td>Entra ID</td><td>HTTPS (OAuth 2.0)</td><td>443</td><td>Client ID + Secret</td><td>Public (AAD endpoint)</td></tr>
+            <tr><td>Web/API App</td><td>Key Vault</td><td>HTTPS</td><td>443</td><td>Managed Identity</td><td>Azure Backbone</td></tr>
+            <tr><td>API App</td><td>SendGrid</td><td>HTTPS (REST API)</td><td>443</td><td>API Key (from Key Vault)</td><td>Public (SaaS)</td></tr>
+            <tr><td>API App</td><td>Service Bus</td><td>AMQP over TLS</td><td>5671</td><td>Managed Identity</td><td>Azure Backbone</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<hr class="divider">
+
+<!-- ============================= RESOURCE GROUPS ============================= -->
+<div class="container" id="resources">
+    <h2>Azure Resource Group Organization</h2>
+    <p style="font-size:14px;color:#555;margin-bottom:16px;">Resources are organized by function for clear ownership, billing, and lifecycle management.</p>
+
+    <div class="mermaid">
+flowchart TB
+    subgraph SUB["Azure Subscription: sub-nanotechnologies"]
+        subgraph RG1["rg-eappraisal-compute"]
+            direction LR
+            ASP1["App Service Plan<br/>(Web)"]
+            WEB["App Service<br/>eAppraisal.Web"]
+            ASP2["App Service Plan<br/>(API)"]
+            API["App Service<br/>eAppraisal.Api"]
+        end
+        subgraph RG2["rg-eappraisal-data"]
+            direction LR
+            SQLSRV["SQL Server<br/>sql-eappraisal"]
+            SQLDB["SQL Database<br/>sqldb-eappraisal"]
+            REDIS["Redis Cache<br/>redis-eappraisal"]
+            STORAGE["Storage Account<br/>steappraisal"]
+        end
+        subgraph RG3["rg-eappraisal-security"]
+            direction LR
+            KV["Key Vault<br/>kv-eappraisal"]
+            ENTRA["Entra ID<br/>App Registration"]
+            MI["Managed Identities<br/>(Web + API)"]
+        end
+        subgraph RG4["rg-eappraisal-monitor"]
+            direction LR
+            INSIGHTS["App Insights<br/>ai-eappraisal"]
+            LOG["Log Analytics<br/>log-eappraisal"]
+            ALERT["Alert Rules<br/>(5 rules)"]
+        end
+        subgraph RG5["rg-eappraisal-integration"]
+            direction LR
+            SG["SendGrid Account"]
+            SB["Service Bus<br/>sb-eappraisal"]
+            AC["App Configuration<br/>appcs-eappraisal"]
+        end
+        subgraph RG6["rg-eappraisal-network"]
+            direction LR
+            VNET["Virtual Network<br/>vnet-eappraisal"]
+            FD2["Front Door<br/>fd-eappraisal"]
+            NSG["Network Security<br/>Groups (3)"]
+            PE["Private Endpoints<br/>(SQL + Redis + Blob)"]
+        end
+    end
+
+    classDef compute fill:#68C5A5,stroke:#3D8B6B,color:#000,stroke-width:2px
+    classDef data fill:#3498DB,stroke:#2171A9,color:#fff,stroke-width:2px
+    classDef sec fill:#E74C3C,stroke:#C0392B,color:#fff,stroke-width:2px
+    classDef mon fill:#78909C,stroke:#455A64,color:#fff,stroke-width:2px
+    classDef intg fill:#AB47BC,stroke:#7B1FA2,color:#fff,stroke-width:2px
+    classDef net fill:#00838F,stroke:#006064,color:#fff,stroke-width:2px
+
+    class ASP1,WEB,ASP2,API compute
+    class SQLSRV,SQLDB,REDIS,STORAGE data
+    class KV,ENTRA,MI sec
+    class INSIGHTS,LOG,ALERT mon
+    class SG,SB,AC intg
+    class VNET,FD2,NSG,PE net
+    </div>
+
+    <table>
+        <thead><tr><th>Resource Group</th><th>Purpose</th><th>Resources</th><th>RBAC Owner</th></tr></thead>
+        <tbody>
+            <tr><td><strong>rg-eappraisal-compute</strong></td><td>Application hosting</td><td>2 App Service Plans, 2 App Services (4 slots total)</td><td>DevOps Team</td></tr>
+            <tr><td><strong>rg-eappraisal-data</strong></td><td>Data persistence</td><td>SQL Server + DB, Redis Cache, Storage Account</td><td>DBA Team</td></tr>
+            <tr><td><strong>rg-eappraisal-security</strong></td><td>Identity &amp; secrets</td><td>Key Vault, Entra ID App Registration, Managed Identities</td><td>Security Team</td></tr>
+            <tr><td><strong>rg-eappraisal-monitor</strong></td><td>Observability</td><td>App Insights, Log Analytics, Alert Rules</td><td>Platform Team</td></tr>
+            <tr><td><strong>rg-eappraisal-integration</strong></td><td>External services</td><td>SendGrid, Service Bus, App Configuration</td><td>DevOps Team</td></tr>
+            <tr><td><strong>rg-eappraisal-network</strong></td><td>Networking</td><td>VNet, Front Door, NSGs, Private Endpoints</td><td>Network Team</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<hr class="divider">
+
+<!-- ============================= SERVICE DETAILS ============================= -->
+<div class="container" id="services">
+    <h2>Azure Service Details</h2>
+
+    <h3>Compute Services</h3>
+    <div class="card-grid">
+        <div class="card" style="border-color:#68C5A5">
+            <h4>&#127760; eAppraisal.Web &mdash; App Service</h4>
+            <div class="card-desc">
+                <strong>Plan:</strong> asp-web (Linux, B2 / S1)<br/>
+                <strong>Runtime:</strong> .NET 8.0<br/>
+                <strong>Components:</strong> 6 MVC Controllers, Razor Views, ApiClient (HttpClient)<br/>
+                <strong>State:</strong> Distributed session via Redis<br/>
+                <strong>Slots:</strong> Production + Staging (swap deployment)<br/>
+                <strong>Custom Domain:</strong> eappraisal.nanotechnologies.com<br/>
+                <strong>Health Check:</strong> /health (every 30s)
+            </div>
+            <div class="card-tags">
+                <span class="tag green">ASP.NET Core MVC</span>
+                <span class="tag blue">Razor Views</span>
+                <span class="tag teal">Redis Sessions</span>
+            </div>
+        </div>
+        <div class="card" style="border-color:#F5A623">
+            <h4>&#9881; eAppraisal.Api &mdash; App Service</h4>
+            <div class="card-desc">
+                <strong>Plan:</strong> asp-api (Linux, B2 / S1)<br/>
+                <strong>Runtime:</strong> .NET 8.0<br/>
+                <strong>Components:</strong> 5 REST Controllers, 26 Endpoints, 18 Injected Services<br/>
+                <strong>Services:</strong> 9 Domain + 6 Cross-cutting + 3 External<br/>
+                <strong>Slots:</strong> Production + Staging<br/>
+                <strong>Auth:</strong> Cookie-based (eAppraisal.Auth) via Entra ID<br/>
+                <strong>Health Check:</strong> /api/health (every 30s)
+            </div>
+            <div class="card-tags">
+                <span class="tag orange">REST API</span>
+                <span class="tag orange">26 Endpoints</span>
+                <span class="tag red">Cookie Auth</span>
+            </div>
+        </div>
+    </div>
+
+    <h3>Data Services</h3>
+    <div class="card-grid">
+        <div class="card" style="border-color:#3498DB">
+            <h4>&#128451; Azure SQL Database</h4>
+            <div class="card-desc">
+                <strong>Server:</strong> sql-eappraisal.database.windows.net<br/>
+                <strong>Database:</strong> sqldb-eappraisal<br/>
+                <strong>Tier:</strong> General Purpose S2 (50 DTUs / 250 GB)<br/>
+                <strong>Tables:</strong> 11 (Employees, Appraisals, Comments, CtcSnapshots, StageHistories, AppraisalCycles, EmployeeFeedbacks, AuditEvents, Notifications, AspNetUsers, AspNetUserClaims)<br/>
+                <strong>Backup:</strong> Geo-redundant, 7-day PITR<br/>
+                <strong>Access:</strong> Private endpoint + Managed Identity
+            </div>
+            <div class="card-tags">
+                <span class="tag blue">EF Core 8</span>
+                <span class="tag blue">11 Tables</span>
+                <span class="tag blue">Geo-redundant</span>
+            </div>
+        </div>
+        <div class="card" style="border-color:#E74C3C">
+            <h4>&#9889; Azure Cache for Redis</h4>
+            <div class="card-desc">
+                <strong>Name:</strong> redis-eappraisal<br/>
+                <strong>Tier:</strong> Basic C1 (1 GB) &rarr; Standard C1 (prod)<br/>
+                <strong>Use Cases:</strong><br/>
+                &bull; Distributed session storage (replaces InMemoryCache)<br/>
+                &bull; Rate limiter sliding window state<br/>
+                &bull; API response caching (employee lists, cycles)<br/>
+                <strong>TLS:</strong> Enabled (port 6380)
+            </div>
+            <div class="card-tags">
+                <span class="tag red">Sessions</span>
+                <span class="tag red">Rate Limiting</span>
+                <span class="tag red">Response Cache</span>
+            </div>
+        </div>
+        <div class="card" style="border-color:#009688">
+            <h4>&#128193; Azure Blob Storage</h4>
+            <div class="card-desc">
+                <strong>Account:</strong> steappraisal<br/>
+                <strong>Tier:</strong> Hot (LRS)<br/>
+                <strong>Containers:</strong><br/>
+                &bull; <code>employee-documents</code> &mdash; uploaded profiles, ID proofs<br/>
+                &bull; <code>audit-archive</code> &mdash; monthly audit event exports<br/>
+                &bull; <code>report-exports</code> &mdash; exported appraisal PDFs<br/>
+                <strong>Access:</strong> Private endpoint + SAS tokens
+            </div>
+            <div class="card-tags">
+                <span class="tag teal">Documents</span>
+                <span class="tag teal">Audit Archive</span>
+                <span class="tag teal">Report Exports</span>
+            </div>
+        </div>
+    </div>
+
+    <h3>Security Services</h3>
+    <div class="card-grid">
+        <div class="card" style="border-color:#E74C3C">
+            <h4>&#128274; Microsoft Entra ID (Azure AD)</h4>
+            <div class="card-desc">
+                <strong>Tenant:</strong> nanotechnologies.onmicrosoft.com<br/>
+                <strong>App Registration:</strong> eAppraisal-Production<br/>
+                <strong>Auth Flow:</strong> OAuth 2.0 Authorization Code + PKCE<br/>
+                <strong>App Roles:</strong> Admin, HR, Manager, Employee<br/>
+                <strong>Features:</strong> SSO, MFA, Conditional Access<br/>
+                <strong>Replaces:</strong> Local ASP.NET Core Identity (UserManager + PasswordHasher)
+            </div>
+            <div class="card-tags">
+                <span class="tag red">SSO</span>
+                <span class="tag red">MFA</span>
+                <span class="tag red">RBAC</span>
+                <span class="tag red">Conditional Access</span>
+            </div>
+        </div>
+        <div class="card" style="border-color:#FF7043">
+            <h4>&#128273; Azure Key Vault</h4>
+            <div class="card-desc">
+                <strong>Name:</strong> kv-eappraisal<br/>
+                <strong>SKU:</strong> Standard<br/>
+                <strong>Stored Secrets:</strong><br/>
+                &bull; <code>SqlConnectionString</code> &mdash; Azure SQL connection<br/>
+                &bull; <code>RedisConnectionString</code> &mdash; Redis access key<br/>
+                &bull; <code>SendGridApiKey</code> &mdash; Email service key<br/>
+                &bull; <code>EntraClientSecret</code> &mdash; Entra ID app secret<br/>
+                <strong>Access Policy:</strong> Managed Identity only (no human access to secrets)
+            </div>
+            <div class="card-tags">
+                <span class="tag orange">Secrets</span>
+                <span class="tag orange">Managed Identity</span>
+                <span class="tag orange">Auto-Rotation</span>
+            </div>
+        </div>
+    </div>
+
+    <h3>Monitoring Services</h3>
+    <div class="card-grid">
+        <div class="card" style="border-color:#78909C">
+            <h4>&#128200; Application Insights</h4>
+            <div class="card-desc">
+                <strong>Name:</strong> ai-eappraisal<br/>
+                <strong>Features:</strong> Request tracing, dependency tracking, failure analysis, live metrics<br/>
+                <strong>Custom Events:</strong> LoginSuccess, LoginFailed, AppraisalAssigned, AppraisalFinalized, AccountLocked<br/>
+                <strong>Replaces:</strong> IObservabilityAgent console logging
+            </div>
+            <div class="card-tags"><span class="tag gray">APM</span><span class="tag gray">Tracing</span><span class="tag gray">Live Metrics</span></div>
+        </div>
+        <div class="card" style="border-color:#78909C">
+            <h4>&#128276; Azure Monitor Alerts</h4>
+            <div class="card-desc">
+                <strong>Alert Rules:</strong><br/>
+                &bull; Response time &gt; 2s (P95) &rarr; Warning<br/>
+                &bull; HTTP 5xx error rate &gt; 5% &rarr; Critical<br/>
+                &bull; CPU utilization &gt; 80% &rarr; Warning<br/>
+                &bull; Failed login spike &gt; 20/min &rarr; Security<br/>
+                &bull; SQL DTU &gt; 90% &rarr; Critical<br/>
+                <strong>Action:</strong> Email + Teams channel notification
+            </div>
+            <div class="card-tags"><span class="tag gray">5 Rules</span><span class="tag gray">Email</span><span class="tag gray">Teams</span></div>
+        </div>
+    </div>
+
+    <h3>Integration Services</h3>
+    <div class="card-grid">
+        <div class="card" style="border-color:#AB47BC">
+            <h4>&#9993; SendGrid (Email)</h4>
+            <div class="card-desc">
+                <strong>Replaces:</strong> LocalSmtpGateway (ISmtpGateway)<br/>
+                <strong>Email Templates:</strong><br/>
+                &bull; Appraisal Assigned &mdash; notify employee<br/>
+                &bull; Appraisal Finalized &mdash; notify employee + HR<br/>
+                &bull; Account Locked/Unlocked &mdash; notify user<br/>
+                &bull; Password Reset &mdash; token link
+            </div>
+            <div class="card-tags"><span class="tag purple">4 Templates</span><span class="tag purple">Delivery Tracking</span></div>
+        </div>
+        <div class="card" style="border-color:#AB47BC">
+            <h4>&#128233; Azure Service Bus</h4>
+            <div class="card-desc">
+                <strong>Namespace:</strong> sb-eappraisal<br/>
+                <strong>Queues:</strong><br/>
+                &bull; <code>notification-queue</code> &mdash; async email + in-app notifications<br/>
+                &bull; <code>audit-event-queue</code> &mdash; async audit log persistence<br/>
+                <strong>Replaces:</strong> Synchronous INotificationService + IAuditService calls
+            </div>
+            <div class="card-tags"><span class="tag purple">Async Events</span><span class="tag purple">2 Queues</span></div>
+        </div>
+        <div class="card" style="border-color:#AB47BC">
+            <h4>&#9881; Azure App Configuration</h4>
+            <div class="card-desc">
+                <strong>Name:</strong> appcs-eappraisal<br/>
+                <strong>Feature Flags:</strong><br/>
+                &bull; <code>EnableEmailNotifications</code> (off in staging)<br/>
+                &bull; <code>EnableHrisSync</code> (off until HRIS ready)<br/>
+                &bull; <code>EnableAuditArchive</code> (on in prod)<br/>
+                <strong>Replaces:</strong> InMemoryFeatureFlagService + appsettings.json
+            </div>
+            <div class="card-tags"><span class="tag purple">Feature Flags</span><span class="tag purple">Dynamic Refresh</span></div>
+        </div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================= SECURITY ============================= -->
+<div class="container" id="security">
+    <h2>Security Architecture</h2>
+
+    <div class="mermaid">
+flowchart LR
+    subgraph AUTH_FLOW["Authentication Flow"]
+        direction TB
+        User["&#128101; User"] --> FD2["Front Door<br/>(WAF + DDoS)"]
+        FD2 --> Web2["eAppraisal.Web"]
+        Web2 -->|"Redirect"| Entra["Entra ID<br/>Login Page"]
+        Entra -->|"MFA Challenge"| User
+        User -->|"Auth Code"| Entra
+        Entra -->|"ID Token + Access Token"| Web2
+        Web2 -->|"Access Token"| Api2["eAppraisal.Api"]
+        Api2 -->|"Validate Token"| Entra
+    end
+
+    subgraph SECRETS["Secret Management"]
+        direction TB
+        MI["Managed Identity<br/>(System-assigned)"]
+        MI --> KV2["Azure Key Vault"]
+        KV2 --> S1["SQL Connection"]
+        KV2 --> S2["Redis Key"]
+        KV2 --> S3["SendGrid Key"]
+        KV2 --> S4["Entra Secret"]
+    end
+
+    classDef userStyle fill:#4A90D9,stroke:#2C5F8A,color:#fff
+    classDef secStyle fill:#E74C3C,stroke:#C0392B,color:#fff
+    classDef webStyle fill:#68C5A5,stroke:#3D8B6B,color:#000
+    classDef apiStyle fill:#F5A623,stroke:#C47D12,color:#000
+    classDef kvStyle fill:#FF7043,stroke:#D84315,color:#fff
+
+    class User userStyle
+    class FD2 secStyle
+    class Entra secStyle
+    class Web2 webStyle
+    class Api2 apiStyle
+    class MI,KV2,S1,S2,S3,S4 kvStyle
+    </div>
+
+    <h3>Security Controls Summary</h3>
+    <table>
+        <thead><tr><th>Layer</th><th>Control</th><th>Azure Service</th><th>Details</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Network Edge</strong></td><td>WAF + DDoS Protection</td><td>Azure Front Door</td><td>OWASP 3.2 ruleset, rate limiting, geo-filtering</td></tr>
+            <tr><td><strong>Network</strong></td><td>Private networking</td><td>VNet + Private Endpoints</td><td>SQL, Redis, Blob accessible only via private IPs</td></tr>
+            <tr><td><strong>Network</strong></td><td>Network segmentation</td><td>NSGs per subnet</td><td>Allow only required ports between subnets</td></tr>
+            <tr><td><strong>Identity</strong></td><td>Authentication</td><td>Microsoft Entra ID</td><td>OAuth 2.0 + OIDC, MFA enforcement</td></tr>
+            <tr><td><strong>Identity</strong></td><td>Authorization</td><td>Entra ID App Roles</td><td>4 roles: Admin, HR, Manager, Employee</td></tr>
+            <tr><td><strong>Identity</strong></td><td>Service-to-service</td><td>Managed Identity</td><td>No passwords stored; Key Vault, SQL, Service Bus access</td></tr>
+            <tr><td><strong>Data</strong></td><td>Encryption at rest</td><td>Azure SQL TDE + Storage SSE</td><td>AES-256, Microsoft-managed keys</td></tr>
+            <tr><td><strong>Data</strong></td><td>Encryption in transit</td><td>TLS 1.3</td><td>All connections: browser, VNet, private endpoints</td></tr>
+            <tr><td><strong>Data</strong></td><td>PAN masking</td><td>Application layer (PolicyMaskingEngine)</td><td>HR/Admin see full PAN; others see masked (XXXXX1234)</td></tr>
+            <tr><td><strong>Application</strong></td><td>Account lockout</td><td>Application layer (EligibilityRulesService)</td><td>3 failed attempts = locked; Admin unlocks</td></tr>
+            <tr><td><strong>Secrets</strong></td><td>Secrets management</td><td>Azure Key Vault</td><td>Connection strings, API keys, certificates</td></tr>
+            <tr><td><strong>Monitoring</strong></td><td>Threat detection</td><td>Microsoft Sentinel</td><td>SIEM for security event correlation</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<hr class="divider">
+
+<!-- ============================= CI/CD ============================= -->
+<div class="container" id="cicd">
+    <h2>CI/CD Pipeline (GitHub Actions)</h2>
+
+    <div class="mermaid">
+flowchart LR
+    subgraph TRIGGER["Trigger"]
+        Push["&#128232; Push to main"]
+        PR["&#128232; Pull Request"]
+    end
+
+    subgraph BUILD["Build Stage"]
+        Restore["dotnet restore"]
+        Compile["dotnet build"]
+        Test["dotnet test"]
+        Publish["dotnet publish<br/>(Web + API artifacts)"]
+    end
+
+    subgraph DEPLOY_STG["Deploy to Staging"]
+        DeployWebStg["Deploy Web<br/>to Staging slot"]
+        DeployApiStg["Deploy API<br/>to Staging slot"]
+        Migrate["Run EF Migrations<br/>(Azure SQL)"]
+        Smoke["Smoke Tests<br/>(Health check + Login)"]
+    end
+
+    subgraph DEPLOY_PROD["Deploy to Production"]
+        Approve["&#9989; Manual Approval"]
+        SwapWeb["Swap Web slot<br/>Staging &rarr; Production"]
+        SwapApi["Swap API slot<br/>Staging &rarr; Production"]
+        Verify["Post-deploy verification"]
+    end
+
+    Push --> Restore
+    PR --> Restore
+    Restore --> Compile
+    Compile --> Test
+    Test --> Publish
+    Publish --> DeployWebStg
+    Publish --> DeployApiStg
+    DeployApiStg --> Migrate
+    Migrate --> Smoke
+    DeployWebStg --> Smoke
+    Smoke --> Approve
+    Approve --> SwapWeb
+    Approve --> SwapApi
+    SwapWeb --> Verify
+    SwapApi --> Verify
+
+    classDef trigStyle fill:#4A90D9,stroke:#2C5F8A,color:#fff
+    classDef buildStyle fill:#F5A623,stroke:#C47D12,color:#000
+    classDef stgStyle fill:#AB47BC,stroke:#7B1FA2,color:#fff
+    classDef prodStyle fill:#27AE60,stroke:#1E8449,color:#fff
+
+    class Push,PR trigStyle
+    class Restore,Compile,Test,Publish buildStyle
+    class DeployWebStg,DeployApiStg,Migrate,Smoke stgStyle
+    class Approve,SwapWeb,SwapApi,Verify prodStyle
+    </div>
+
+    <div class="flow-box">
+        <h3>Deployment Strategy: Blue-Green (Slot Swap)</h3>
+        <div class="flow-arrow">
+            <div class="flow-step" style="background:#F5A623;color:#000">Build &amp;<br/>Test</div>
+            <div class="flow-connector">&#10145;</div>
+            <div class="flow-step" style="background:#AB47BC">Deploy to<br/>Staging Slot</div>
+            <div class="flow-connector">&#10145;</div>
+            <div class="flow-step" style="background:#AB47BC">Run EF<br/>Migrations</div>
+            <div class="flow-connector">&#10145;</div>
+            <div class="flow-step" style="background:#AB47BC">Smoke<br/>Tests</div>
+            <div class="flow-connector">&#10145;</div>
+            <div class="flow-step" style="background:#E74C3C">Manual<br/>Approval</div>
+            <div class="flow-connector">&#10145;</div>
+            <div class="flow-step" style="background:#27AE60">Slot Swap<br/>(Zero Downtime)</div>
+        </div>
+    </div>
+
+    <div class="note-box">
+        <strong>Zero-downtime deployment:</strong> The Staging slot is warmed up with real traffic before swap. If issues are detected post-swap, the slot can be swapped back instantly (rollback in seconds). EF Core migrations are backward-compatible to support this.
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================= SCALING ============================= -->
+<div class="container" id="scaling">
+    <h2>Scaling &amp; High Availability Strategy</h2>
+
+    <div class="card-grid">
+        <div class="card" style="border-color:#0078d4">
+            <h4>&#128200; Auto-Scale Rules (App Services)</h4>
+            <div class="card-desc">
+                <strong>Web App (asp-web):</strong><br/>
+                &bull; Scale out: CPU &gt; 70% for 5 min &rarr; +1 instance (max 4)<br/>
+                &bull; Scale in: CPU &lt; 30% for 10 min &rarr; -1 instance (min 1)<br/><br/>
+                <strong>API App (asp-api):</strong><br/>
+                &bull; Scale out: HTTP queue &gt; 50 &rarr; +1 instance (max 6)<br/>
+                &bull; Scale in: HTTP queue &lt; 10 for 10 min &rarr; -1 instance (min 2)<br/><br/>
+                <strong>Requires:</strong> Standard (S1) or Premium tier App Service Plan
+            </div>
+            <div class="card-tags"><span class="tag blue">Auto-Scale</span><span class="tag blue">1-6 Instances</span></div>
+        </div>
+        <div class="card" style="border-color:#0078d4">
+            <h4>&#128737; High Availability</h4>
+            <div class="card-desc">
+                <strong>Compute:</strong> Multi-instance App Service (load balanced)<br/>
+                <strong>Database:</strong> Azure SQL zone-redundant (99.995% SLA)<br/>
+                <strong>Cache:</strong> Redis Standard with replica (99.9% SLA)<br/>
+                <strong>Network:</strong> Front Door global anycast (99.99% SLA)<br/>
+                <strong>Sessions:</strong> Redis-backed (survives instance restarts)<br/>
+                <strong>DNS:</strong> Azure DNS with Traffic Manager (failover)<br/><br/>
+                <strong>Composite SLA:</strong> ~99.95% availability
+            </div>
+            <div class="card-tags"><span class="tag blue">99.95% SLA</span><span class="tag blue">Zone Redundant</span></div>
+        </div>
+    </div>
+
+    <h3>Disaster Recovery</h3>
+    <table>
+        <thead><tr><th>Component</th><th>RTO</th><th>RPO</th><th>DR Strategy</th></tr></thead>
+        <tbody>
+            <tr><td>App Services (Web + API)</td><td>&lt; 5 min</td><td>0 (stateless)</td><td>Redeploy from CI/CD pipeline</td></tr>
+            <tr><td>Azure SQL Database</td><td>&lt; 30 min</td><td>&lt; 5 min</td><td>Geo-replication to paired region + PITR (7 days)</td></tr>
+            <tr><td>Redis Cache</td><td>&lt; 15 min</td><td>~1 min</td><td>Recreate from config; sessions re-establish on login</td></tr>
+            <tr><td>Blob Storage</td><td>&lt; 1 hour</td><td>0 (LRS/GRS)</td><td>GRS replication to paired region</td></tr>
+            <tr><td>Key Vault</td><td>&lt; 5 min</td><td>0</td><td>Soft delete + purge protection (90 days)</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<hr class="divider">
+
+<!-- ============================= MIGRATION ============================= -->
+<div class="container" id="migration">
+    <h2>Local-to-Azure Migration Mapping</h2>
+    <p style="font-size:14px;color:#555;margin-bottom:16px;">The Clean Architecture with interface-based DI makes migration straightforward. Only Infrastructure implementations change &mdash; no domain or API code modifications needed.</p>
+
+    <table>
+        <thead><tr><th>Local Component</th><th>Interface</th><th>Azure Service</th><th>Migration Effort</th></tr></thead>
+        <tbody>
+            <tr><td>Kestrel (Web :5200)</td><td>&mdash;</td><td>Azure App Service (Web)</td><td><span class="tag green">Deploy only</span></td></tr>
+            <tr><td>Kestrel (API :5100)</td><td>&mdash;</td><td>Azure App Service (API)</td><td><span class="tag green">Deploy only</span></td></tr>
+            <tr><td>SQLite (eappraisal.db)</td><td><code>IAppDbContext</code></td><td>Azure SQL Database</td><td><span class="tag green">Change connection string</span></td></tr>
+            <tr><td>ASP.NET Core Identity</td><td><code>IUserStore</code></td><td>Microsoft Entra ID</td><td><span class="tag orange">New IUserStore implementation</span></td></tr>
+            <tr><td>InMemoryCache (sessions)</td><td>&mdash;</td><td>Azure Cache for Redis</td><td><span class="tag green">Add Redis session NuGet + config</span></td></tr>
+            <tr><td>AuditLogCollector</td><td><code>IAuditService</code></td><td>Service Bus + SQL persistence</td><td><span class="tag orange">Async queue implementation</span></td></tr>
+            <tr><td>NotificationService</td><td><code>INotificationService</code></td><td>Service Bus + SendGrid</td><td><span class="tag orange">Async queue implementation</span></td></tr>
+            <tr><td>LocalSmtpGateway</td><td><code>ISmtpGateway</code></td><td>SendGrid REST API</td><td><span class="tag orange">New implementation</span></td></tr>
+            <tr><td>StubHrisPayrollService</td><td><code>IHrisPayrollService</code></td><td>Azure API Management + HRIS API</td><td><span class="tag red">External integration</span></td></tr>
+            <tr><td>InMemoryRateLimiter</td><td><code>IRateLimiter</code></td><td>Redis-backed + Front Door WAF</td><td><span class="tag orange">Redis implementation</span></td></tr>
+            <tr><td>InMemoryFeatureFlagService</td><td><code>IFeatureFlagService</code></td><td>Azure App Configuration</td><td><span class="tag orange">New implementation</span></td></tr>
+            <tr><td>ConfigurationService</td><td><code>IConfigurationService</code></td><td>App Configuration + Key Vault</td><td><span class="tag green">Config provider change</span></td></tr>
+            <tr><td>ObservabilityAgent (Console)</td><td><code>IObservabilityAgent</code></td><td>Application Insights SDK</td><td><span class="tag green">Add AI NuGet + config</span></td></tr>
+            <tr><td>PolicyMaskingEngine</td><td><code>IPolicyMaskingEngine</code></td><td>No change (application logic)</td><td><span class="tag green">No change</span></td></tr>
+            <tr><td>appsettings.json (secrets)</td><td>&mdash;</td><td>Azure Key Vault</td><td><span class="tag green">Add KV config provider</span></td></tr>
+        </tbody>
+    </table>
+
+    <div class="note-box">
+        <strong>Key Architecture Advantage:</strong> Out of 18 services, 6 require <strong>no code changes</strong> (deploy only / config change), 7 need <strong>new Infrastructure implementations</strong> behind existing interfaces, and only 1 (HRIS) needs <strong>external integration</strong> work. Domain services (AppraisalWorkflowService, CommentsService, CtcService, ReportingService, EligibilityRulesService) require <strong>zero changes</strong>.
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================= ENVIRONMENTS ============================= -->
+<div class="container" id="env">
+    <h2>Environment Configuration (Dev / Staging / Production)</h2>
+
+    <table>
+        <thead><tr><th>Setting</th><th>Development (Local)</th><th>Staging (Azure)</th><th>Production (Azure)</th></tr></thead>
+        <tbody>
+            <tr><td><code>ASPNETCORE_ENVIRONMENT</code></td><td>Development</td><td>Staging</td><td>Production</td></tr>
+            <tr><td>Database</td><td>SQLite (eappraisal.db)</td><td>Azure SQL (S1 - 20 DTU)</td><td>Azure SQL (S2 - 50 DTU)</td></tr>
+            <tr><td>Connection String Source</td><td>appsettings.json</td><td>Key Vault</td><td>Key Vault</td></tr>
+            <tr><td>Identity Provider</td><td>Local ASP.NET Identity</td><td>Entra ID (Test Tenant)</td><td>Entra ID (Prod Tenant)</td></tr>
+            <tr><td>Session Store</td><td>In-Memory Cache</td><td>Redis Basic (C0)</td><td>Redis Standard (C1)</td></tr>
+            <tr><td>Email Service</td><td>LocalSmtpGateway (logs)</td><td>SendGrid (sandbox)</td><td>SendGrid (production)</td></tr>
+            <tr><td>HRIS Integration</td><td>StubHrisPayrollService</td><td>Mock API endpoint</td><td>Corporate HRIS API</td></tr>
+            <tr><td>Logging</td><td>Console (ILogger)</td><td>App Insights (sampling 50%)</td><td>App Insights (sampling 100%)</td></tr>
+            <tr><td>Feature Flags</td><td>appsettings.json</td><td>App Configuration (label: staging)</td><td>App Configuration (label: prod)</td></tr>
+            <tr><td>SSL / HTTPS</td><td>HTTP only</td><td>Azure-managed SSL</td><td>Azure-managed + Custom domain SSL</td></tr>
+            <tr><td>Front Door / WAF</td><td>None</td><td>Front Door (Prevention mode)</td><td>Front Door (Prevention + Custom rules)</td></tr>
+            <tr><td>Auto-scaling</td><td>Single instance</td><td>1-2 instances</td><td>2-6 instances</td></tr>
+            <tr><td>Backup</td><td>None (dev data)</td><td>7-day SQL PITR</td><td>35-day SQL PITR + Geo-replication</td></tr>
+        </tbody>
+    </table>
+
+    <div class="warn-box">
+        <strong>Deployment Strategy:</strong> The recommended CI/CD pipeline uses GitHub Actions:<br/>
+        <code>Push to main</code> &rarr; <code>Build &amp; Test</code> &rarr; <code>Publish</code> &rarr; <code>Deploy to Staging slot</code> &rarr; <code>Smoke tests</code> &rarr; <code>Manual approval</code> &rarr; <code>Swap to Production</code>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================= COST ESTIMATION ============================= -->
+<div class="container" id="cost">
+    <h2>Azure Cost Estimation (Monthly)</h2>
+    <p style="font-size:14px;color:#555;margin-bottom:16px;">Estimated monthly costs for Staging and Production environments (Central India region pricing, approximate).</p>
+
+    <table>
+        <thead><tr><th>Azure Service</th><th>Tier / SKU</th><th>Staging (USD/mo)</th><th>Production (USD/mo)</th><th>Notes</th></tr></thead>
+        <tbody>
+            <tr><td>App Service Plan (Web)</td><td>B2 / S1</td><td>~$55</td><td>~$73</td><td>S1 for production auto-scale</td></tr>
+            <tr><td>App Service Plan (API)</td><td>B2 / S1</td><td>~$55</td><td>~$73</td><td>S1 for production auto-scale</td></tr>
+            <tr><td>Azure SQL Database</td><td>S1 / S2</td><td>~$30</td><td>~$75</td><td>50 DTU, 250 GB max, geo-backup</td></tr>
+            <tr><td>Azure Cache for Redis</td><td>Basic C0 / Standard C1</td><td>~$16</td><td>~$81</td><td>Standard for HA replica</td></tr>
+            <tr><td>Azure Front Door</td><td>Standard</td><td>~$35</td><td>~$35</td><td>Includes WAF policy</td></tr>
+            <tr><td>Azure Key Vault</td><td>Standard</td><td>~$1</td><td>~$1</td><td>Pay per operation</td></tr>
+            <tr><td>Application Insights</td><td>Pay-as-you-go</td><td>~$5</td><td>~$15</td><td>5 GB/month free tier</td></tr>
+            <tr><td>Log Analytics</td><td>Pay-as-you-go</td><td>~$5</td><td>~$12</td><td>5 GB/month free tier</td></tr>
+            <tr><td>Blob Storage</td><td>Hot LRS</td><td>~$2</td><td>~$5</td><td>Minimal for docs &amp; archive</td></tr>
+            <tr><td>SendGrid</td><td>Free / Essentials</td><td>$0</td><td>~$20</td><td>Free: 100 emails/day</td></tr>
+            <tr><td>Service Bus</td><td>Basic</td><td>~$0.05</td><td>~$10</td><td>Standard for production</td></tr>
+            <tr><td>App Configuration</td><td>Free / Standard</td><td>$0</td><td>~$37</td><td>Standard for labels + history</td></tr>
+            <tr><td>Azure DNS</td><td>Zone</td><td>~$1</td><td>~$1</td><td>Per zone + queries</td></tr>
+            <tr><td colspan="2" style="text-align:right;font-weight:700">TOTAL ESTIMATED</td><td style="font-weight:700;color:#0078d4">~$205/mo</td><td style="font-weight:700;color:#0078d4">~$438/mo</td><td></td></tr>
+        </tbody>
+    </table>
+
+    <div class="note-box">
+        <strong>Cost Optimization Tips:</strong><br/>
+        &bull; Use <strong>Azure Reserved Instances</strong> (1-year) for App Service Plans &mdash; saves ~30%<br/>
+        &bull; Use <strong>Azure Hybrid Benefit</strong> for SQL Database if existing SQL Server licenses<br/>
+        &bull; Start with <strong>Basic tiers</strong> and upgrade based on usage metrics<br/>
+        &bull; Use <strong>auto-shutdown</strong> for staging environment (weekdays only)<br/>
+        &bull; Move audit archive to <strong>Cool/Archive</strong> blob tier after 30 days
+    </div>
+</div>
+
+<button class="print-btn" onclick="window.print()">&#128424; Print / Save as PDF</button>
+
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: {
+            fontSize: '13px',
+            fontFamily: 'Segoe UI, Tahoma, sans-serif',
+            lineColor: '#666'
+        },
+        flowchart: {
+            useMaxWidth: true,
+            htmlLabels: true,
+            curve: 'basis',
+            rankSpacing: 50,
+            nodeSpacing: 25,
+            padding: 15
+        },
+        sequence: {
+            useMaxWidth: true,
+            diagramMarginX: 20,
+            actorMargin: 50,
+            width: 160,
+            height: 50,
+            messageMargin: 35,
+            mirrorActors: true,
+            wrap: true,
+            actorBkg: '#e3f2fd',
+            actorBorder: '#0078d4',
+            actorTextColor: '#005a9e',
+            noteBkgColor: '#fff8e1',
+            noteBorderColor: '#ffb300'
+        }
+    });
+</script>
+</body>
+</html>

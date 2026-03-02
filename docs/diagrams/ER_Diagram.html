@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eAppraisal - ER Diagram</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; color: #333; }
+        .header { background: linear-gradient(135deg, #1565C0, #0D47A1); color: white; padding: 30px 40px; text-align: center; }
+        .header h1 { font-size: 28px; margin-bottom: 6px; }
+        .header p { font-size: 14px; opacity: 0.85; }
+        .nav { background: white; padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 50; }
+        .nav a { padding: 7px 16px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600; color: #1565C0; border: 2px solid #1565C0; transition: all 0.2s; }
+        .nav a:hover { background: #1565C0; color: white; }
+        .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+        h2 { color: #1565C0; font-size: 22px; margin-bottom: 16px; padding-top: 10px; }
+        h3 { color: #0D47A1; font-size: 17px; margin: 24px 0 12px; }
+        .mermaid { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); overflow-x: auto; }
+        .legend { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 16px 0; padding: 14px; background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; }
+        .legend-color { width: 18px; height: 18px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.2); }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 20px; }
+        th { background: #1565C0; color: white; padding: 12px 16px; text-align: left; font-size: 13px; }
+        td { padding: 10px 16px; border-bottom: 1px solid #f0f0f0; font-size: 13px; vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #e3f2fd; }
+        td code { background: #f5f5f5; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: 'Cascadia Code','Consolas',monospace; }
+        .entity-section { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); margin-bottom: 24px; border-left: 5px solid; }
+        .entity-section h3 { margin-top: 0; font-size: 18px; }
+        .entity-section .entity-desc { font-size: 13px; color: #555; margin-bottom: 12px; }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; margin-right: 4px; }
+        .tag.pk { background: #FFF3E0; color: #E65100; }
+        .tag.fk { background: #E3F2FD; color: #0D47A1; }
+        .tag.req { background: #E8F5E9; color: #1B5E20; }
+        .tag.opt { background: #F3E5F5; color: #6A1B9A; }
+        .tag.idx { background: #FCE4EC; color: #C62828; }
+        .tag.comp { background: #ECEFF1; color: #37474F; }
+        .tag.unique { background: #FFF8E1; color: #F57F17; }
+        .note-box { background: #e3f2fd; border: 1px solid #42a5f5; border-radius: 10px; padding: 14px 20px; margin: 16px 0; font-size: 13px; line-height: 1.6; }
+        .note-box strong { color: #0D47A1; }
+        hr.divider { border: none; height: 2px; background: linear-gradient(to right, transparent, #90caf9, transparent); margin: 40px 0; }
+        .print-btn { position: fixed; bottom: 20px; right: 20px; background: #1565C0; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 100; }
+        .print-btn:hover { background: #0D47A1; }
+        @media print { .print-btn, .nav { display: none; } body { background: white; } .container { page-break-inside: avoid; } }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>eAppraisal System &mdash; Entity Relationship (ER) Diagram</h1>
+    <p>10 Entities | 11 Database Tables | 9 Relationships | EF Core 8 + SQLite / Azure SQL</p>
+</div>
+
+<div class="nav">
+    <a href="#er-diagram">ER Diagram</a>
+    <a href="#relationships">Relationships</a>
+    <a href="#entities">Entity Details</a>
+    <a href="#indexes">Indexes</a>
+    <a href="#workflow">Data Lifecycle</a>
+</div>
+
+<!-- ============================= ER DIAGRAM ============================= -->
+<div class="container" id="er-diagram">
+    <h2>Entity Relationship Diagram</h2>
+    <p style="font-size:14px;color:#555;margin-bottom:16px;">Complete database schema showing all entities, attributes, primary keys, foreign keys, and relationships with cardinality.</p>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#E65100"></div> PK = Primary Key</div>
+        <div class="legend-item"><div class="legend-color" style="background:#0D47A1"></div> FK = Foreign Key</div>
+        <div class="legend-item"><div class="legend-color" style="background:#1B5E20"></div> Required Field</div>
+        <div class="legend-item"><div class="legend-color" style="background:#6A1B9A"></div> Optional / Nullable</div>
+        <div class="legend-item"><strong>||--||</strong>&nbsp; One-to-One</div>
+        <div class="legend-item"><strong>||--o{</strong>&nbsp; One-to-Many</div>
+        <div class="legend-item"><strong>||--o|</strong>&nbsp; One-to-Zero-or-One</div>
+    </div>
+
+    <div class="mermaid">
+erDiagram
+    Employee {
+        int Id PK
+        string FirstName "Required, max 100"
+        string LastName "Required, max 100"
+        string Email "max 256"
+        string Department "max 100"
+        string City "max 100"
+        string Address "max 300"
+        string MobileNo "max 20"
+        string PersonalPhone "max 20"
+        datetime DateOfBirth "nullable"
+        string Gender "max 10"
+        string MaritalStatus "max 20"
+        datetime DateOfJoining "Required"
+        string PassportNo "max 20"
+        string PanNo "max 20"
+        int WorkExperience "nullable"
+        int ManagerId FK "nullable, self-ref"
+    }
+
+    AppraisalCycle {
+        int Id PK
+        string Name "Required, max 150"
+        datetime StartDate "Required"
+        datetime EndDate "Required"
+        string State "Open | Closed | Archived"
+    }
+
+    Appraisal {
+        int Id PK
+        int CycleId FK "Required"
+        int EmployeeId FK "Required"
+        int ManagerEmployeeId FK "Required"
+        string Status "Draft | ManagerCommented | EmployeeFeedback | Final"
+        datetime CreatedAt "auto"
+        datetime UpdatedAt "auto"
+        datetime NextAppraisalDate "nullable"
+        datetime FinalisedAt "nullable"
+    }
+
+    Comment {
+        int Id PK
+        int AppraisalId FK "Required, Unique"
+        string Achievements "Required, max 2000"
+        string Gaps "max 2000"
+        string Suggestions "max 2000"
+        datetime CreatedAt "auto"
+        datetime UpdatedAt "auto"
+        bool IsLocked "default false"
+    }
+
+    EmployeeFeedback {
+        int Id PK
+        int AppraisalId FK "Required, Unique"
+        string FeedbackText "Required, max 2000"
+        string SelfAssessment "max 2000"
+        datetime CreatedAt "auto"
+        datetime UpdatedAt "auto"
+    }
+
+    CtcSnapshot {
+        int Id PK
+        int AppraisalId FK "Required, Unique"
+        bool IsPromoted "default false"
+        decimal Basic "18 comma 2"
+        decimal DA "18 comma 2"
+        decimal HRA "18 comma 2"
+        decimal FoodAllowance "18 comma 2"
+        decimal PF "18 comma 2"
+        datetime NextAppraisalDate "nullable"
+        datetime ApprovedAt "nullable"
+    }
+
+    StageHistory {
+        int Id PK
+        int AppraisalId FK "Required"
+        string FromStage "Required, max 30"
+        string ToStage "Required, max 30"
+        string ChangedBy "Required, max 256"
+        datetime ChangedAt "auto"
+        string Reason "max 500"
+    }
+
+    AuditEvent {
+        int Id PK
+        string EntityType "Required, max 100"
+        int EntityId "nullable"
+        string Action "Required, max 100"
+        string ActorUserId "max 450"
+        string ActorEmail "max 256"
+        datetime At "Required, auto"
+        string IpAddress "max 45"
+        string DetailsJson "text"
+        string CorrelationId "max 100"
+    }
+
+    Notification {
+        int Id PK
+        string RecipientEmail "Required, max 256"
+        string RecipientUserId "max 450"
+        string Topic "Required, max 150"
+        string PayloadJson "text"
+        string Status "Queued | Sent | Failed"
+        int AboutAppraisalId "nullable, soft ref"
+        int RetryCount "default 0"
+        datetime CreatedAt "auto"
+        datetime SentAt "nullable"
+    }
+
+    ApplicationUser {
+        string Id PK "GUID"
+        string UserName "max 256"
+        string Email "max 256"
+        string FullName "max 200"
+        string AppRole "Admin | HR | Manager | Employee"
+        int EmployeeId FK "nullable"
+        int FailedLoginAttempts "default 0"
+        bool IsManuallyLocked "default false"
+        string PasswordHash "Identity managed"
+    }
+
+    Employee ||--o{ Appraisal : "is appraised in"
+    Employee ||--o{ Appraisal : "manages as reviewer"
+    AppraisalCycle ||--o{ Appraisal : "contains"
+    Appraisal ||--o| Comment : "has manager comment"
+    Appraisal ||--o| EmployeeFeedback : "has employee feedback"
+    Appraisal ||--o| CtcSnapshot : "has CTC snapshot"
+    Appraisal ||--o{ StageHistory : "tracks status changes"
+    Employee ||--o| ApplicationUser : "has login account"
+    Employee ||--o{ Employee : "manages (self-ref)"
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================= RELATIONSHIPS ============================= -->
+<div class="container" id="relationships">
+    <h2>Relationship Details</h2>
+
+    <table>
+        <thead>
+            <tr><th>#</th><th>Parent Entity</th><th>Child Entity</th><th>Cardinality</th><th>FK Column</th><th>On Delete</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>1</td><td><strong>Employee</strong></td><td>Employee (self)</td><td>One-to-Many</td><td><code>ManagerId</code></td><td>Restrict</td><td>Self-referencing manager hierarchy. An employee optionally reports to one manager; a manager has zero or more direct reports.</td></tr>
+            <tr><td>2</td><td><strong>Employee</strong></td><td>Appraisal</td><td>One-to-Many</td><td><code>EmployeeId</code></td><td>Restrict</td><td>An employee can have multiple appraisals across different cycles.</td></tr>
+            <tr><td>3</td><td><strong>Employee</strong></td><td>Appraisal</td><td>One-to-Many</td><td><code>ManagerEmployeeId</code></td><td>Restrict</td><td>A manager (who is also an Employee) reviews multiple appraisals for their direct reports.</td></tr>
+            <tr><td>4</td><td><strong>AppraisalCycle</strong></td><td>Appraisal</td><td>One-to-Many</td><td><code>CycleId</code></td><td>Cascade</td><td>A cycle contains multiple appraisals. Deleting a cycle cascades to all its appraisals.</td></tr>
+            <tr><td>5</td><td><strong>Appraisal</strong></td><td>Comment</td><td>One-to-One</td><td><code>AppraisalId</code> (unique)</td><td>Cascade</td><td>Each appraisal has at most one manager comment record.</td></tr>
+            <tr><td>6</td><td><strong>Appraisal</strong></td><td>EmployeeFeedback</td><td>One-to-One</td><td><code>AppraisalId</code> (unique)</td><td>Cascade</td><td>Each appraisal has at most one employee feedback record.</td></tr>
+            <tr><td>7</td><td><strong>Appraisal</strong></td><td>CtcSnapshot</td><td>One-to-One</td><td><code>AppraisalId</code> (unique)</td><td>Cascade</td><td>Each appraisal has at most one CTC snapshot (created at finalization).</td></tr>
+            <tr><td>8</td><td><strong>Appraisal</strong></td><td>StageHistory</td><td>One-to-Many</td><td><code>AppraisalId</code></td><td>Cascade</td><td>Each appraisal has multiple stage transition records (audit trail of status changes).</td></tr>
+            <tr><td>9</td><td><strong>Employee</strong></td><td>ApplicationUser</td><td>One-to-One</td><td><code>EmployeeId</code> (nullable)</td><td>&mdash;</td><td>An employee may optionally have a login account. Admin users may not link to any employee.</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Relationship Diagram (Simplified)</h3>
+    <div class="mermaid">
+flowchart TB
+    EMP["&#128100; Employee<br/>(PK: Id)"]
+    CYCLE["&#128197; AppraisalCycle<br/>(PK: Id)"]
+    APP["&#128203; Appraisal<br/>(PK: Id)"]
+    COMMENT["&#128172; Comment<br/>(PK: Id)"]
+    FEEDBACK["&#128221; EmployeeFeedback<br/>(PK: Id)"]
+    CTC["&#128176; CtcSnapshot<br/>(PK: Id)"]
+    STAGE["&#128200; StageHistory<br/>(PK: Id)"]
+    USER["&#128274; ApplicationUser<br/>(PK: Id)"]
+    AUDIT["&#128218; AuditEvent<br/>(PK: Id)"]
+    NOTIF["&#128276; Notification<br/>(PK: Id)"]
+
+    EMP -->|"1 : N<br/>EmployeeId"| APP
+    EMP -->|"1 : N<br/>ManagerEmployeeId"| APP
+    EMP -.->|"1 : N<br/>ManagerId (self)"| EMP
+    CYCLE -->|"1 : N<br/>CycleId"| APP
+    APP -->|"1 : 1<br/>AppraisalId"| COMMENT
+    APP -->|"1 : 1<br/>AppraisalId"| FEEDBACK
+    APP -->|"1 : 1<br/>AppraisalId"| CTC
+    APP -->|"1 : N<br/>AppraisalId"| STAGE
+    EMP -.->|"1 : 0..1<br/>EmployeeId"| USER
+
+    classDef core fill:#1565C0,stroke:#0D47A1,color:#fff,stroke-width:2px
+    classDef detail fill:#43A047,stroke:#2E7D32,color:#fff,stroke-width:2px
+    classDef support fill:#F57C00,stroke:#E65100,color:#fff,stroke-width:2px
+    classDef identity fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
+    classDef audit fill:#78909C,stroke:#455A64,color:#fff,stroke-width:2px
+
+    class EMP,CYCLE core
+    class APP detail
+    class COMMENT,FEEDBACK,CTC,STAGE support
+    class USER identity
+    class AUDIT,NOTIF audit
+    </div>
+
+    <div class="note-box">
+        <strong>Standalone Entities:</strong> <code>AuditEvent</code> and <code>Notification</code> are standalone tables with no direct foreign key relationships. AuditEvent uses <code>EntityType</code> + <code>EntityId</code> for polymorphic soft references. Notification uses <code>AboutAppraisalId</code> as a soft reference (not an FK constraint).
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================= ENTITY DETAILS ============================= -->
+<div class="container" id="entities">
+    <h2>Entity Details (All Columns)</h2>
+
+    <!-- EMPLOYEE -->
+    <div class="entity-section" style="border-color:#1565C0">
+        <h3>&#128100; Employee</h3>
+        <div class="entity-desc">Core entity representing all staff. Self-referencing hierarchy via ManagerId. PAN number is masked based on viewer's role.</div>
+        <table>
+            <thead><tr><th>Column</th><th>Type</th><th>Constraint</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td><code>Id</code></td><td>int</td><td><span class="tag pk">PK</span> Auto-increment</td><td>Unique employee identifier</td></tr>
+                <tr><td><code>FirstName</code></td><td>nvarchar(100)</td><td><span class="tag req">Required</span></td><td>Employee first name</td></tr>
+                <tr><td><code>LastName</code></td><td>nvarchar(100)</td><td><span class="tag req">Required</span></td><td>Employee last name</td></tr>
+                <tr><td><code>Email</code></td><td>nvarchar(256)</td><td><span class="tag opt">Nullable</span></td><td>Work email address</td></tr>
+                <tr><td><code>Department</code></td><td>nvarchar(100)</td><td><span class="tag opt">Nullable</span></td><td>Department name (Engineering, HR, QA, etc.)</td></tr>
+                <tr><td><code>City</code></td><td>nvarchar(100)</td><td><span class="tag opt">Nullable</span></td><td>City of residence</td></tr>
+                <tr><td><code>Address</code></td><td>nvarchar(300)</td><td><span class="tag opt">Nullable</span></td><td>Full postal address</td></tr>
+                <tr><td><code>MobileNo</code></td><td>nvarchar(20)</td><td><span class="tag opt">Nullable</span></td><td>Mobile phone number</td></tr>
+                <tr><td><code>PersonalPhone</code></td><td>nvarchar(20)</td><td><span class="tag opt">Nullable</span></td><td>Personal/landline phone</td></tr>
+                <tr><td><code>DateOfBirth</code></td><td>datetime</td><td><span class="tag opt">Nullable</span></td><td>Date of birth</td></tr>
+                <tr><td><code>Gender</code></td><td>nvarchar(10)</td><td><span class="tag opt">Nullable</span></td><td>M / F</td></tr>
+                <tr><td><code>MaritalStatus</code></td><td>nvarchar(20)</td><td><span class="tag opt">Nullable</span></td><td>Single / Married</td></tr>
+                <tr><td><code>DateOfJoining</code></td><td>datetime</td><td><span class="tag req">Required</span></td><td>Date employee joined organization</td></tr>
+                <tr><td><code>PassportNo</code></td><td>nvarchar(20)</td><td><span class="tag opt">Nullable</span></td><td>Passport number</td></tr>
+                <tr><td><code>PanNo</code></td><td>nvarchar(20)</td><td><span class="tag opt">Nullable</span></td><td>PAN card number (masked for non-HR/Admin)</td></tr>
+                <tr><td><code>WorkExperience</code></td><td>int</td><td><span class="tag opt">Nullable</span></td><td>Years of work experience</td></tr>
+                <tr><td><code>ManagerId</code></td><td>int</td><td><span class="tag fk">FK</span> <span class="tag opt">Nullable</span></td><td>Self-referencing FK to Employee.Id (reporting manager)</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- APPRAISAL CYCLE -->
+    <div class="entity-section" style="border-color:#0D47A1">
+        <h3>&#128197; AppraisalCycle</h3>
+        <div class="entity-desc">Defines appraisal periods (annual, quarterly). Has state: Open (active), Closed (no new assignments), Archived.</div>
+        <table>
+            <thead><tr><th>Column</th><th>Type</th><th>Constraint</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td><code>Id</code></td><td>int</td><td><span class="tag pk">PK</span> Auto-increment</td><td>Unique cycle identifier</td></tr>
+                <tr><td><code>Name</code></td><td>nvarchar(150)</td><td><span class="tag req">Required</span></td><td>Cycle name (e.g., "2025 Annual Appraisal")</td></tr>
+                <tr><td><code>StartDate</code></td><td>datetime</td><td><span class="tag req">Required</span></td><td>Cycle start date</td></tr>
+                <tr><td><code>EndDate</code></td><td>datetime</td><td><span class="tag req">Required</span></td><td>Cycle end date</td></tr>
+                <tr><td><code>State</code></td><td>nvarchar(20)</td><td><span class="tag req">Required</span> Default: "Open"</td><td>Open | Closed | Archived</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- APPRAISAL -->
+    <div class="entity-section" style="border-color:#43A047">
+        <h3>&#128203; Appraisal</h3>
+        <div class="entity-desc">Central entity linking an employee to a cycle with a reviewing manager. Status tracks workflow: Draft &rarr; ManagerCommented &rarr; EmployeeFeedback &rarr; Final.</div>
+        <table>
+            <thead><tr><th>Column</th><th>Type</th><th>Constraint</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td><code>Id</code></td><td>int</td><td><span class="tag pk">PK</span> Auto-increment</td><td>Unique appraisal identifier</td></tr>
+                <tr><td><code>CycleId</code></td><td>int</td><td><span class="tag fk">FK</span> <span class="tag req">Required</span></td><td>FK to AppraisalCycle.Id (cascade delete)</td></tr>
+                <tr><td><code>EmployeeId</code></td><td>int</td><td><span class="tag fk">FK</span> <span class="tag req">Required</span></td><td>FK to Employee.Id &mdash; employee being appraised (restrict delete)</td></tr>
+                <tr><td><code>ManagerEmployeeId</code></td><td>int</td><td><span class="tag fk">FK</span> <span class="tag req">Required</span></td><td>FK to Employee.Id &mdash; manager conducting review (restrict delete)</td></tr>
+                <tr><td><code>Status</code></td><td>nvarchar(30)</td><td><span class="tag req">Required</span> Default: "Draft"</td><td>Draft | ManagerCommented | EmployeeFeedback | Final</td></tr>
+                <tr><td><code>CreatedAt</code></td><td>datetime</td><td>Default: UtcNow</td><td>Record creation timestamp</td></tr>
+                <tr><td><code>UpdatedAt</code></td><td>datetime</td><td>Default: UtcNow</td><td>Last update timestamp</td></tr>
+                <tr><td><code>NextAppraisalDate</code></td><td>datetime</td><td><span class="tag opt">Nullable</span></td><td>Next scheduled appraisal date (set at finalization)</td></tr>
+                <tr><td><code>FinalisedAt</code></td><td>datetime</td><td><span class="tag opt">Nullable</span></td><td>When appraisal was finalized</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- COMMENT -->
+    <div class="entity-section" style="border-color:#F57C00">
+        <h3>&#128172; Comment (Manager Comment)</h3>
+        <div class="entity-desc">Manager's evaluation comments. One-to-one with Appraisal. Locked permanently (IsLocked = true) when appraisal is finalized.</div>
+        <table>
+            <thead><tr><th>Column</th><th>Type</th><th>Constraint</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td><code>Id</code></td><td>int</td><td><span class="tag pk">PK</span></td><td>Unique comment identifier</td></tr>
+                <tr><td><code>AppraisalId</code></td><td>int</td><td><span class="tag fk">FK</span> <span class="tag unique">Unique</span> <span class="tag req">Required</span></td><td>FK to Appraisal.Id (one-to-one, cascade delete)</td></tr>
+                <tr><td><code>Achievements</code></td><td>nvarchar(2000)</td><td><span class="tag req">Required</span></td><td>Manager's comments on employee achievements</td></tr>
+                <tr><td><code>Gaps</code></td><td>nvarchar(2000)</td><td><span class="tag opt">Nullable</span></td><td>Areas needing improvement</td></tr>
+                <tr><td><code>Suggestions</code></td><td>nvarchar(2000)</td><td><span class="tag opt">Nullable</span></td><td>Manager's improvement suggestions</td></tr>
+                <tr><td><code>CreatedAt</code></td><td>datetime</td><td>Default: UtcNow</td><td>When comment was first created</td></tr>
+                <tr><td><code>UpdatedAt</code></td><td>datetime</td><td>Default: UtcNow</td><td>Last modification time</td></tr>
+                <tr><td><code>IsLocked</code></td><td>bool</td><td>Default: false</td><td>When true, comment is immutable (set at finalization)</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- EMPLOYEE FEEDBACK -->
+    <div class="entity-section" style="border-color:#7B1FA2">
+        <h3>&#128221; EmployeeFeedback</h3>
+        <div class="entity-desc">Employee's self-assessment response to manager comments. One-to-one with Appraisal.</div>
+        <table>
+            <thead><tr><th>Column</th><th>Type</th><th>Constraint</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td><code>Id</code></td><td>int</td><td><span class="tag pk">PK</span></td><td>Unique feedback identifier</td></tr>
+                <tr><td><code>AppraisalId</code></td><td>int</td><td><span class="tag fk">FK</span> <span class="tag unique">Unique</span> <span class="tag req">Required</span></td><td>FK to Appraisal.Id (one-to-one, cascade delete)</td></tr>
+                <tr><td><code>FeedbackText</code></td><td>nvarchar(2000)</td><td><span class="tag req">Required</span></td><td>Employee's feedback on manager's comments</td></tr>
+                <tr><td><code>SelfAssessment</code></td><td>nvarchar(2000)</td><td><span class="tag opt">Nullable</span></td><td>Employee's self-evaluation text</td></tr>
+                <tr><td><code>CreatedAt</code></td><td>datetime</td><td>Default: UtcNow</td><td>When feedback was submitted</td></tr>
+                <tr><td><code>UpdatedAt</code></td><td>datetime</td><td>Default: UtcNow</td><td>Last modification time</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- CTC SNAPSHOT -->
+    <div class="entity-section" style="border-color:#00897B">
+        <h3>&#128176; CtcSnapshot</h3>
+        <div class="entity-desc">Cost-to-Company compensation breakdown captured at finalization. TotalCTC = Basic + DA + HRA + FoodAllowance + PF (computed, not stored).</div>
+        <table>
+            <thead><tr><th>Column</th><th>Type</th><th>Constraint</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td><code>Id</code></td><td>int</td><td><span class="tag pk">PK</span></td><td>Unique snapshot identifier</td></tr>
+                <tr><td><code>AppraisalId</code></td><td>int</td><td><span class="tag fk">FK</span> <span class="tag unique">Unique</span> <span class="tag req">Required</span></td><td>FK to Appraisal.Id (one-to-one, cascade delete)</td></tr>
+                <tr><td><code>IsPromoted</code></td><td>bool</td><td>Default: false</td><td>Whether employee was promoted in this cycle</td></tr>
+                <tr><td><code>Basic</code></td><td>decimal(18,2)</td><td></td><td>Basic salary component</td></tr>
+                <tr><td><code>DA</code></td><td>decimal(18,2)</td><td></td><td>Dearness Allowance</td></tr>
+                <tr><td><code>HRA</code></td><td>decimal(18,2)</td><td></td><td>House Rent Allowance</td></tr>
+                <tr><td><code>FoodAllowance</code></td><td>decimal(18,2)</td><td></td><td>Food Allowance</td></tr>
+                <tr><td><code>PF</code></td><td>decimal(18,2)</td><td></td><td>Provident Fund contribution</td></tr>
+                <tr><td><code>NextAppraisalDate</code></td><td>datetime</td><td><span class="tag opt">Nullable</span></td><td>Next scheduled appraisal date</td></tr>
+                <tr><td><code>ApprovedAt</code></td><td>datetime</td><td><span class="tag opt">Nullable</span></td><td>When CTC was approved by manager</td></tr>
+                <tr><td colspan="4"><span class="tag comp">Computed</span> <code>TotalCTC</code> = Basic + DA + HRA + FoodAllowance + PF (NotMapped &mdash; calculated at runtime)</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- STAGE HISTORY -->
+    <div class="entity-section" style="border-color:#5C6BC0">
+        <h3>&#128200; StageHistory</h3>
+        <div class="entity-desc">Audit trail of appraisal status transitions (e.g., Draft &rarr; ManagerCommented). Many records per appraisal.</div>
+        <table>
+            <thead><tr><th>Column</th><th>Type</th><th>Constraint</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td><code>Id</code></td><td>int</td><td><span class="tag pk">PK</span></td><td>Unique history record identifier</td></tr>
+                <tr><td><code>AppraisalId</code></td><td>int</td><td><span class="tag fk">FK</span> <span class="tag req">Required</span></td><td>FK to Appraisal.Id (cascade delete)</td></tr>
+                <tr><td><code>FromStage</code></td><td>nvarchar(30)</td><td><span class="tag req">Required</span></td><td>Previous status (e.g., "Draft")</td></tr>
+                <tr><td><code>ToStage</code></td><td>nvarchar(30)</td><td><span class="tag req">Required</span></td><td>New status (e.g., "ManagerCommented")</td></tr>
+                <tr><td><code>ChangedBy</code></td><td>nvarchar(256)</td><td><span class="tag req">Required</span></td><td>Email of user who triggered transition</td></tr>
+                <tr><td><code>ChangedAt</code></td><td>datetime</td><td>Default: UtcNow</td><td>When transition occurred</td></tr>
+                <tr><td><code>Reason</code></td><td>nvarchar(500)</td><td><span class="tag opt">Nullable</span></td><td>Optional reason for the transition</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- AUDIT EVENT -->
+    <div class="entity-section" style="border-color:#78909C">
+        <h3>&#128218; AuditEvent</h3>
+        <div class="entity-desc">System-wide audit log. Standalone entity (no FK constraints). Uses polymorphic EntityType + EntityId for soft references.</div>
+        <table>
+            <thead><tr><th>Column</th><th>Type</th><th>Constraint</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td><code>Id</code></td><td>int</td><td><span class="tag pk">PK</span></td><td>Unique audit event identifier</td></tr>
+                <tr><td><code>EntityType</code></td><td>nvarchar(100)</td><td><span class="tag req">Required</span> <span class="tag idx">Indexed</span></td><td>Type of entity (e.g., "Appraisal", "Employee", "User")</td></tr>
+                <tr><td><code>EntityId</code></td><td>int</td><td><span class="tag opt">Nullable</span> <span class="tag idx">Indexed</span></td><td>ID of affected entity (composite index with EntityType)</td></tr>
+                <tr><td><code>Action</code></td><td>nvarchar(100)</td><td><span class="tag req">Required</span></td><td>Action name (Login, Registered, Create, Finalized, etc.)</td></tr>
+                <tr><td><code>ActorUserId</code></td><td>nvarchar(450)</td><td><span class="tag opt">Nullable</span></td><td>ASP.NET Identity user ID of actor</td></tr>
+                <tr><td><code>ActorEmail</code></td><td>nvarchar(256)</td><td><span class="tag opt">Nullable</span></td><td>Email of the actor who performed the action</td></tr>
+                <tr><td><code>At</code></td><td>datetime</td><td><span class="tag req">Required</span> <span class="tag idx">Indexed</span></td><td>When the action occurred</td></tr>
+                <tr><td><code>IpAddress</code></td><td>nvarchar(45)</td><td><span class="tag opt">Nullable</span></td><td>IP address of the request</td></tr>
+                <tr><td><code>DetailsJson</code></td><td>nvarchar(max)</td><td><span class="tag opt">Nullable</span></td><td>Additional details serialized as JSON</td></tr>
+                <tr><td><code>CorrelationId</code></td><td>nvarchar(100)</td><td><span class="tag opt">Nullable</span></td><td>Correlation ID for request tracing</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- NOTIFICATION -->
+    <div class="entity-section" style="border-color:#78909C">
+        <h3>&#128276; Notification</h3>
+        <div class="entity-desc">In-app and email notification queue. Standalone entity with soft reference to Appraisal via AboutAppraisalId.</div>
+        <table>
+            <thead><tr><th>Column</th><th>Type</th><th>Constraint</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td><code>Id</code></td><td>int</td><td><span class="tag pk">PK</span></td><td>Unique notification identifier</td></tr>
+                <tr><td><code>RecipientEmail</code></td><td>nvarchar(256)</td><td><span class="tag req">Required</span></td><td>Email of notification recipient</td></tr>
+                <tr><td><code>RecipientUserId</code></td><td>nvarchar(450)</td><td><span class="tag opt">Nullable</span></td><td>Identity user ID of recipient</td></tr>
+                <tr><td><code>Topic</code></td><td>nvarchar(150)</td><td><span class="tag req">Required</span></td><td>Notification type (AppraisalAssigned, Finalized, etc.)</td></tr>
+                <tr><td><code>PayloadJson</code></td><td>nvarchar(max)</td><td><span class="tag opt">Nullable</span></td><td>Notification payload as JSON</td></tr>
+                <tr><td><code>Status</code></td><td>nvarchar(20)</td><td><span class="tag req">Required</span> Default: "Queued"</td><td>Queued | Sent | Failed</td></tr>
+                <tr><td><code>AboutAppraisalId</code></td><td>int</td><td><span class="tag opt">Nullable</span></td><td>Soft reference to Appraisal.Id (no FK constraint)</td></tr>
+                <tr><td><code>RetryCount</code></td><td>int</td><td>Default: 0</td><td>Number of send retry attempts</td></tr>
+                <tr><td><code>CreatedAt</code></td><td>datetime</td><td>Default: UtcNow</td><td>When notification was created/queued</td></tr>
+                <tr><td><code>SentAt</code></td><td>datetime</td><td><span class="tag opt">Nullable</span></td><td>When notification was successfully sent</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- APPLICATION USER -->
+    <div class="entity-section" style="border-color:#E53935">
+        <h3>&#128274; ApplicationUser (ASP.NET Identity)</h3>
+        <div class="entity-desc">Extends IdentityUser with custom fields. Linked to Employee via EmployeeId. Stores role, lockout state, and failed login tracking.</div>
+        <table>
+            <thead><tr><th>Column</th><th>Type</th><th>Constraint</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td><code>Id</code></td><td>nvarchar(450)</td><td><span class="tag pk">PK</span> GUID</td><td>Identity-generated GUID</td></tr>
+                <tr><td><code>UserName</code></td><td>nvarchar(256)</td><td>Inherited</td><td>Login username (same as Email)</td></tr>
+                <tr><td><code>Email</code></td><td>nvarchar(256)</td><td>Inherited</td><td>User email address</td></tr>
+                <tr><td><code>PasswordHash</code></td><td>nvarchar(max)</td><td>Inherited</td><td>BCrypt hashed password (Identity-managed)</td></tr>
+                <tr><td><code>FullName</code></td><td>nvarchar(200)</td><td><span class="tag opt">Nullable</span></td><td>Display name</td></tr>
+                <tr><td><code>AppRole</code></td><td>nvarchar(50)</td><td><span class="tag opt">Nullable</span></td><td>Admin | HR | Manager | Employee</td></tr>
+                <tr><td><code>EmployeeId</code></td><td>int</td><td><span class="tag fk">FK</span> <span class="tag opt">Nullable</span></td><td>FK to Employee.Id (nullable &mdash; Admin may not have one)</td></tr>
+                <tr><td><code>FailedLoginAttempts</code></td><td>int</td><td>Default: 0</td><td>Counter for failed logins (3 = auto-lockout)</td></tr>
+                <tr><td><code>IsManuallyLocked</code></td><td>bool</td><td>Default: false</td><td>Admin-triggered manual account lock</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================= INDEXES ============================= -->
+<div class="container" id="indexes">
+    <h2>Database Indexes</h2>
+
+    <table>
+        <thead><tr><th>Table</th><th>Index Name / Type</th><th>Columns</th><th>Unique</th><th>Purpose</th></tr></thead>
+        <tbody>
+            <tr><td>Employee</td><td>PK</td><td><code>Id</code></td><td>Yes</td><td>Primary key</td></tr>
+            <tr><td>Employee</td><td>FK Index</td><td><code>ManagerId</code></td><td>No</td><td>Manager hierarchy lookups</td></tr>
+            <tr><td>AppraisalCycle</td><td>PK</td><td><code>Id</code></td><td>Yes</td><td>Primary key</td></tr>
+            <tr><td>Appraisal</td><td>PK</td><td><code>Id</code></td><td>Yes</td><td>Primary key</td></tr>
+            <tr><td>Appraisal</td><td>FK Index</td><td><code>CycleId</code></td><td>No</td><td>Cycle-based queries</td></tr>
+            <tr><td>Appraisal</td><td>FK Index</td><td><code>EmployeeId</code></td><td>No</td><td>Employee appraisal lookups</td></tr>
+            <tr><td>Appraisal</td><td>FK Index</td><td><code>ManagerEmployeeId</code></td><td>No</td><td>Manager's team queries</td></tr>
+            <tr><td>Comment</td><td>Unique FK</td><td><code>AppraisalId</code></td><td>Yes</td><td>One-to-one with Appraisal</td></tr>
+            <tr><td>EmployeeFeedback</td><td>Unique FK</td><td><code>AppraisalId</code></td><td>Yes</td><td>One-to-one with Appraisal</td></tr>
+            <tr><td>CtcSnapshot</td><td>Unique FK</td><td><code>AppraisalId</code></td><td>Yes</td><td>One-to-one with Appraisal</td></tr>
+            <tr><td>StageHistory</td><td>FK Index</td><td><code>AppraisalId</code></td><td>No</td><td>Stage history per appraisal</td></tr>
+            <tr><td>AuditEvent</td><td>Composite Index</td><td><code>EntityType, EntityId</code></td><td>No</td><td>Audit lookups by entity</td></tr>
+            <tr><td>AuditEvent</td><td>Index</td><td><code>At</code></td><td>No</td><td>Time-range queries</td></tr>
+            <tr><td>AspNetUsers</td><td>Unique</td><td><code>NormalizedEmail</code></td><td>Yes</td><td>Email-based login (Identity)</td></tr>
+            <tr><td>AspNetUsers</td><td>Unique</td><td><code>NormalizedUserName</code></td><td>Yes</td><td>Username lookup (Identity)</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<hr class="divider">
+
+<!-- ============================= DATA LIFECYCLE ============================= -->
+<div class="container" id="workflow">
+    <h2>Data Lifecycle (Appraisal Workflow)</h2>
+    <p style="font-size:14px;color:#555;margin-bottom:16px;">Shows how data flows through the entities during the appraisal workflow.</p>
+
+    <div class="mermaid">
+sequenceDiagram
+    participant HR as HR User
+    participant APP as Appraisal Table
+    participant SH as StageHistory
+    participant MGR as Manager
+    participant CMT as Comment Table
+    participant EMP as Employee
+    participant FB as EmployeeFeedback Table
+    participant CTC as CtcSnapshot Table
+    participant AUD as AuditEvent Table
+    participant NOT as Notification Table
+
+    Note over HR,NOT: Phase 1: Assignment (HR)
+    HR->>APP: INSERT Appraisal<br/>(Status: Draft, CycleId, EmployeeId, ManagerEmployeeId)
+    APP->>SH: INSERT StageHistory<br/>(From: New, To: Draft)
+    APP->>AUD: INSERT AuditEvent<br/>(Action: Assigned)
+    APP->>NOT: INSERT Notification<br/>(Topic: AppraisalAssigned)
+
+    Note over HR,NOT: Phase 2: Manager Comments
+    MGR->>CMT: INSERT Comment<br/>(Achievements, Gaps, Suggestions)
+    CMT->>APP: UPDATE Status = ManagerCommented
+    APP->>SH: INSERT StageHistory<br/>(From: Draft, To: ManagerCommented)
+    APP->>AUD: INSERT AuditEvent<br/>(Action: Commented)
+
+    Note over HR,NOT: Phase 3: Employee Feedback
+    EMP->>FB: INSERT EmployeeFeedback<br/>(FeedbackText, SelfAssessment)
+    FB->>APP: UPDATE Status = EmployeeFeedback
+    APP->>SH: INSERT StageHistory<br/>(From: ManagerCommented, To: EmployeeFeedback)
+    APP->>AUD: INSERT AuditEvent<br/>(Action: Feedback)
+
+    Note over HR,NOT: Phase 4: Finalization (Manager)
+    MGR->>CTC: INSERT CtcSnapshot<br/>(Basic, DA, HRA, Food, PF, IsPromoted)
+    MGR->>CMT: UPDATE IsLocked = true
+    CTC->>APP: UPDATE Status = Final, FinalisedAt = now
+    APP->>SH: INSERT StageHistory<br/>(From: EmployeeFeedback, To: Final)
+    APP->>AUD: INSERT AuditEvent<br/>(Action: Finalized)
+    APP->>NOT: INSERT Notification<br/>(Topic: AppraisalFinalized)
+    </div>
+
+    <div class="note-box">
+        <strong>Key Data Rules:</strong><br/>
+        &bull; <strong>Comment.IsLocked:</strong> Set to <code>true</code> at finalization &mdash; prevents any further edits to manager comments<br/>
+        &bull; <strong>CtcSnapshot.TotalCTC:</strong> Computed at runtime as <code>Basic + DA + HRA + FoodAllowance + PF</code> (not stored in DB)<br/>
+        &bull; <strong>Employee.PanNo:</strong> Masked at API layer by <code>PolicyMaskingEngine</code> &mdash; HR/Admin see full PAN, others see <code>XXXXX1234</code><br/>
+        &bull; <strong>AuditEvent / Notification:</strong> Standalone tables with no FK constraints for decoupled, resilient logging<br/>
+        &bull; <strong>Cascade Deletes:</strong> Deleting an Appraisal cascades to Comment, EmployeeFeedback, CtcSnapshot, and StageHistory<br/>
+        &bull; <strong>Restrict Deletes:</strong> Cannot delete an Employee that has appraisals or manages other employees
+    </div>
+</div>
+
+<button class="print-btn" onclick="window.print()">&#128424; Print / Save as PDF</button>
+
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: {
+            fontSize: '13px',
+            fontFamily: 'Segoe UI, Tahoma, sans-serif',
+            lineColor: '#555'
+        },
+        er: {
+            useMaxWidth: true,
+            entityPadding: 15,
+            fontSize: 12,
+            layoutDirection: 'TB'
+        },
+        flowchart: {
+            useMaxWidth: true,
+            htmlLabels: true,
+            curve: 'basis',
+            rankSpacing: 50,
+            nodeSpacing: 25
+        },
+        sequence: {
+            useMaxWidth: true,
+            diagramMarginX: 15,
+            actorMargin: 40,
+            width: 140,
+            height: 45,
+            messageMargin: 30,
+            mirrorActors: true,
+            wrap: true,
+            actorBkg: '#e3f2fd',
+            actorBorder: '#1565C0',
+            actorTextColor: '#0D47A1',
+            noteBkgColor: '#FFF8E1',
+            noteBorderColor: '#FFB300'
+        }
+    });
+</script>
+</body>
+</html>

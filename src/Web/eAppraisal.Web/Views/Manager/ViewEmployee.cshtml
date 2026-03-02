@@ -1,0 +1,62 @@
+@model AppraisalDetailDto
+@{ ViewData["Title"] = "View Appraisal"; }
+<h2>Appraisal Details - @Model.EmployeeName</h2>
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header"><strong>Employee Information</strong></div>
+            <div class="card-body">
+                <p><strong>Name:</strong> @Model.EmployeeName</p>
+                <p><strong>Department:</strong> @Model.Department</p>
+                <p><strong>Email:</strong> @Model.Email</p>
+                <p><strong>Date of Joining:</strong> @Model.DateOfJoining.ToString("yyyy-MM-dd")</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header"><strong>Appraisal Info</strong></div>
+            <div class="card-body">
+                <p><strong>Cycle:</strong> @Model.CycleName</p>
+                <p><strong>Status:</strong> <span class="badge bg-info">@Model.Status</span></p>
+                <p><strong>Manager:</strong> @Model.ManagerName</p>
+                <p><strong>Created:</strong> @Model.CreatedAt.ToString("yyyy-MM-dd")</p>
+                @if (Model.FinalisedAt.HasValue) { <p><strong>Finalised:</strong> @Model.FinalisedAt.Value.ToString("yyyy-MM-dd")</p> }
+            </div>
+        </div>
+    </div>
+</div>
+@if (!string.IsNullOrEmpty(Model.Achievements))
+{
+    <div class="card mb-3">
+        <div class="card-header"><strong>Manager Comments</strong> @if(Model.IsCommentLocked){<span class="badge bg-danger">Locked</span>}</div>
+        <div class="card-body">
+            <p><strong>Achievements:</strong> @Model.Achievements</p>
+            <p><strong>Gaps:</strong> @Model.Gaps</p>
+            <p><strong>Suggestions:</strong> @Model.Suggestions</p>
+        </div>
+    </div>
+}
+@if (!string.IsNullOrEmpty(Model.FeedbackText))
+{
+    <div class="card mb-3">
+        <div class="card-header"><strong>Employee Feedback</strong></div>
+        <div class="card-body">
+            <p><strong>Feedback:</strong> @Model.FeedbackText</p>
+            <p><strong>Self Assessment:</strong> @Model.SelfAssessment</p>
+        </div>
+    </div>
+}
+@if (Model.Status == "Final")
+{
+    <div class="card mb-3">
+        <div class="card-header"><strong>CTC Details</strong></div>
+        <div class="card-body">
+            <p><strong>Promoted:</strong> @(Model.IsPromoted ? "Yes" : "No")</p>
+            <p><strong>Basic:</strong> @Model.Basic.ToString("N2") | <strong>DA:</strong> @Model.DA.ToString("N2") | <strong>HRA:</strong> @Model.HRA.ToString("N2")</p>
+            <p><strong>Food Allowance:</strong> @Model.FoodAllowance.ToString("N2") | <strong>PF:</strong> @Model.PF.ToString("N2")</p>
+            <p><strong>Total CTC:</strong> <span class="fw-bold text-success">@Model.TotalCTC.ToString("N2")</span></p>
+        </div>
+    </div>
+}
+<a href="/Manager/MyAppraisals" class="btn btn-secondary">Back</a>

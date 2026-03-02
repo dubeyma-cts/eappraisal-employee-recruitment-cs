@@ -1,0 +1,31 @@
+@{ ViewData["Title"] = "Admin Dashboard"; }
+<h2>Admin Dashboard</h2>
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-dark mb-3">
+            <div class="card-body">
+                <h5 class="card-title">User Management</h5>
+                <p class="card-text">Manage user accounts, lock/unlock users</p>
+                <a href="/Admin/Users" class="btn btn-light btn-sm">Manage Users</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Create User</h5>
+                <p class="card-text">Create new user accounts (HR, Manager, Employee, Admin)</p>
+                <a href="/Admin/CreateUser" class="btn btn-light btn-sm">Create User</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Reports</h5>
+                <p class="card-text">View appraisal reports</p>
+                <a href="/Reports" class="btn btn-light btn-sm">View Reports</a>
+            </div>
+        </div>
+    </div>
+</div>

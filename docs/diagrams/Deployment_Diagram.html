@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eAppraisal - Deployment Diagram</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; color: #333; }
+        .header {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+            color: white; padding: 30px 40px; text-align: center;
+        }
+        .header h1 { font-size: 30px; margin-bottom: 6px; }
+        .header p { font-size: 14px; opacity: 0.85; }
+        .nav {
+            background: white; padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 8px;
+            justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky; top: 0; z-index: 50;
+        }
+        .nav a {
+            padding: 7px 16px; border-radius: 20px; text-decoration: none; font-size: 13px;
+            font-weight: 600; color: #1b5e20; border: 2px solid #1b5e20; transition: all 0.2s;
+        }
+        .nav a:hover { background: #1b5e20; color: white; }
+        .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+        h2 { color: #1b5e20; font-size: 22px; margin-bottom: 16px; padding-top: 10px; }
+        h3 { color: #2e7d32; font-size: 17px; margin: 20px 0 10px; }
+
+        .mermaid {
+            background: white; border-radius: 12px; padding: 30px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08); overflow-x: auto;
+        }
+        .legend {
+            display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
+            margin: 16px 0; padding: 14px;
+            background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; }
+        .legend-color { width: 18px; height: 18px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.2); }
+
+        table {
+            width: 100%; border-collapse: collapse; background: white; border-radius: 10px;
+            overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 20px;
+        }
+        th { background: #1b5e20; color: white; padding: 12px 16px; text-align: left; font-size: 13px; }
+        td { padding: 10px 16px; border-bottom: 1px solid #f0f0f0; font-size: 13px; vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f1f8e9; }
+        td code {
+            background: #f5f5f5; padding: 2px 6px; border-radius: 4px; font-size: 12px;
+            font-family: 'Cascadia Code', 'Consolas', monospace;
+        }
+
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .card {
+            background: white; border-radius: 12px; padding: 20px 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06); border-left: 5px solid;
+        }
+        .card h4 { font-size: 16px; margin-bottom: 6px; }
+        .card .card-desc { font-size: 13px; color: #555; line-height: 1.6; }
+        .card .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+        .tag {
+            padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;
+            background: #e8f5e9; color: #1b5e20;
+        }
+        .tag.blue { background: #e3f2fd; color: #0d47a1; }
+        .tag.orange { background: #fff3e0; color: #e65100; }
+        .tag.purple { background: #f3e5f5; color: #6a1b9a; }
+        .tag.red { background: #fce4ec; color: #c62828; }
+
+        .note-box {
+            background: #fff9c4; border: 1px solid #f9a825; border-radius: 10px; padding: 14px 20px;
+            margin: 16px 0; font-size: 13px; line-height: 1.6;
+        }
+        .note-box strong { color: #e65100; }
+
+        hr.divider { border: none; height: 2px; background: linear-gradient(to right, transparent, #ccc, transparent); margin: 40px 0; }
+        .print-btn {
+            position: fixed; bottom: 20px; right: 20px; background: #1b5e20; color: white;
+            border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 100;
+        }
+        .print-btn:hover { background: #2e7d32; }
+        @media print { .print-btn, .nav { display: none; } body { background: white; } }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>eAppraisal System - Deployment Diagram</h1>
+    <p>Current (Local Development) &amp; Target (Azure Cloud) Deployment Topologies</p>
+</div>
+
+<div class="nav">
+    <a href="#current">Current Deployment</a>
+    <a href="#network">Network & Ports</a>
+    <a href="#azure">Target Azure Deployment</a>
+    <a href="#nodes">Node Details</a>
+    <a href="#startup">Startup Sequence</a>
+    <a href="#env">Environments</a>
+</div>
+
+<!-- ============================== CURRENT DEPLOYMENT ============================== -->
+<div class="container" id="current">
+    <h2>Current Deployment (Local Development - Single Machine)</h2>
+    <p style="font-size:14px;color:#555;margin-bottom:16px;">Both the Web frontend and API backend run on the same development machine as separate Kestrel processes.</p>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#4A90D9"></div> Client (Browser)</div>
+        <div class="legend-item"><div class="legend-color" style="background:#68C5A5"></div> Web Server (MVC)</div>
+        <div class="legend-item"><div class="legend-color" style="background:#F5A623"></div> API Server (REST)</div>
+        <div class="legend-item"><div class="legend-color" style="background:#9B59B6"></div> Application Services</div>
+        <div class="legend-item"><div class="legend-color" style="background:#3498DB"></div> Database</div>
+    </div>
+
+    <div class="mermaid">
+graph TB
+    subgraph CLIENT["CLIENT MACHINE (Browser)"]
+        Browser["&#127760; Web Browser<br/>(Chrome / Edge / Firefox)"]
+    end
+
+    subgraph DEV["DEVELOPMENT MACHINE (localhost)"]
+
+        subgraph WEB_PROCESS["PROCESS 1: eAppraisal.Web<br/>Kestrel &mdash; http://localhost:5200"]
+            WebApp["ASP.NET Core MVC<br/>6 Controllers | Razor Views<br/>Session Store | ApiClient"]
+        end
+
+        subgraph API_PROCESS["PROCESS 2: eAppraisal.Api<br/>Kestrel &mdash; http://localhost:5100"]
+            ApiApp["ASP.NET Core Web API<br/>5 REST Controllers"]
+            subgraph SERVICES["Injected Services"]
+                direction LR
+                DomainSvcs["Domain Services<br/>(9 services)"]
+                CrossCut["Cross-Cutting<br/>(6 services)"]
+                External["External Stubs<br/>(3 services)"]
+            end
+            Identity["ASP.NET Core Identity<br/>(User Management)"]
+        end
+
+        subgraph DB_NODE["DATABASE"]
+            SQLite[("&#128451; SQLite<br/>eappraisal.db<br/>File-based<br/>11 Tables")]
+        end
+    end
+
+    Browser -->|"HTTP :5200<br/>HTML + Forms"| WebApp
+    WebApp -->|"HTTP :5100<br/>JSON + Cookie"| ApiApp
+    ApiApp --> DomainSvcs
+    ApiApp --> Identity
+    DomainSvcs --> CrossCut
+    DomainSvcs --> SQLite
+    CrossCut --> SQLite
+    Identity --> SQLite
+
+    classDef clientStyle fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px
+    classDef webStyle fill:#68C5A5,stroke:#3D8B6B,color:#000,stroke-width:2px
+    classDef apiStyle fill:#F5A623,stroke:#C47D12,color:#000,stroke-width:2px
+    classDef svcStyle fill:#9B59B6,stroke:#6C3483,color:#fff,stroke-width:2px
+    classDef dbStyle fill:#3498DB,stroke:#2171A9,color:#fff,stroke-width:2px
+
+    class Browser clientStyle
+    class WebApp webStyle
+    class ApiApp,Identity apiStyle
+    class DomainSvcs,CrossCut,External svcStyle
+    class SQLite dbStyle
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================== NETWORK & PORTS ============================== -->
+<div class="container" id="network">
+    <h2>Network Topology & Port Mapping</h2>
+
+    <div class="mermaid">
+sequenceDiagram
+    participant Browser as &#127760; Browser
+    participant Web as eAppraisal.Web<br/>:5200
+    participant API as eAppraisal.Api<br/>:5100
+    participant DB as SQLite<br/>eappraisal.db
+
+    Note over Browser,DB: REQUEST FLOW (e.g., Login)
+
+    Browser->>Web: HTTP GET :5200/Account/Login<br/>(HTML Page Request)
+    Web-->>Browser: HTML + CSS + JS Response
+
+    Browser->>Web: HTTP POST :5200/Account/Login<br/>(Form Submit)
+    Web->>API: HTTP POST :5100/api/auth/login<br/>(JSON + Forward Cookie)
+    API->>DB: EF Core Query<br/>(SQLite file I/O)
+    DB-->>API: Query Result
+    API-->>Web: JSON Response + Set-Cookie
+    Web->>Web: Store cookie in Session
+    Web-->>Browser: 302 Redirect to Dashboard
+    </div>
+
+    <h3>Port Allocation</h3>
+    <table>
+        <thead><tr><th>Component</th><th>Protocol</th><th>Port</th><th>Binding</th><th>Purpose</th></tr></thead>
+        <tbody>
+            <tr><td><strong>eAppraisal.Web</strong></td><td>HTTP</td><td><code>5200</code></td><td><code>http://localhost:5200</code></td><td>MVC frontend - serves HTML to browser</td></tr>
+            <tr><td><strong>eAppraisal.Api</strong></td><td>HTTP</td><td><code>5100</code></td><td><code>http://localhost:5100</code></td><td>REST API - serves JSON to Web app</td></tr>
+            <tr><td><strong>SQLite DB</strong></td><td>File I/O</td><td>N/A</td><td><code>eappraisal.db</code> (local file)</td><td>Data persistence via direct file access</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Communication Protocols</h3>
+    <table>
+        <thead><tr><th>From</th><th>To</th><th>Protocol</th><th>Format</th><th>Auth Mechanism</th></tr></thead>
+        <tbody>
+            <tr><td>Browser</td><td>Web (:5200)</td><td>HTTP/HTTPS</td><td>HTML forms + GET/POST</td><td>Session cookie (Web session)</td></tr>
+            <tr><td>Web (:5200)</td><td>API (:5100)</td><td>HTTP</td><td>JSON (REST)</td><td>Forwarded eAppraisal.Auth cookie</td></tr>
+            <tr><td>API (:5100)</td><td>SQLite</td><td>File I/O</td><td>SQL (via EF Core)</td><td>None (local file access)</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<hr class="divider">
+
+<!-- ============================== AZURE TARGET ============================== -->
+<div class="container" id="azure">
+    <h2>Target Deployment (Azure Cloud - Production)</h2>
+    <p style="font-size:14px;color:#555;margin-bottom:16px;">Recommended production-ready Azure deployment topology with scalable services and managed infrastructure.</p>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#4A90D9"></div> Internet / Users</div>
+        <div class="legend-item"><div class="legend-color" style="background:#68C5A5"></div> Azure App Service (Web)</div>
+        <div class="legend-item"><div class="legend-color" style="background:#F5A623"></div> Azure App Service (API)</div>
+        <div class="legend-item"><div class="legend-color" style="background:#3498DB"></div> Azure SQL / Data</div>
+        <div class="legend-item"><div class="legend-color" style="background:#E74C3C"></div> Security / Identity</div>
+        <div class="legend-item"><div class="legend-color" style="background:#95A5A6"></div> Monitoring</div>
+    </div>
+
+    <div class="mermaid">
+graph TB
+    subgraph INTERNET["INTERNET"]
+        Users["&#128101; Users<br/>(Admin, HR, Manager, Employee)"]
+    end
+
+    subgraph AZURE["AZURE CLOUD"]
+
+        subgraph NETWORKING["Azure Networking"]
+            AppGW["&#128737; Azure Application Gateway<br/>/ Front Door<br/>SSL Termination, WAF, Load Balancing"]
+        end
+
+        subgraph COMPUTE["Azure App Services (Compute)"]
+            subgraph WEB_APP["App Service Plan: Web"]
+                WebSvc["&#127760; eAppraisal.Web<br/>Azure App Service<br/>(Linux / .NET 8)<br/>MVC + Razor Views"]
+            end
+            subgraph API_APP["App Service Plan: API"]
+                ApiSvc["&#9881; eAppraisal.Api<br/>Azure App Service<br/>(Linux / .NET 8)<br/>REST API + Identity"]
+            end
+        end
+
+        subgraph DATA["Azure Data Services"]
+            AzureSQL[("&#128451; Azure SQL Database<br/>S1 Standard Tier<br/>Replaces SQLite<br/>Geo-redundant backups")]
+            Redis["&#9889; Azure Cache for Redis<br/>Session Store + Caching<br/>Replaces InMemoryCache"]
+            Blob["&#128193; Azure Blob Storage<br/>Document storage<br/>(Future: employee docs)"]
+        end
+
+        subgraph IDENTITY["Azure Security"]
+            EntraID["&#128274; Microsoft Entra ID<br/>(Azure AD)<br/>SSO / MFA<br/>Replaces local Identity"]
+            KeyVault["&#128273; Azure Key Vault<br/>Connection Strings<br/>Secrets Management"]
+        end
+
+        subgraph MONITORING["Azure Monitoring"]
+            AppInsights["&#128200; Application Insights<br/>Performance Monitoring<br/>Request Tracing"]
+            LogAnalytics["&#128202; Log Analytics<br/>Centralized Logging<br/>Replaces console logs"]
+            Sentinel["&#128737; Microsoft Sentinel<br/>Security Monitoring<br/>Threat Detection"]
+        end
+
+        subgraph INTEGRATION["Azure Integration"]
+            SendGrid["&#9993; Azure Communication<br/>Services / SendGrid<br/>Email Notifications<br/>Replaces SMTP stub"]
+            ServiceBus["&#128233; Azure Service Bus<br/>Async Notifications<br/>Replaces in-memory queue"]
+        end
+
+    end
+
+    Users -->|"HTTPS"| AppGW
+    AppGW -->|":443"| WebSvc
+    AppGW -->|":443"| ApiSvc
+    WebSvc -->|"HTTPS (internal)"| ApiSvc
+    ApiSvc --> AzureSQL
+    ApiSvc --> Redis
+    ApiSvc --> EntraID
+    ApiSvc --> KeyVault
+    WebSvc --> Redis
+    ApiSvc -.-> AppInsights
+    WebSvc -.-> AppInsights
+    AppInsights -.-> LogAnalytics
+    LogAnalytics -.-> Sentinel
+    ApiSvc -.-> SendGrid
+    ApiSvc -.-> ServiceBus
+
+    classDef userStyle fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px
+    classDef webStyle fill:#68C5A5,stroke:#3D8B6B,color:#000,stroke-width:2px
+    classDef apiStyle fill:#F5A623,stroke:#C47D12,color:#000,stroke-width:2px
+    classDef dataStyle fill:#3498DB,stroke:#2171A9,color:#fff,stroke-width:2px
+    classDef secStyle fill:#E74C3C,stroke:#C0392B,color:#fff,stroke-width:2px
+    classDef monStyle fill:#95A5A6,stroke:#717D7E,color:#000,stroke-width:2px
+    classDef intStyle fill:#AB47BC,stroke:#7B1FA2,color:#fff,stroke-width:2px
+    classDef netStyle fill:#78909C,stroke:#455A64,color:#fff,stroke-width:2px
+
+    class Users userStyle
+    class WebSvc webStyle
+    class ApiSvc apiStyle
+    class AzureSQL,Redis,Blob dataStyle
+    class EntraID,KeyVault secStyle
+    class AppInsights,LogAnalytics,Sentinel monStyle
+    class SendGrid,ServiceBus intStyle
+    class AppGW netStyle
+    </div>
+
+    <h3>Local-to-Azure Migration Mapping</h3>
+    <table>
+        <thead><tr><th>Local Component</th><th>Azure Service</th><th>Why</th></tr></thead>
+        <tbody>
+            <tr><td>Kestrel (Web :5200)</td><td>Azure App Service (Web)</td><td>Managed hosting, auto-scale, SSL, custom domains</td></tr>
+            <tr><td>Kestrel (API :5100)</td><td>Azure App Service (API)</td><td>Managed hosting, deployment slots, health checks</td></tr>
+            <tr><td>SQLite (eappraisal.db)</td><td>Azure SQL Database</td><td>Managed SQL, geo-replication, automated backups, scaling</td></tr>
+            <tr><td>ASP.NET Core Identity</td><td>Microsoft Entra ID (Azure AD)</td><td>Enterprise SSO, MFA, conditional access, compliance</td></tr>
+            <tr><td>DistributedMemoryCache</td><td>Azure Cache for Redis</td><td>Distributed sessions across multiple instances, persistence</td></tr>
+            <tr><td>LocalSmtpGateway (stub)</td><td>SendGrid / Azure Communication Services</td><td>Actual email delivery with tracking and templates</td></tr>
+            <tr><td>StubHrisPayrollService</td><td>Azure API Management + HRIS API</td><td>Real integration with corporate HRIS/payroll system</td></tr>
+            <tr><td>Console.Log (ILogger)</td><td>Application Insights + Log Analytics</td><td>Centralized logging, distributed tracing, alerting</td></tr>
+            <tr><td>InMemoryRateLimiter</td><td>Azure Application Gateway WAF</td><td>Distributed rate limiting, DDoS protection</td></tr>
+            <tr><td>InMemoryFeatureFlagService</td><td>Azure App Configuration</td><td>Centralized feature flags with dynamic refresh</td></tr>
+            <tr><td>appsettings.json (secrets)</td><td>Azure Key Vault</td><td>Secure secrets management, rotation, access policies</td></tr>
+        </tbody>
+    </table>
+
+    <div class="note-box">
+        <strong>Architecture Note:</strong> The application's Clean Architecture with interface-based dependency injection makes this migration straightforward. Each local stub/implementation has a corresponding interface (e.g., <code>ISmtpGateway</code>, <code>IHrisPayrollService</code>, <code>IRateLimiter</code>). To migrate, only the Infrastructure layer implementations and DI registrations need to change - no domain or API code modifications required.
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================== NODE DETAILS ============================== -->
+<div class="container" id="nodes">
+    <h2>Deployment Node Details</h2>
+
+    <h3>Current (Local Development)</h3>
+    <div class="card-grid">
+        <div class="card" style="border-color:#68C5A5">
+            <h4>&#127760; eAppraisal.Web (Process 1)</h4>
+            <div class="card-desc">
+                <strong>Runtime:</strong> .NET 8.0 / Kestrel<br/>
+                <strong>URL:</strong> http://localhost:5200<br/>
+                <strong>Artifacts:</strong> eAppraisal.Web.dll + Razor Views<br/>
+                <strong>Dependencies:</strong> eAppraisal.Domain.dll only<br/>
+                <strong>State:</strong> Session store (in-memory), API auth cookie<br/>
+                <strong>Startup:</strong> <code>dotnet run</code> in src/Web/eAppraisal.Web/
+            </div>
+            <div class="card-tags">
+                <span class="tag">MVC + Razor</span>
+                <span class="tag">ApiClient (HTTP)</span>
+                <span class="tag">Session Store</span>
+            </div>
+        </div>
+        <div class="card" style="border-color:#F5A623">
+            <h4>&#9881; eAppraisal.Api (Process 2)</h4>
+            <div class="card-desc">
+                <strong>Runtime:</strong> .NET 8.0 / Kestrel<br/>
+                <strong>URL:</strong> http://localhost:5100<br/>
+                <strong>Artifacts:</strong> eAppraisal.Api.dll + Domain + Application + Infrastructure DLLs<br/>
+                <strong>Dependencies:</strong> All 4 other projects<br/>
+                <strong>State:</strong> Stateless (auth via cookies from Identity)<br/>
+                <strong>Startup:</strong> <code>dotnet run</code> in src/Gateways/eAppraisal.Api/ (runs SeedData on first start)
+            </div>
+            <div class="card-tags">
+                <span class="tag orange">REST API</span>
+                <span class="tag orange">Cookie Auth</span>
+                <span class="tag orange">18 Injected Services</span>
+            </div>
+        </div>
+        <div class="card" style="border-color:#3498DB">
+            <h4>&#128451; SQLite Database</h4>
+            <div class="card-desc">
+                <strong>Engine:</strong> SQLite 3 (via EF Core provider)<br/>
+                <strong>File:</strong> eappraisal.db (in API project root)<br/>
+                <strong>Size:</strong> ~200KB (seeded data)<br/>
+                <strong>Tables:</strong> 11 (9 domain + 2 Identity)<br/>
+                <strong>Access:</strong> Direct file I/O by API process only<br/>
+                <strong>Migrations:</strong> Applied automatically via <code>db.Database.MigrateAsync()</code>
+            </div>
+            <div class="card-tags">
+                <span class="tag blue">File-based</span>
+                <span class="tag blue">Auto-migrate</span>
+                <span class="tag blue">Auto-seed</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================== STARTUP SEQUENCE ============================== -->
+<div class="container" id="startup">
+    <h2>Application Startup Sequence</h2>
+
+    <div class="mermaid">
+sequenceDiagram
+    participant Dev as Developer
+    participant API as eAppraisal.Api
+    participant EF as EF Core
+    participant DB as SQLite DB
+    participant Seed as SeedData
+    participant Web as eAppraisal.Web
+
+    Note over Dev,Web: Step 1: Start API Server
+
+    Dev->>API: dotnet run (Port 5100)
+    API->>API: Build DI Container<br/>(Infrastructure + Application services)
+    API->>API: Configure Cookie Auth<br/>(eAppraisal.Auth, 15-min, Lax)
+    API->>API: Configure Middleware Pipeline<br/>(Auth + Authz + Controllers)
+
+    API->>Seed: SeedData.InitializeAsync()
+    Seed->>EF: db.Database.MigrateAsync()
+    EF->>DB: CREATE tables if not exist<br/>Apply pending migrations
+    DB-->>EF: Schema ready
+    Seed->>DB: Check if Employees table has data
+    alt First Run (Empty DB)
+        Seed->>DB: INSERT 4 Employees<br/>(Manager, 2 Employees, HR)
+        Seed->>DB: INSERT 1 AppraisalCycle<br/>(2025 Annual Appraisal)
+        Seed->>DB: INSERT 5 AspNetUsers<br/>(admin, HR, manager, 2 employees)
+    end
+    alt Subsequent Run (Data Exists)
+        Note over Seed: Skip seeding
+    end
+    Seed-->>API: Initialization complete
+    API->>API: Start listening on :5100
+    API-->>Dev: API ready
+
+    Note over Dev,Web: Step 2: Start Web Server
+
+    Dev->>Web: dotnet run (Port 5200)
+    Web->>Web: Register HttpClient "eAppraisalApi"<br/>(BaseAddress: http://localhost:5100)
+    Web->>Web: Configure Session<br/>(MemoryCache, 15-min timeout)
+    Web->>Web: Configure MVC Routes<br/>(default: Account/Index)
+    Web->>Web: Start listening on :5200
+    Web-->>Dev: Web ready
+
+    Note over Dev,Web: Both servers running - open http://localhost:5200
+    </div>
+
+    <h3>Startup Commands</h3>
+    <table>
+        <thead><tr><th>Step</th><th>Command</th><th>Working Directory</th><th>Result</th></tr></thead>
+        <tbody>
+            <tr><td>1. Build</td><td><code>dotnet build src/eAppraisal.sln</code></td><td>Solution root</td><td>Compiles all 5 projects</td></tr>
+            <tr><td>2. Start API</td><td><code>dotnet run</code></td><td>src/Gateways/eAppraisal.Api/</td><td>API on http://localhost:5100</td></tr>
+            <tr><td>3. Start Web</td><td><code>dotnet run</code></td><td>src/Web/eAppraisal.Web/</td><td>Web on http://localhost:5200</td></tr>
+            <tr><td>4. Open Browser</td><td>Navigate to <code>http://localhost:5200</code></td><td>-</td><td>Login page displayed</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Default Seed Accounts</h3>
+    <table>
+        <thead><tr><th>Role</th><th>Email</th><th>Password</th><th>Employee Link</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Admin</strong></td><td><code>admin@nanotechnologies.com</code></td><td><code>Admin@123</code></td><td>No linked employee</td></tr>
+            <tr><td><strong>HR</strong></td><td><code>sunita.rao@nanotechnologies.com</code></td><td><code>Hr@12345</code></td><td>Sunita Rao (HR Dept)</td></tr>
+            <tr><td><strong>Manager</strong></td><td><code>ramesh.kumar@nanotechnologies.com</code></td><td><code>Manager@123</code></td><td>Ramesh Kumar (Engineering)</td></tr>
+            <tr><td><strong>Employee</strong></td><td><code>priya.sharma@nanotechnologies.com</code></td><td><code>Employee@123</code></td><td>Priya Sharma (Engineering)</td></tr>
+            <tr><td><strong>Employee</strong></td><td><code>anil.patel@nanotechnologies.com</code></td><td><code>Employee@123</code></td><td>Anil Patel (QA)</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<hr class="divider">
+
+<!-- ============================== ENVIRONMENTS ============================== -->
+<div class="container" id="env">
+    <h2>Environment Configuration</h2>
+
+    <h3>Environment Variables & Settings per Stage</h3>
+    <table>
+        <thead><tr><th>Setting</th><th>Development (Local)</th><th>Staging (Azure)</th><th>Production (Azure)</th></tr></thead>
+        <tbody>
+            <tr><td>ASPNETCORE_ENVIRONMENT</td><td><code>Development</code></td><td><code>Staging</code></td><td><code>Production</code></td></tr>
+            <tr><td>Database</td><td>SQLite (eappraisal.db)</td><td>Azure SQL (Standard S1)</td><td>Azure SQL (Premium P1)</td></tr>
+            <tr><td>Connection String Source</td><td>appsettings.json</td><td>Azure Key Vault</td><td>Azure Key Vault</td></tr>
+            <tr><td>Identity Provider</td><td>Local ASP.NET Identity</td><td>Entra ID (Test Tenant)</td><td>Entra ID (Prod Tenant)</td></tr>
+            <tr><td>Session Store</td><td>In-Memory Cache</td><td>Azure Redis Cache (Basic)</td><td>Azure Redis Cache (Standard)</td></tr>
+            <tr><td>Email Service</td><td>LocalSmtpGateway (logs)</td><td>SendGrid (sandbox)</td><td>SendGrid (production)</td></tr>
+            <tr><td>HRIS Integration</td><td>StubHrisPayrollService</td><td>Mock API endpoint</td><td>Corporate HRIS API</td></tr>
+            <tr><td>Logging</td><td>Console (ILogger)</td><td>Application Insights</td><td>Application Insights + Sentinel</td></tr>
+            <tr><td>SSL / HTTPS</td><td>HTTP (dev only)</td><td>Azure-managed SSL</td><td>Azure-managed SSL + Custom domain</td></tr>
+            <tr><td>Feature Flags</td><td>appsettings.json</td><td>Azure App Configuration</td><td>Azure App Configuration</td></tr>
+        </tbody>
+    </table>
+
+    <div class="note-box">
+        <strong>Deployment Strategy:</strong> The recommended CI/CD pipeline is GitHub Actions or Azure DevOps:<br/>
+        <code>Build (.NET 8)</code> &rarr; <code>Unit Tests</code> &rarr; <code>Publish artifacts</code> &rarr; <code>Deploy to Staging slot</code> &rarr; <code>Smoke tests</code> &rarr; <code>Swap to Production slot</code>
+    </div>
+</div>
+
+<button class="print-btn" onclick="window.print()">&#128424; Print / Save as PDF</button>
+
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: {
+            fontSize: '13px',
+            fontFamily: 'Segoe UI, Tahoma, sans-serif'
+        },
+        flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis', rankSpacing: 50 },
+        sequence: {
+            useMaxWidth: true, diagramMarginX: 20, actorMargin: 60, width: 180, height: 50,
+            messageMargin: 40, mirrorActors: true, wrap: true,
+            actorBkg: '#e8f5e9', actorBorder: '#2e7d32', actorTextColor: '#1b5e20',
+            noteBkgColor: '#fff9c4', noteBorderColor: '#f9a825'
+        }
+    });
+</script>
+</body>
+</html>

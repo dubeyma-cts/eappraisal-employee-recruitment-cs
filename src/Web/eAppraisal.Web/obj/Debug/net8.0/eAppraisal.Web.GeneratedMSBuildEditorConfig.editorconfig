@@ -1,0 +1,153 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = eAppraisal.Web
+build_property.RootNamespace = eAppraisal.Web
+build_property.ProjectDir = C:\Users\266319\OneDrive - Cognizant\UpgradeToArchitect\Phase_2\Use_Case_6\eappraisal-employee-recruitment-cs\src\Web\eAppraisal.Web\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\266319\OneDrive - Cognizant\UpgradeToArchitect\Phase_2\Use_Case_6\eappraisal-employee-recruitment-cs\src\Web\eAppraisal.Web
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 8.0
+build_property.EnableCodeStyleSeverity = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Admin/CreateUser.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ3JlYXRlVXNlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Admin/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Admin/Users.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVXNlcnMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Employee/EditProfile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVcRWRpdFByb2ZpbGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Employee/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Employee/MyAppraisal.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVcTXlBcHByYWlzYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Employee/MyProfile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVcTXlQcm9maWxlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Employee/SubmitFeedback.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVcU3VibWl0RmVlZGJhY2suY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Employee/ViewAppraisal.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wbG95ZWVcVmlld0FwcHJhaXNhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/HR/CreateCycle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSFJcQ3JlYXRlQ3ljbGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/HR/CreateEmployee.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSFJcQ3JlYXRlRW1wbG95ZWUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/HR/Cycles.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSFJcQ3ljbGVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/HR/EditCycle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSFJcRWRpdEN5Y2xlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/HR/EditEmployee.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSFJcRWRpdEVtcGxveWVlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/HR/Employees.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSFJcRW1wbG95ZWVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/HR/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSFJcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/HR/UpcomingAppraisals.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSFJcVXBjb21pbmdBcHByYWlzYWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/HR/_EmployeeForm.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSFJcX0VtcGxveWVlRm9ybS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Manager/EnterComments.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFuYWdlclxFbnRlckNvbW1lbnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Manager/Finalize.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFuYWdlclxGaW5hbGl6ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Manager/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFuYWdlclxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Manager/MyAppraisals.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFuYWdlclxNeUFwcHJhaXNhbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Manager/ViewEmployee.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFuYWdlclxWaWV3RW1wbG95ZWUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Reports/Completed.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0c1xDb21wbGV0ZWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Reports/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0c1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Reports/InProcess.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0c1xJblByb2Nlc3MuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Reports/Upcoming.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0c1xVcGNvbWluZy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Reports/_AppraisalTable.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0c1xfQXBwcmFpc2FsVGFibGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/Shared/_SidebarNav.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9TaWRlYmFyTmF2LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/266319/OneDrive - Cognizant/UpgradeToArchitect/Phase_2/Use_Case_6/eappraisal-employee-recruitment-cs/src/Web/eAppraisal.Web/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 

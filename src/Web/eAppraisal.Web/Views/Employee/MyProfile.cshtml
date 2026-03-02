@@ -1,0 +1,23 @@
+@model EmployeeDto
+@{ ViewData["Title"] = "My Profile"; }
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>My Profile</h2>
+    <a href="/Employee/EditProfile" class="btn btn-primary">Edit Profile</a>
+</div>
+@if (Model != null)
+{
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6"><p><strong>Name:</strong> @Model.FullName</p></div>
+                <div class="col-md-6"><p><strong>Email:</strong> @Model.Email</p></div>
+                <div class="col-md-6"><p><strong>Department:</strong> @Model.Department</p></div>
+                <div class="col-md-6"><p><strong>City:</strong> @Model.City</p></div>
+                <div class="col-md-6"><p><strong>Mobile:</strong> @Model.MobileNo</p></div>
+                <div class="col-md-6"><p><strong>Date of Joining:</strong> @Model.DateOfJoining.ToString("yyyy-MM-dd")</p></div>
+                <div class="col-md-6"><p><strong>PAN:</strong> @Model.PanNo</p></div>
+                <div class="col-md-6"><p><strong>Manager:</strong> @Model.ManagerName</p></div>
+            </div>
+        </div>
+    </div>
+}

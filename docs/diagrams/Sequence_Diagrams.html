@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eAppraisal - Sequence Diagrams</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            color: #333;
+        }
+        .header {
+            background: linear-gradient(135deg, #0d47a1, #1565c0);
+            color: white;
+            padding: 20px 40px;
+            text-align: center;
+        }
+        .header h1 { font-size: 28px; margin-bottom: 5px; }
+        .header p { font-size: 14px; opacity: 0.85; }
+        .nav {
+            background: white;
+            padding: 12px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .nav a {
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0d47a1;
+            border: 2px solid #0d47a1;
+            transition: all 0.2s;
+        }
+        .nav a:hover { background: #0d47a1; color: white; }
+        .diagram-section {
+            max-width: 1300px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .diagram-section h2 {
+            color: #0d47a1;
+            margin-bottom: 8px;
+            font-size: 22px;
+            padding-top: 10px;
+        }
+        .diagram-section .subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 16px;
+        }
+        .mermaid {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            overflow-x: auto;
+        }
+        .phase-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0;
+        }
+        .phase-badge {
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+        hr.divider {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #ccc, transparent);
+            margin: 40px 0;
+        }
+        .print-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0d47a1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+        .print-btn:hover { background: #1565c0; }
+        @media print {
+            .print-btn, .nav { display: none; }
+            .diagram-section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>eAppraisal System - Sequence Diagrams</h1>
+        <p>Detailed interaction flows for all major system operations</p>
+    </div>
+
+    <div class="nav">
+        <a href="#login">1. Login Flow</a>
+        <a href="#workflow">2. Appraisal Workflow</a>
+        <a href="#create-user">3. Admin Creates User</a>
+        <a href="#create-emp">4. HR Creates Employee</a>
+        <a href="#pan-masking">5. PAN Masking</a>
+        <a href="#reports">6. Reports Flow</a>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 1. LOGIN FLOW -->
+    <!-- ============================================ -->
+    <div class="diagram-section" id="login">
+        <h2>1. User Login Flow</h2>
+        <p class="subtitle">Shows authentication through Web &rarr; ApiClient &rarr; API &rarr; AuthService &rarr; IdentityUserStore, with all 4 outcomes (not found, locked, wrong password, success)</p>
+        <div class="mermaid">
+sequenceDiagram
+    actor User as User (Browser)
+    participant Web as eAppraisal.Web<br/>(Port 5200)
+    participant ApiClient as ApiClient
+    participant API as eAppraisal.Api<br/>(Port 5100)
+    participant AuthSvc as AuthService
+    participant UserStore as IdentityUserStore
+    participant AuditSvc as AuditLogCollector
+    participant DB as SQLite DB
+
+    User->>Web: GET /Account/Login
+    Web-->>User: Render Login Page
+
+    User->>Web: POST /Account/Login {email, password}
+    Web->>ApiClient: LoginAsync("api/auth/login", LoginDto)
+    ApiClient->>API: POST /api/auth/login (JSON)
+
+    API->>AuthSvc: LoginAsync(dto, ipAddress)
+    AuthSvc->>UserStore: AuthenticateAsync(email, password, ip)
+    UserStore->>DB: FindByEmailAsync(email)
+
+    alt User Not Found
+        DB-->>UserStore: null
+        UserStore-->>AuthSvc: Success=false, "Invalid email or password"
+        AuthSvc->>AuditSvc: LogAsync("LoginFailed")
+        AuditSvc->>DB: INSERT AuditEvent
+        AuthSvc-->>API: AuthResultDto {Success: false}
+        API-->>ApiClient: 401 Unauthorized
+        ApiClient-->>Web: AuthResultDto
+        Web-->>User: Login Page + Error Message
+    end
+
+    alt Account Locked
+        DB-->>UserStore: user (locked or 3+ failed attempts)
+        UserStore-->>AuthSvc: Success=false, "Account is locked"
+        AuthSvc->>AuditSvc: LogAsync("LoginFailed")
+        AuthSvc-->>API: 401 Unauthorized
+        API-->>Web: Error response
+        Web-->>User: Login Page + "Account Locked" Error
+    end
+
+    alt Wrong Password
+        DB-->>UserStore: user found
+        UserStore->>DB: CheckPasswordSignIn - FAILED
+        UserStore->>DB: UPDATE FailedLoginAttempts++
+        UserStore-->>AuthSvc: Success=false
+        AuthSvc->>AuditSvc: LogAsync("LoginFailed")
+        AuthSvc-->>API: 401 Unauthorized
+        API-->>Web: Error response
+        Web-->>User: Login Page + Error Message
+    end
+
+    rect rgb(220, 245, 220)
+        Note over User,DB: SUCCESS PATH
+        DB-->>UserStore: user found
+        UserStore->>DB: CheckPasswordSignIn - OK
+        UserStore->>DB: Reset FailedLoginAttempts = 0
+        UserStore->>DB: SignInAsync (Set Auth Cookie)
+        UserStore-->>AuthSvc: Success=true, Role, FullName, EmployeeId
+        AuthSvc->>AuditSvc: LogAsync("LoginSuccess")
+        AuditSvc->>DB: INSERT AuditEvent
+        AuthSvc-->>API: AuthResultDto {Success: true}
+        API-->>ApiClient: 200 OK + Set-Cookie
+        ApiClient->>ApiClient: Store cookie in Session
+        ApiClient-->>Web: AuthResultDto
+        Web->>Web: Store UserEmail, UserRole, FullName, EmployeeId in Session
+        Web-->>User: 302 Redirect to Role Dashboard
+    end
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ============================================ -->
+    <!-- 2. FULL APPRAISAL WORKFLOW -->
+    <!-- ============================================ -->
+    <div class="diagram-section" id="workflow">
+        <h2>2. Full Appraisal Workflow</h2>
+        <p class="subtitle">Complete 4-phase lifecycle: HR Assigns &rarr; Manager Comments &rarr; Employee Feedback &rarr; Manager Finalizes</p>
+        <div class="phase-legend">
+            <span class="phase-badge" style="background:#3b82f6">Phase 1: HR Assigns (Draft)</span>
+            <span class="phase-badge" style="background:#f59e0b;color:#000">Phase 2: Manager Comments</span>
+            <span class="phase-badge" style="background:#10b981">Phase 3: Employee Feedback</span>
+            <span class="phase-badge" style="background:#ef4444">Phase 4: Finalize (Final)</span>
+        </div>
+        <div class="mermaid">
+sequenceDiagram
+    actor HR as HR User
+    actor Mgr as Manager
+    actor Emp as Employee
+    participant Web as eAppraisal.Web
+    participant API as eAppraisal.Api
+    participant WfSvc as AppraisalWorkflow<br/>Service
+    participant CmtSvc as Comments<br/>Service
+    participant CtcSvc as CtcService
+    participant RptSvc as Reporting<br/>Service
+    participant AuditSvc as AuditLog<br/>Collector
+    participant NotifSvc as Notification<br/>Service
+    participant DB as SQLite DB
+
+    rect rgb(219, 234, 254)
+        Note over HR,DB: PHASE 1 &mdash; HR Assigns Appraisal (None &#10145; Draft)
+        HR->>Web: GET /HR/UpcomingAppraisals
+        Web->>API: GET /api/cycles/open + POST unassigned-employees
+        API-->>Web: Open cycles + unassigned employees
+        Web-->>HR: Show unassigned employees
+
+        HR->>Web: POST /HR/AssignAppraisal {EmployeeId, CycleId}
+        Web->>API: POST /api/appraisals/assign
+        API->>WfSvc: AssignAsync(empId, cycleId, assignedBy)
+        WfSvc->>DB: Verify employee has manager
+        WfSvc->>DB: INSERT Appraisal (Status=Draft)
+        WfSvc->>DB: INSERT StageHistory (None &#10145; Draft)
+        WfSvc->>AuditSvc: LogAsync("Assigned")
+        AuditSvc->>DB: INSERT AuditEvent
+        WfSvc->>NotifSvc: QueueAsync("AppraisalAssigned")
+        NotifSvc->>DB: INSERT Notification
+        WfSvc-->>API: AppraisalDto
+        API-->>Web: 200 OK
+        Web-->>HR: "Appraisal assigned successfully"
+    end
+
+    rect rgb(254, 243, 199)
+        Note over Mgr,DB: PHASE 2 &mdash; Manager Comments (Draft &#10145; ManagerCommented)
+        Mgr->>Web: GET /Manager/MyAppraisals
+        Web->>API: GET /api/appraisals/by-manager/{empId}
+        API->>RptSvc: GetByManagerAsync(empId)
+        RptSvc->>DB: SELECT appraisals WHERE manager=empId
+        RptSvc-->>API: AppraisalDto list
+        API-->>Web: Appraisals
+        Web-->>Mgr: Show team appraisals (Status: Draft)
+
+        Mgr->>Web: GET /Manager/EnterComments/{id}
+        Web->>API: GET /api/appraisals/{id}
+        API->>RptSvc: GetDetailAsync(id)
+        RptSvc-->>API: AppraisalDetailDto
+        Web-->>Mgr: Show comments form
+
+        Mgr->>Web: POST /Manager/EnterComments {Achievements, Gaps, Suggestions}
+        Web->>API: POST /api/appraisals/comment
+        API->>CmtSvc: SaveCommentAsync(dto, changedBy)
+        CmtSvc->>DB: Check IsLocked != true
+        CmtSvc->>DB: INSERT/UPDATE Comment
+        CmtSvc->>DB: UPDATE Status = ManagerCommented
+        CmtSvc->>DB: INSERT StageHistory (Draft &#10145; ManagerCommented)
+        CmtSvc->>AuditSvc: LogAsync("Comment Saved")
+        CmtSvc-->>API: OK
+        API-->>Web: 200 OK
+        Web-->>Mgr: Redirect to MyAppraisals
+    end
+
+    rect rgb(209, 250, 229)
+        Note over Emp,DB: PHASE 3 &mdash; Employee Feedback (ManagerCommented &#10145; EmployeeFeedback)
+        Emp->>Web: GET /Employee/MyAppraisal
+        Web->>API: GET /api/appraisals/by-employee/{empId}
+        API->>RptSvc: GetByEmployeeAsync(empId)
+        RptSvc-->>API: Appraisals
+        Web-->>Emp: Show appraisals (Status: ManagerCommented)
+
+        Emp->>Web: GET /Employee/SubmitFeedback/{id}
+        Web->>API: GET /api/appraisals/{id}
+        API->>RptSvc: GetDetailAsync(id)
+        RptSvc-->>API: Detail (manager comments visible)
+        Web-->>Emp: Show feedback form + read-only manager comments
+
+        Emp->>Web: POST /Employee/SubmitFeedback {FeedbackText, SelfAssessment}
+        Web->>API: POST /api/appraisals/feedback
+        API->>CmtSvc: SaveFeedbackAsync(dto, changedBy)
+        CmtSvc->>DB: Check Status != Final
+        CmtSvc->>DB: INSERT/UPDATE EmployeeFeedback
+        CmtSvc->>DB: UPDATE Status = EmployeeFeedback
+        CmtSvc->>DB: INSERT StageHistory (ManagerCommented &#10145; EmployeeFeedback)
+        CmtSvc->>AuditSvc: LogAsync("Feedback Saved")
+        CmtSvc-->>API: OK
+        API-->>Web: 200 OK
+        Web-->>Emp: Redirect to MyAppraisal
+    end
+
+    rect rgb(254, 226, 226)
+        Note over Mgr,DB: PHASE 4 &mdash; Manager Finalizes (EmployeeFeedback &#10145; Final)
+        Mgr->>Web: GET /Manager/Finalize/{id}
+        Web->>API: GET /api/appraisals/{id}
+        RptSvc-->>API: Full detail with feedback
+        Web-->>Mgr: Show CTC form (Basic, DA, HRA, Food, PF)
+
+        Mgr->>Web: POST /Manager/Finalize {CTC details + IsPromoted}
+        Web->>API: POST /api/appraisals/finalize
+        API->>WfSvc: FinalizeAsync(dto, changedBy)
+
+        WfSvc->>DB: Verify Status != Final
+        WfSvc->>CtcSvc: CreateOrUpdateSnapshotAsync(id, dto)
+        CtcSvc->>DB: INSERT CtcSnapshot (Basic+DA+HRA+Food+PF=TotalCTC)
+        CtcSvc-->>WfSvc: Done
+
+        WfSvc->>CmtSvc: LockCommentsAsync(id)
+        CmtSvc->>DB: UPDATE Comment SET IsLocked=true
+        CmtSvc-->>WfSvc: Done
+
+        WfSvc->>DB: UPDATE Status=Final, FinalisedAt=now
+        WfSvc->>DB: INSERT StageHistory (EmployeeFeedback &#10145; Final)
+        WfSvc->>AuditSvc: LogAsync("Finalized")
+        AuditSvc->>DB: INSERT AuditEvent
+        WfSvc->>NotifSvc: QueueAsync("AppraisalFinalized")
+        NotifSvc->>DB: INSERT Notification
+        WfSvc-->>API: OK
+        API-->>Web: 200 OK
+        Web-->>Mgr: Redirect to MyAppraisals (Status: Final)
+    end
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ============================================ -->
+    <!-- 3. ADMIN CREATES USER -->
+    <!-- ============================================ -->
+    <div class="diagram-section" id="create-user">
+        <h2>3. Admin Creates a New User Account</h2>
+        <p class="subtitle">Admin creates user &rarr; AuthService.RegisterUserAsync &rarr; IdentityUserStore.CreateUserAsync (creates Employee + Identity user with rollback)</p>
+        <div class="mermaid">
+sequenceDiagram
+    actor Admin as Admin User
+    participant Web as eAppraisal.Web
+    participant API as eAppraisal.Api
+    participant AuthSvc as AuthService
+    participant UserStore as IdentityUserStore
+    participant AuditSvc as AuditLogCollector
+    participant DB as SQLite DB
+
+    Admin->>Web: GET /Admin/CreateUser
+    Web-->>Admin: Render form (FullName, Email, Role, Password)
+
+    Admin->>Web: POST /Admin/CreateUser
+    Web->>API: POST /api/auth/register (RegisterRequest)
+    API->>API: Validate ModelState
+    API->>AuthSvc: RegisterUserAsync(email, fullName, password, role)
+    AuthSvc->>UserStore: CreateUserAsync(email, fullName, password, role)
+
+    UserStore->>DB: FindByEmailAsync(email)
+
+    alt Email Already Exists
+        DB-->>UserStore: existing user found
+        UserStore-->>AuthSvc: Success=false, "Email already exists"
+        AuthSvc-->>API: (false, error)
+        API-->>Web: 400 BadRequest
+        Web-->>Admin: Form + error message
+    end
+
+    rect rgb(220, 245, 220)
+        Note over Admin,DB: SUCCESS PATH
+        DB-->>UserStore: null (no existing user)
+        UserStore->>DB: INSERT Employee (FirstName, LastName, Email, Dept=Unassigned)
+        DB-->>UserStore: Employee created (Id assigned)
+
+        UserStore->>DB: INSERT AspNetUser (email, fullName, role, password hash, employeeId)
+
+        alt Password Policy Violation
+            DB-->>UserStore: CreateAsync FAILED
+            UserStore->>DB: DELETE Employee (rollback)
+            UserStore-->>AuthSvc: Success=false, "password errors"
+            AuthSvc-->>API: (false, error)
+            API-->>Web: 400 BadRequest
+            Web-->>Admin: Form + password policy error
+        end
+
+        DB-->>UserStore: CreateAsync OK
+        UserStore-->>AuthSvc: (true, null, employeeId)
+        AuthSvc->>AuditSvc: LogAsync("User", empId, "Registered")
+        AuditSvc->>DB: INSERT AuditEvent
+        AuthSvc-->>API: (true, null)
+        API-->>Web: 200 OK
+        Web-->>Admin: Redirect to Users + "User created successfully"
+    end
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ============================================ -->
+    <!-- 4. HR CREATES EMPLOYEE WITH LOGIN -->
+    <!-- ============================================ -->
+    <div class="diagram-section" id="create-emp">
+        <h2>4. HR Creates Employee with Optional Login Account</h2>
+        <p class="subtitle">HR creates employee record, optionally creates a login account in the same flow</p>
+        <div class="mermaid">
+sequenceDiagram
+    actor HR as HR User
+    participant Web as eAppraisal.Web
+    participant API as eAppraisal.Api
+    participant EmpSvc as EmployeeService
+    participant AuthSvc as AuthService
+    participant DB as SQLite DB
+
+    HR->>Web: GET /HR/CreateEmployee
+    Web-->>HR: Employee form + "Create Login Account" checkbox
+
+    HR->>Web: POST /HR/CreateEmployee {EmployeeDto + createLogin + loginRole + loginPassword}
+    Web->>API: POST /api/employees (EmployeeDto)
+    API->>EmpSvc: CreateAsync(dto)
+    EmpSvc->>DB: INSERT Employee
+    DB-->>EmpSvc: Employee with Id
+    EmpSvc-->>API: EmployeeDto
+    API-->>Web: 201 Created
+
+    alt createLogin = true
+        Note over Web,API: HR checked "Create Login Account"
+        Web->>API: POST /api/auth/register {Email, FullName, Password, Role}
+        API->>AuthSvc: RegisterUserAsync(...)
+        AuthSvc->>DB: CreateUserAsync(...)
+
+        alt Login OK
+            AuthSvc-->>API: Success=true
+            API-->>Web: 200 OK
+            Web-->>HR: "Employee created with login account"
+        end
+
+        alt Login FAILED
+            AuthSvc-->>API: Success=false, Error
+            API-->>Web: 400 BadRequest
+            Web-->>HR: "Employee created but login failed: {error}"
+        end
+    end
+
+    alt createLogin = false
+        Web-->>HR: "Employee created successfully"
+    end
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ============================================ -->
+    <!-- 5. PAN MASKING -->
+    <!-- ============================================ -->
+    <div class="diagram-section" id="pan-masking">
+        <h2>5. PAN Masking Flow (Policy Engine)</h2>
+        <p class="subtitle">Role-based data masking: HR/Admin see full PAN, Manager/Employee see masked (XXXXXXX34F)</p>
+        <div class="mermaid">
+sequenceDiagram
+    actor User as Authenticated User
+    participant Web as eAppraisal.Web
+    participant API as EmployeesController
+    participant EmpSvc as EmployeeService
+    participant Masking as PolicyMaskingEngine
+    participant DB as SQLite DB
+
+    User->>Web: View Employee List
+    Web->>API: GET /api/employees (Cookie has AppRole claim)
+    API->>EmpSvc: GetAllAsync()
+    EmpSvc->>DB: SELECT * FROM Employees
+    DB-->>EmpSvc: Employees (PAN: "ABCDE1234F")
+    EmpSvc-->>API: List of EmployeeDto
+
+    API->>API: GetUserRole() from JWT Claims
+
+    loop For each employee
+        API->>Masking: ApplyMasking(pan, role)
+
+        alt role = "HR" or "Admin"
+            Masking-->>API: "ABCDE1234F" (Full PAN)
+        end
+        alt role = "Manager" or "Employee"
+            Masking-->>API: "XXXXXXX34F" (Masked)
+        end
+    end
+
+    API-->>Web: JSON with masked PAN
+    Web-->>User: Employee table (PAN per role)
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ============================================ -->
+    <!-- 6. REPORTS FLOW -->
+    <!-- ============================================ -->
+    <div class="diagram-section" id="reports">
+        <h2>6. Reports Flow (Role-Filtered Data)</h2>
+        <p class="subtitle">Same API endpoint returns different data based on user role: HR sees all, Manager sees team, Employee sees own</p>
+        <div class="mermaid">
+sequenceDiagram
+    actor User as HR / Manager / Employee
+    participant Web as ReportsController
+    participant API as eAppraisal.Api
+    participant RptSvc as ReportingService
+    participant DB as SQLite DB
+
+    User->>Web: GET /Reports/Completed
+    Web->>Web: Read session: role, employeeId
+
+    Web->>API: GET /api/appraisals/by-status?status=Final&role={role}&employeeId={empId}
+    API->>RptSvc: GetByStatusAsync("Final", role, empId)
+    RptSvc->>DB: SELECT Appraisals WHERE Status=Final
+
+    alt role = "HR"
+        Note over RptSvc,DB: No filter - HR sees ALL finalized appraisals
+    end
+    alt role = "Manager"
+        Note over RptSvc,DB: WHERE ManagerEmployeeId = empId (team only)
+    end
+    alt role = "Employee"
+        Note over RptSvc,DB: WHERE EmployeeId = empId (own only)
+    end
+
+    DB-->>RptSvc: Filtered results
+    RptSvc-->>API: List of AppraisalDto
+    API-->>Web: JSON
+    Web-->>User: Completed appraisals table
+        </div>
+    </div>
+
+    <button class="print-btn" onclick="window.print()">&#128424; Print / Save as PDF</button>
+
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                fontSize: '13px',
+                fontFamily: 'Segoe UI, Tahoma, sans-serif',
+                actorBkg: '#e3f2fd',
+                actorBorder: '#1565c0',
+                actorTextColor: '#0d47a1',
+                signalColor: '#333',
+                signalTextColor: '#333',
+                noteBkgColor: '#fff9c4',
+                noteBorderColor: '#f9a825',
+                noteTextColor: '#333',
+                activationBkgColor: '#e8f5e9',
+                activationBorderColor: '#43a047'
+            },
+            sequence: {
+                useMaxWidth: true,
+                diagramMarginX: 20,
+                diagramMarginY: 10,
+                actorMargin: 60,
+                width: 180,
+                height: 50,
+                boxMargin: 10,
+                noteMargin: 15,
+                messageMargin: 40,
+                mirrorActors: true,
+                wrap: true
+            }
+        });
+    </script>
+</body>
+</html>

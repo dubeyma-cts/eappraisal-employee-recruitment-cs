@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eAppraisal - Use Case Diagram</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; color: #333; }
+        .header { background: linear-gradient(135deg, #4a148c, #6a1b9a); color: white; padding: 20px 40px; text-align: center; }
+        .header h1 { font-size: 28px; margin-bottom: 5px; }
+        .header p { font-size: 14px; opacity: 0.85; }
+        .nav { background: white; padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 50; }
+        .nav a { padding: 8px 16px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600; color: #4a148c; border: 2px solid #4a148c; transition: all 0.2s; }
+        .nav a:hover { background: #4a148c; color: white; }
+        .section { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+        .section h2 { color: #4a148c; margin-bottom: 8px; font-size: 22px; padding-top: 10px; }
+        .section .subtitle { font-size: 14px; color: #666; margin-bottom: 16px; }
+        .actor-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); margin-bottom: 24px; }
+        .actor-header { padding: 16px 24px; color: white; }
+        .actor-header h3 { font-size: 20px; margin-bottom: 4px; }
+        .actor-header p { font-size: 13px; opacity: 0.9; }
+        .diagram-body { padding: 20px; }
+        .mermaid { background: #fafbfc; border-radius: 8px; padding: 20px; border: 1px solid #e8e8e8; }
+        .legend { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 20px auto; max-width: 1200px; padding: 15px; background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; }
+        .legend-color { width: 18px; height: 18px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.2); }
+        hr.divider { border: none; height: 2px; background: linear-gradient(to right, transparent, #ccc, transparent); margin: 40px 0; }
+        .matrix-container { overflow-x: auto; }
+        table.matrix { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); font-size: 13px; }
+        table.matrix th { padding: 10px 12px; text-align: center; font-size: 13px; white-space: nowrap; }
+        table.matrix th.header-row { background: #4a148c; color: white; }
+        table.matrix th.group-header { background: #e1bee7; color: #4a148c; text-align: left; padding-left: 16px; font-size: 14px; }
+        table.matrix td { padding: 8px 12px; border-bottom: 1px solid #f0f0f0; text-align: center; }
+        table.matrix td:first-child { text-align: left; padding-left: 24px; font-weight: 500; }
+        table.matrix tr:hover td { background: #faf5ff; }
+        .check { color: #4a148c; font-weight: bold; font-size: 18px; }
+        .uc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 16px; margin-top: 16px; }
+        .uc-card { background: white; border-radius: 10px; padding: 16px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 4px solid; }
+        .uc-card h4 { font-size: 15px; margin-bottom: 8px; }
+        .uc-card .uc-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+        .uc-card .uc-badge { padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; color: white; }
+        .uc-card .uc-desc { font-size: 13px; color: #555; line-height: 1.5; }
+        .uc-card .uc-conditions { font-size: 12px; color: #777; margin-top: 6px; }
+        .uc-card .uc-conditions strong { color: #555; }
+        .print-btn { position: fixed; bottom: 20px; right: 20px; background: #4a148c; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 100; }
+        .print-btn:hover { background: #6a1b9a; }
+        @media print { .print-btn, .nav { display: none; } .section { page-break-inside: avoid; } body { background: white; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>eAppraisal System - Use Case Diagram</h1>
+        <p>4 Actors | 26 Use Cases | 7 Categories | Per-Actor Views with Includes &amp; Extends</p>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#E74C3C"></div> Authentication</div>
+        <div class="legend-item"><div class="legend-color" style="background:#27AE60"></div> Employee Mgmt</div>
+        <div class="legend-item"><div class="legend-color" style="background:#8E44AD"></div> Cycle Mgmt</div>
+        <div class="legend-item"><div class="legend-color" style="background:#F39C12"></div> Workflow</div>
+        <div class="legend-item"><div class="legend-color" style="background:#E67E22"></div> CTC</div>
+        <div class="legend-item"><div class="legend-color" style="background:#3498DB"></div> Reporting</div>
+        <div class="legend-item"><div class="legend-color" style="background:#95A5A6"></div> Cross-Cutting</div>
+    </div>
+
+    <div class="nav">
+        <a href="#admin">Admin</a>
+        <a href="#hr">HR</a>
+        <a href="#manager">Manager</a>
+        <a href="#employee">Employee</a>
+        <a href="#relationships">Relationships</a>
+        <a href="#state">Workflow States</a>
+        <a href="#matrix">Matrix</a>
+        <a href="#details">Details</a>
+    </div>
+
+    <!-- ===== ADMIN ===== -->
+    <div class="section" id="admin">
+        <div class="actor-card">
+            <div class="actor-header" style="background:linear-gradient(135deg,#4A90D9,#2C5F8A)">
+                <h3>&#128100; Admin &mdash; 6 Use Cases</h3>
+                <p>System administrator responsible for user account management, access control, and security operations.</p>
+            </div>
+            <div class="diagram-body">
+                <div class="mermaid">
+flowchart LR
+    A(("Admin")):::actor
+
+    subgraph AUTH["Authentication &amp; Access Control"]
+        A1(["Login to System"])
+        A2(["Logout"])
+        A3(["Create User Account"])
+        A4(["Lock User Account"])
+        A5(["Unlock User Account"])
+        A6(["View All Users"])
+    end
+
+    A --> A1
+    A --> A2
+    A --> A3
+    A --> A4
+    A --> A5
+    A --> A6
+
+    classDef actor fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:3px,font-size:16px
+    classDef default fill:#FEF5E7,stroke:#E74C3C,color:#333,stroke-width:2px
+    linkStyle 0,1,2,3,4,5 stroke:#4A90D9,stroke-width:2.5px
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== HR ===== -->
+    <div class="section" id="hr">
+        <div class="actor-card">
+            <div class="actor-header" style="background:linear-gradient(135deg,#27AE60,#1E8449)">
+                <h3>&#128100; HR &mdash; 14 Use Cases</h3>
+                <p>Human Resources manages employees, appraisal cycles, assignments, and organization-wide reporting.</p>
+            </div>
+            <div class="diagram-body">
+                <div class="mermaid">
+flowchart LR
+    H(("HR")):::actor
+
+    subgraph AUTH["Authentication"]
+        H1(["Login"]):::auth
+        H2(["Logout"]):::auth
+    end
+
+    subgraph EMP["Employee Management"]
+        H3(["Create Employee"]):::emp
+        H4(["Edit Employee"]):::emp
+        H5(["View Employees"]):::emp
+        H6(["Create Login Account"]):::emp
+    end
+
+    subgraph CYCLE["Cycle Management"]
+        H7(["Create Cycle"]):::cycle
+        H8(["Edit / Close Cycle"]):::cycle
+        H9(["View All Cycles"]):::cycle
+        H10(["Unassigned Employees"]):::cycle
+        H11(["Assign Appraisal"]):::cycle
+    end
+
+    subgraph REPORT["Reporting"]
+        H12(["Upcoming Report"]):::report
+        H13(["In-Process Report"]):::report
+        H14(["Completed Report"]):::report
+    end
+
+    H --> H1
+    H --> H2
+    H --> H3
+    H --> H4
+    H --> H5
+    H --> H6
+    H --> H7
+    H --> H8
+    H --> H9
+    H --> H10
+    H --> H11
+    H --> H12
+    H --> H13
+    H --> H14
+
+    classDef actor fill:#27AE60,stroke:#1E8449,color:#fff,stroke-width:3px,font-size:16px
+    classDef auth fill:#FEF5E7,stroke:#E74C3C,color:#333,stroke-width:2px
+    classDef emp fill:#EAFAF1,stroke:#27AE60,color:#333,stroke-width:2px
+    classDef cycle fill:#F4ECF7,stroke:#8E44AD,color:#333,stroke-width:2px
+    classDef report fill:#EBF5FB,stroke:#3498DB,color:#333,stroke-width:2px
+    linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13 stroke:#27AE60,stroke-width:2px
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MANAGER ===== -->
+    <div class="section" id="manager">
+        <div class="actor-card">
+            <div class="actor-header" style="background:linear-gradient(135deg,#E67E22,#CA6F1E)">
+                <h3>&#128100; Manager &mdash; 9 Use Cases</h3>
+                <p>Reviews team appraisals, provides comments, finalizes with CTC approval, and views team reports.</p>
+            </div>
+            <div class="diagram-body">
+                <div class="mermaid">
+flowchart LR
+    M(("Manager")):::actor
+
+    subgraph AUTH["Authentication"]
+        M1(["Login"]):::auth
+        M2(["Logout"]):::auth
+    end
+
+    subgraph WORKFLOW["Appraisal Workflow"]
+        M3(["View Team Appraisals"]):::wf
+        M4(["Enter Manager Comments"]):::wf
+        M5(["View Appraisal Detail"]):::wf
+        M6(["Finalize Appraisal"]):::wf
+    end
+
+    subgraph REPORT["Reporting"]
+        M7(["Upcoming Report"]):::report
+        M8(["In-Process Report"]):::report
+        M9(["Completed Report"]):::report
+    end
+
+    M --> M1
+    M --> M2
+    M --> M3
+    M --> M4
+    M --> M5
+    M --> M6
+    M --> M7
+    M --> M8
+    M --> M9
+
+    classDef actor fill:#E67E22,stroke:#CA6F1E,color:#fff,stroke-width:3px,font-size:16px
+    classDef auth fill:#FEF5E7,stroke:#E74C3C,color:#333,stroke-width:2px
+    classDef wf fill:#FEF9E7,stroke:#F39C12,color:#333,stroke-width:2px
+    classDef report fill:#EBF5FB,stroke:#3498DB,color:#333,stroke-width:2px
+    linkStyle 0,1,2,3,4,5,6,7,8 stroke:#E67E22,stroke-width:2.5px
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== EMPLOYEE ===== -->
+    <div class="section" id="employee">
+        <div class="actor-card">
+            <div class="actor-header" style="background:linear-gradient(135deg,#3498DB,#2E86C1)">
+                <h3>&#128100; Employee &mdash; 8 Use Cases</h3>
+                <p>Views and edits own profile, submits self-assessment feedback, and views completed appraisals.</p>
+            </div>
+            <div class="diagram-body">
+                <div class="mermaid">
+flowchart LR
+    E(("Employee")):::actor
+
+    subgraph AUTH["Authentication"]
+        E1(["Login"]):::auth
+        E2(["Logout"]):::auth
+    end
+
+    subgraph PROFILE["Profile Management"]
+        E3(["View Own Profile"]):::prof
+        E4(["Edit Own Profile"]):::prof
+    end
+
+    subgraph WORKFLOW["Appraisal Workflow"]
+        E5(["View Appraisal Detail"]):::wf
+        E6(["Submit Self-Assessment"]):::wf
+        E7(["View Own Appraisals"]):::wf
+    end
+
+    subgraph REPORT["Reporting"]
+        E8(["Completed Report"]):::report
+    end
+
+    E --> E1
+    E --> E2
+    E --> E3
+    E --> E4
+    E --> E5
+    E --> E6
+    E --> E7
+    E --> E8
+
+    classDef actor fill:#3498DB,stroke:#2E86C1,color:#fff,stroke-width:3px,font-size:16px
+    classDef auth fill:#FEF5E7,stroke:#E74C3C,color:#333,stroke-width:2px
+    classDef prof fill:#EAFAF1,stroke:#27AE60,color:#333,stroke-width:2px
+    classDef wf fill:#FEF9E7,stroke:#F39C12,color:#333,stroke-width:2px
+    classDef report fill:#EBF5FB,stroke:#3498DB,color:#333,stroke-width:2px
+    linkStyle 0,1,2,3,4,5,6,7 stroke:#3498DB,stroke-width:2.5px
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ===== INCLUDES / EXTENDS ===== -->
+    <div class="section" id="relationships">
+        <h2>Includes &amp; Extends Relationships</h2>
+        <p class="subtitle">Dashed arrows show which use cases automatically include or optionally extend other use cases</p>
+        <div class="actor-card">
+            <div class="diagram-body">
+                <div class="mermaid">
+flowchart TB
+    subgraph PRIMARY["Primary Use Cases"]
+        direction LR
+        R1(["Login"]):::auth
+        R2(["Create User"]):::auth
+        R3(["Create Employee"]):::emp
+        R4(["View Employees"]):::emp
+        R5(["View Profile"]):::prof
+        R6(["Assign Appraisal"]):::cycle
+        R7(["Manager Comments"]):::wf
+        R8(["Self-Assessment"]):::wf
+        R9(["Finalize Appraisal"]):::wf
+    end
+
+    subgraph INCLUDED["Included &amp; Extended Use Cases"]
+        direction LR
+        R10(["Create Login"]):::emp
+        R11(["CTC Breakdown"]):::ctc
+        R12(["Promotion Decision"]):::ctc
+        R13(["Next Appraisal Date"]):::ctc
+        R14(["Audit Trail"]):::cross
+        R15(["Notification"]):::cross
+        R16(["PAN Masking"]):::cross
+        R17(["Lock Comments"]):::cross
+    end
+
+    R9 -.->|"includes"| R11
+    R9 -.->|"includes"| R17
+    R9 -.->|"includes"| R15
+    R9 -.->|"extends"| R12
+    R9 -.->|"extends"| R13
+    R6 -.->|"includes"| R15
+    R3 -.->|"extends"| R10
+    R1 -.->|"includes"| R14
+    R2 -.->|"includes"| R14
+    R7 -.->|"includes"| R14
+    R8 -.->|"includes"| R14
+    R9 -.->|"includes"| R14
+    R4 -.->|"includes"| R16
+    R5 -.->|"includes"| R16
+
+    classDef auth fill:#FEF5E7,stroke:#E74C3C,color:#333,stroke-width:2px
+    classDef emp fill:#EAFAF1,stroke:#27AE60,color:#333,stroke-width:2px
+    classDef prof fill:#EAFAF1,stroke:#27AE60,color:#333,stroke-width:2px
+    classDef cycle fill:#F4ECF7,stroke:#8E44AD,color:#333,stroke-width:2px
+    classDef wf fill:#FEF9E7,stroke:#F39C12,color:#333,stroke-width:2px
+    classDef ctc fill:#FDEBD0,stroke:#E67E22,color:#333,stroke-width:2px
+    classDef cross fill:#F2F3F4,stroke:#95A5A6,color:#333,stroke-width:2px
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ===== STATE MACHINE ===== -->
+    <div class="section" id="state">
+        <h2>Appraisal Workflow State Machine</h2>
+        <p class="subtitle">Shows all status transitions in the appraisal lifecycle with the actor who triggers each transition</p>
+        <div class="actor-card">
+            <div class="diagram-body">
+                <div class="mermaid">
+stateDiagram-v2
+    [*] --> Draft : HR Assigns Appraisal
+    Draft --> ManagerCommented : Manager Enters Comments
+    ManagerCommented --> EmployeeFeedback : Employee Submits Feedback
+    EmployeeFeedback --> Final : Manager Finalizes (CTC Approved)
+    Final --> [*]
+
+    state Draft {
+        [*] --> WaitingForManager
+        WaitingForManager : Appraisal created and assigned
+        WaitingForManager : Manager can view and add comments
+    }
+
+    state ManagerCommented {
+        [*] --> WaitingForEmployee
+        WaitingForEmployee : Manager comments submitted
+        WaitingForEmployee : Employee can view and respond
+    }
+
+    state EmployeeFeedback {
+        [*] --> WaitingForFinalization
+        WaitingForFinalization : Employee feedback received
+        WaitingForFinalization : Manager reviews and finalizes
+    }
+
+    state Final {
+        [*] --> Completed
+        Completed : CTC snapshot saved
+        Completed : Comments locked (immutable)
+        Completed : Notification sent
+        Completed : Audit trail recorded
+    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ===== MATRIX ===== -->
+    <div class="section" id="matrix">
+        <h2>Actor - Use Case Matrix</h2>
+        <p class="subtitle">Quick reference showing which actor can perform which use case</p>
+        <div class="matrix-container">
+            <table class="matrix">
+                <thead>
+                    <tr>
+                        <th class="header-row" style="text-align:left;width:320px">Use Case</th>
+                        <th class="header-row" style="width:80px">Admin</th>
+                        <th class="header-row" style="width:80px">HR</th>
+                        <th class="header-row" style="width:80px">Manager</th>
+                        <th class="header-row" style="width:80px">Employee</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><th class="group-header" colspan="5">Authentication &amp; Access Control</th></tr>
+                    <tr><td>Login to System</td><td class="check">&#10004;</td><td class="check">&#10004;</td><td class="check">&#10004;</td><td class="check">&#10004;</td></tr>
+                    <tr><td>Logout from System</td><td class="check">&#10004;</td><td class="check">&#10004;</td><td class="check">&#10004;</td><td class="check">&#10004;</td></tr>
+                    <tr><td>Create User Account</td><td class="check">&#10004;</td><td></td><td></td><td></td></tr>
+                    <tr><td>Lock User Account</td><td class="check">&#10004;</td><td></td><td></td><td></td></tr>
+                    <tr><td>Unlock User Account</td><td class="check">&#10004;</td><td></td><td></td><td></td></tr>
+                    <tr><td>View All Users</td><td class="check">&#10004;</td><td></td><td></td><td></td></tr>
+                    <tr><th class="group-header" colspan="5">Employee Management</th></tr>
+                    <tr><td>Create Employee</td><td></td><td class="check">&#10004;</td><td></td><td></td></tr>
+                    <tr><td>Edit Employee Details</td><td></td><td class="check">&#10004;</td><td></td><td></td></tr>
+                    <tr><td>View Employee List</td><td></td><td class="check">&#10004;</td><td></td><td></td></tr>
+                    <tr><td>Create Login for Employee</td><td></td><td class="check">&#10004;</td><td></td><td></td></tr>
+                    <tr><td>View Own Profile</td><td></td><td></td><td></td><td class="check">&#10004;</td></tr>
+                    <tr><td>Edit Own Profile</td><td></td><td></td><td></td><td class="check">&#10004;</td></tr>
+                    <tr><th class="group-header" colspan="5">Appraisal Cycle Management</th></tr>
+                    <tr><td>Create Appraisal Cycle</td><td></td><td class="check">&#10004;</td><td></td><td></td></tr>
+                    <tr><td>Edit / Close Cycle</td><td></td><td class="check">&#10004;</td><td></td><td></td></tr>
+                    <tr><td>View All Cycles</td><td></td><td class="check">&#10004;</td><td></td><td></td></tr>
+                    <tr><td>View Unassigned Employees</td><td></td><td class="check">&#10004;</td><td></td><td></td></tr>
+                    <tr><td>Assign Appraisal to Employee</td><td></td><td class="check">&#10004;</td><td></td><td></td></tr>
+                    <tr><th class="group-header" colspan="5">Appraisal Workflow</th></tr>
+                    <tr><td>View Team Appraisals</td><td></td><td></td><td class="check">&#10004;</td><td></td></tr>
+                    <tr><td>Enter Manager Comments</td><td></td><td></td><td class="check">&#10004;</td><td></td></tr>
+                    <tr><td>View Appraisal Detail</td><td></td><td></td><td class="check">&#10004;</td><td class="check">&#10004;</td></tr>
+                    <tr><td>Submit Self-Assessment Feedback</td><td></td><td></td><td></td><td class="check">&#10004;</td></tr>
+                    <tr><td>Finalize Appraisal (CTC Approval)</td><td></td><td></td><td class="check">&#10004;</td><td></td></tr>
+                    <tr><td>View Own Appraisals</td><td></td><td></td><td></td><td class="check">&#10004;</td></tr>
+                    <tr><th class="group-header" colspan="5">Reporting &amp; Analytics</th></tr>
+                    <tr><td>View Upcoming (Draft) Report</td><td></td><td class="check">&#10004;</td><td class="check">&#10004;</td><td></td></tr>
+                    <tr><td>View In-Process Report</td><td></td><td class="check">&#10004;</td><td class="check">&#10004;</td><td></td></tr>
+                    <tr><td>View Completed (Final) Report</td><td></td><td class="check">&#10004;</td><td class="check">&#10004;</td><td class="check">&#10004;</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ===== USE CASE DETAILS ===== -->
+    <div class="section" id="details">
+        <h2>Use Case Descriptions</h2>
+        <p class="subtitle">Detailed descriptions with actors, preconditions, and postconditions</p>
+
+        <h3 style="color:#E74C3C;margin:20px 0 10px">Authentication &amp; Access Control</h3>
+        <div class="uc-grid">
+            <div class="uc-card" style="border-color:#E74C3C">
+                <h4>UC-01: Login to System</h4>
+                <div class="uc-meta">
+                    <span class="uc-badge" style="background:#4A90D9">Admin</span>
+                    <span class="uc-badge" style="background:#27AE60">HR</span>
+                    <span class="uc-badge" style="background:#E67E22">Manager</span>
+                    <span class="uc-badge" style="background:#3498DB">Employee</span>
+                </div>
+                <div class="uc-desc">User enters email + password. System validates credentials, checks for lockout (3 failed attempts), and redirects to role-specific dashboard on success.</div>
+                <div class="uc-conditions"><strong>Pre:</strong> Valid account exists, not locked | <strong>Post:</strong> Session created, auth cookie stored</div>
+            </div>
+            <div class="uc-card" style="border-color:#E74C3C">
+                <h4>UC-03: Create User Account</h4>
+                <div class="uc-meta"><span class="uc-badge" style="background:#4A90D9">Admin</span></div>
+                <div class="uc-desc">Admin creates a new user with FullName, Email, Role (Admin/HR/Manager/Employee), and Password. An Employee record is auto-created and linked.</div>
+                <div class="uc-conditions"><strong>Pre:</strong> Admin logged in | <strong>Post:</strong> New user + employee record created, audit logged</div>
+            </div>
+            <div class="uc-card" style="border-color:#E74C3C">
+                <h4>UC-04/05: Lock / Unlock User</h4>
+                <div class="uc-meta"><span class="uc-badge" style="background:#4A90D9">Admin</span></div>
+                <div class="uc-desc">Admin can manually lock a user (preventing login) or unlock a locked account (resets failed login attempts to 0).</div>
+                <div class="uc-conditions"><strong>Pre:</strong> Admin logged in, user exists | <strong>Post:</strong> User lock status changed, audit logged</div>
+            </div>
+        </div>
+
+        <h3 style="color:#27AE60;margin:20px 0 10px">Employee Management</h3>
+        <div class="uc-grid">
+            <div class="uc-card" style="border-color:#27AE60">
+                <h4>UC-07: Create Employee</h4>
+                <div class="uc-meta"><span class="uc-badge" style="background:#27AE60">HR</span></div>
+                <div class="uc-desc">HR creates employee with full details (Name, Email, Department, City, Manager, PAN, etc.). Optionally creates a login account in the same form.</div>
+                <div class="uc-conditions"><strong>Pre:</strong> HR logged in | <strong>Post:</strong> Employee added, optionally with login account</div>
+            </div>
+            <div class="uc-card" style="border-color:#27AE60">
+                <h4>UC-12: Edit Own Profile</h4>
+                <div class="uc-meta"><span class="uc-badge" style="background:#3498DB">Employee</span></div>
+                <div class="uc-desc">Employee updates personal fields: Name, Email, Phone, Address, DateOfBirth, Gender, MaritalStatus. Cannot change Department or Manager.</div>
+                <div class="uc-conditions"><strong>Pre:</strong> Employee logged in | <strong>Post:</strong> Profile updated (restricted fields excluded)</div>
+            </div>
+        </div>
+
+        <h3 style="color:#8E44AD;margin:20px 0 10px">Appraisal Cycle Management</h3>
+        <div class="uc-grid">
+            <div class="uc-card" style="border-color:#8E44AD">
+                <h4>UC-17: Assign Appraisal</h4>
+                <div class="uc-meta"><span class="uc-badge" style="background:#27AE60">HR</span></div>
+                <div class="uc-desc">HR assigns an employee to an open appraisal cycle. Creates an Appraisal record in "Draft" status. Employee must have a manager assigned.</div>
+                <div class="uc-conditions"><strong>Pre:</strong> Employee has manager, cycle is open | <strong>Post:</strong> Appraisal created (Draft), notification sent</div>
+            </div>
+            <div class="uc-card" style="border-color:#8E44AD">
+                <h4>UC-14: Edit / Close Cycle</h4>
+                <div class="uc-meta"><span class="uc-badge" style="background:#27AE60">HR</span></div>
+                <div class="uc-desc">HR updates cycle Name, Start/End dates, or changes State (Open/Closed). Closing a cycle prevents new appraisal assignments.</div>
+                <div class="uc-conditions"><strong>Pre:</strong> HR logged in, cycle exists | <strong>Post:</strong> Cycle updated</div>
+            </div>
+        </div>
+
+        <h3 style="color:#F39C12;margin:20px 0 10px">Appraisal Workflow</h3>
+        <div class="uc-grid">
+            <div class="uc-card" style="border-color:#F39C12">
+                <h4>UC-19: Enter Manager Comments</h4>
+                <div class="uc-meta"><span class="uc-badge" style="background:#E67E22">Manager</span></div>
+                <div class="uc-desc">Manager provides Achievements, Gaps, and Suggestions for direct report. Status transitions from "Draft" to "ManagerCommented".</div>
+                <div class="uc-conditions"><strong>Pre:</strong> Appraisal in Draft, comments not locked | <strong>Post:</strong> Comments saved, status updated, audit logged</div>
+            </div>
+            <div class="uc-card" style="border-color:#F39C12">
+                <h4>UC-21: Submit Self-Assessment</h4>
+                <div class="uc-meta"><span class="uc-badge" style="background:#3498DB">Employee</span></div>
+                <div class="uc-desc">Employee views manager comments (read-only) and submits FeedbackText + SelfAssessment. Status transitions to "EmployeeFeedback".</div>
+                <div class="uc-conditions"><strong>Pre:</strong> Appraisal in ManagerCommented | <strong>Post:</strong> Feedback saved, status updated</div>
+            </div>
+            <div class="uc-card" style="border-color:#F39C12">
+                <h4>UC-22: Finalize Appraisal</h4>
+                <div class="uc-meta"><span class="uc-badge" style="background:#E67E22">Manager</span></div>
+                <div class="uc-desc">Manager approves CTC (Basic + DA + HRA + FoodAllowance + PF = TotalCTC), marks promotion, sets next appraisal date. Comments are locked permanently. Status becomes "Final".</div>
+                <div class="uc-conditions"><strong>Pre:</strong> Appraisal not yet finalized | <strong>Post:</strong> CTC snapshot saved, comments locked, notification sent, audit logged</div>
+            </div>
+        </div>
+
+        <h3 style="color:#3498DB;margin:20px 0 10px">Reporting</h3>
+        <div class="uc-grid">
+            <div class="uc-card" style="border-color:#3498DB">
+                <h4>UC-27/28/29: Reports (Upcoming / In-Process / Completed)</h4>
+                <div class="uc-meta">
+                    <span class="uc-badge" style="background:#27AE60">HR</span>
+                    <span class="uc-badge" style="background:#E67E22">Manager</span>
+                    <span class="uc-badge" style="background:#3498DB">Employee</span>
+                </div>
+                <div class="uc-desc">Role-filtered reports: <strong>HR</strong> sees all appraisals across the organization. <strong>Manager</strong> sees only their team's appraisals. <strong>Employee</strong> sees only their own completed appraisals.</div>
+                <div class="uc-conditions"><strong>Pre:</strong> User logged in | <strong>Post:</strong> Filtered appraisal list displayed</div>
+            </div>
+        </div>
+    </div>
+
+    <button class="print-btn" onclick="window.print()">&#128424; Print / Save as PDF</button>
+
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                fontSize: '14px',
+                fontFamily: 'Segoe UI, Tahoma, sans-serif',
+                lineColor: '#666'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis',
+                rankSpacing: 60,
+                nodeSpacing: 20,
+                padding: 15
+            },
+            stateDiagram: {
+                useMaxWidth: true
+            }
+        });
+    </script>
+</body>
+</html>

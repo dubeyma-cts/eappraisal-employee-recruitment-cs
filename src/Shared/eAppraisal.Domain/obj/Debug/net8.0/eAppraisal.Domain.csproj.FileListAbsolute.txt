@@ -1,0 +1,12 @@
+C:\Users\266319\OneDrive - Cognizant\UpgradeToArchitect\Phase_2\Use_Case_6\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Domain\bin\Debug\net8.0\eAppraisal.Domain.deps.json
+C:\Users\266319\OneDrive - Cognizant\UpgradeToArchitect\Phase_2\Use_Case_6\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Domain\bin\Debug\net8.0\eAppraisal.Domain.dll
+C:\Users\266319\OneDrive - Cognizant\UpgradeToArchitect\Phase_2\Use_Case_6\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Domain\bin\Debug\net8.0\eAppraisal.Domain.pdb
+C:\Users\266319\OneDrive - Cognizant\UpgradeToArchitect\Phase_2\Use_Case_6\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Domain\obj\Debug\net8.0\eAppraisal.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\266319\OneDrive - Cognizant\UpgradeToArchitect\Phase_2\Use_Case_6\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Domain\obj\Debug\net8.0\eAppraisal.Domain.AssemblyInfoInputs.cache
+C:\Users\266319\OneDrive - Cognizant\UpgradeToArchitect\Phase_2\Use_Case_6\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Domain\obj\Debug\net8.0\eAppraisal.Domain.AssemblyInfo.cs
+C:\Users\266319\OneDrive - Cognizant\UpgradeToArchitect\Phase_2\Use_Case_6\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Domain\obj\Debug\net8.0\eAppraisal.Domain.csproj.CoreCompileInputs.cache
+C:\Users\266319\OneDrive - Cognizant\UpgradeToArchitect\Phase_2\Use_Case_6\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Domain\obj\Debug\net8.0\eAppraisal.Domain.sourcelink.json
+C:\Users\266319\OneDrive - Cognizant\UpgradeToArchitect\Phase_2\Use_Case_6\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Domain\obj\Debug\net8.0\eAppraisal.Domain.dll
+C:\Users\266319\OneDrive - Cognizant\UpgradeToArchitect\Phase_2\Use_Case_6\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Domain\obj\Debug\net8.0\refint\eAppraisal.Domain.dll
+C:\Users\266319\OneDrive - Cognizant\UpgradeToArchitect\Phase_2\Use_Case_6\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Domain\obj\Debug\net8.0\eAppraisal.Domain.pdb
+C:\Users\266319\OneDrive - Cognizant\UpgradeToArchitect\Phase_2\Use_Case_6\eappraisal-employee-recruitment-cs\src\Shared\eAppraisal.Domain\obj\Debug\net8.0\ref\eAppraisal.Domain.dll

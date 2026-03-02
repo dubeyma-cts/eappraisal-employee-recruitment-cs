@@ -1,0 +1,31 @@
+@{ ViewData["Title"] = "HR Dashboard"; }
+<h2>HR Dashboard</h2>
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Employees</h5>
+                <p class="card-text">Manage employee records</p>
+                <a href="/HR/Employees" class="btn btn-light btn-sm">View Employees</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Appraisal Cycles</h5>
+                <p class="card-text">Manage appraisal cycles</p>
+                <a href="/HR/Cycles" class="btn btn-light btn-sm">View Cycles</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Assign Appraisals</h5>
+                <p class="card-text">Assign appraisals to employees</p>
+                <a href="/HR/UpcomingAppraisals" class="btn btn-light btn-sm">Assign</a>
+            </div>
+        </div>
+    </div>
+</div>

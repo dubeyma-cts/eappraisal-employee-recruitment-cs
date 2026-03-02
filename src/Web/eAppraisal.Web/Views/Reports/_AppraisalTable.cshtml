@@ -1,0 +1,24 @@
+@model List<AppraisalDto>
+<table class="table table-striped mt-3">
+    <thead class="table-dark">
+        <tr><th>Employee</th><th>Department</th><th>Manager</th><th>Cycle</th><th>Status</th><th>Created</th><th>Finalised</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var a in Model)
+        {
+            <tr>
+                <td>@a.EmployeeName</td>
+                <td>@a.Department</td>
+                <td>@a.ManagerName</td>
+                <td>@a.CycleName</td>
+                <td><span class="badge @(a.Status == "Final" ? "bg-success" : a.Status == "Draft" ? "bg-secondary" : "bg-warning text-dark")">@a.Status</span></td>
+                <td>@a.CreatedAt.ToString("yyyy-MM-dd")</td>
+                <td>@a.FinalisedAt?.ToString("yyyy-MM-dd")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No appraisals found.</div>
+}

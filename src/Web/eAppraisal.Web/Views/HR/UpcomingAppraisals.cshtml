@@ -1,0 +1,39 @@
+@model List<EmployeeDto>
+@{ ViewData["Title"] = "Assign Appraisals"; }
+<h2>Assign Appraisals</h2>
+<p class="text-muted">Employees below have not been assigned to any open appraisal cycle.</p>
+@if (!Model.Any())
+{
+    <div class="alert alert-success">All employees have been assigned to appraisal cycles.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr><th>Name</th><th>Department</th><th>Manager</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var e in Model)
+            {
+                <tr>
+                    <td>@e.FullName</td>
+                    <td>@e.Department</td>
+                    <td>@e.ManagerName</td>
+                    <td>
+                        @if (ViewBag.OpenCycles != null)
+                        {
+                            foreach (CycleDto c in ViewBag.OpenCycles)
+                            {
+                                <form method="post" asp-action="AssignAppraisal" class="d-inline">
+                                    <input type="hidden" name="employeeId" value="@e.Id" />
+                                    <input type="hidden" name="cycleId" value="@c.Id" />
+                                    <button type="submit" class="btn btn-sm btn-success">Assign to @c.Name</button>
+                                </form>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

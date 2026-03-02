@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Azure Multi-Layer Architecture – Detailed Explanation</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #1a1a1a; background: #fff; padding: 40px; max-width: 900px; margin: auto; }
+  h1 { font-size: 22px; color: #003366; border-bottom: 3px solid #0078d4; padding-bottom: 10px; margin-bottom: 6px; }
+  .subtitle { color: #555; font-size: 13px; margin-bottom: 24px; }
+  h2 { font-size: 16px; color: #0078d4; background: #e8f4ff; padding: 8px 12px; border-left: 4px solid #0078d4; margin: 28px 0 12px; border-radius: 2px; }
+  h3 { font-size: 14px; color: #003366; margin: 16px 0 6px; border-bottom: 1px solid #dde; padding-bottom: 3px; }
+  h4 { font-size: 13px; color: #0056a3; margin: 12px 0 4px; }
+  p { line-height: 1.7; margin-bottom: 8px; }
+  ul { margin: 6px 0 10px 20px; }
+  li { line-height: 1.7; margin-bottom: 3px; }
+  .overview-box { background: #f0f7ff; border: 1px solid #b3d4f5; border-radius: 6px; padding: 14px 18px; margin-bottom: 24px; }
+  .overview-box p { margin: 0; font-size: 13px; line-height: 1.7; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0 20px; font-size: 12px; }
+  th { background: #0078d4; color: #fff; padding: 8px 10px; text-align: left; }
+  td { padding: 7px 10px; border-bottom: 1px solid #dde; vertical-align: top; }
+  tr:nth-child(even) td { background: #f5f9ff; }
+  .abbr-tag { display: inline-block; background: #fff3cd; border: 1px solid #ffc107; border-radius: 3px; padding: 1px 5px; font-size: 11px; font-weight: bold; color: #856404; margin-right: 4px; }
+  .layer-badge { display: inline-block; background: #003366; color: #fff; border-radius: 12px; padding: 2px 10px; font-size: 11px; margin-right: 6px; }
+  .download-bar { background: #f0f7ff; border: 1px solid #b3d4f5; border-radius: 6px; padding: 12px 18px; margin-bottom: 28px; display: flex; align-items: center; gap: 14px; }
+  .btn { background: #0078d4; color: #fff; border: none; padding: 9px 22px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; }
+  .btn:hover { background: #005a9e; }
+  .btn-word { background: #1e5799; }
+  .btn-word:hover { background: #144070; }
+  .note { font-size: 11px; color: #666; }
+  @media print {
+    .download-bar { display: none; }
+    body { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="download-bar">
+  <strong>📄 Export this document:</strong>
+  <button class="btn" onclick="window.print()">🖨️ Save as PDF</button>
+  <button class="btn btn-word" onclick="downloadWord()">📝 Download as HTML File</button>
+  <span class="note">For PDF: Choose "Save as PDF" in the print dialog. For Word: open the downloaded HTML file in Microsoft Word.</span>
+</div>
+
+<h1>Azure Multi-Layer Architecture – Detailed Explanation</h1>
+<p class="subtitle">Enterprise-Grade, Multi-Region, Cloud-Native SaaS Architecture on Microsoft Azure</p>
+
+<div class="overview-box">
+  <p><strong>Overview:</strong> This architecture represents an enterprise-grade, multi-region, cloud-native SaaS (Software as a Service) application hosted on Microsoft Azure. It follows a <strong>defense-in-depth</strong> security model, <strong>high availability</strong> design, and <strong>DevSecOps</strong> principles. The architecture is organized into <strong>9 logical layers</strong>, each serving a specific purpose — from user access at the edge to data persistence, disaster recovery, and security observability.</p>
+</div>
+
+<!-- LAYER 1 -->
+<h2><span class="layer-badge">Layer 1</span> Users</h2>
+<h3>Who are they?</h3>
+<p>These are the end users of the application, distributed globally across three major geographic regions:</p>
+<ul>
+  <li><strong>APAC</strong> – Asia Pacific (countries like India, Australia, Japan, Singapore)</li>
+  <li><strong>EMEA</strong> – Europe, Middle East, and Africa</li>
+  <li><strong>AMER</strong> – Americas (North and South America)</li>
+</ul>
+<h3>Why this matters?</h3>
+<p>Having users spread globally means the architecture must handle <strong>latency</strong>, <strong>regional compliance</strong> (like GDPR in Europe), and <strong>high availability</strong> across time zones. This is why the next layer uses intelligent global traffic routing to direct users to the nearest and healthiest endpoint.</p>
+
+<!-- LAYER 2 -->
+<h2><span class="layer-badge">Layer 2</span> Edge and Ingress</h2>
+<p><strong>"Edge"</strong> refers to the outermost boundary of the cloud infrastructure — the first point where user traffic arrives before reaching the application. <strong>"Ingress"</strong> means the controlled entry point for incoming traffic.</p>
+
+<h3>Azure Front Door (AFD)</h3>
+<ul>
+  <li><span class="abbr-tag">Anycast</span> A networking technique where the same IP address is advertised from multiple geographic locations. User traffic is automatically routed to the <strong>nearest available server</strong>, reducing latency.</li>
+  <li><span class="abbr-tag">Global WAF</span> <strong>Web Application Firewall</strong> — protects against common web attacks like SQL Injection, Cross-Site Scripting (XSS), and DDoS at a global level.</li>
+  <li><strong>Why used?</strong> Acts as the primary intelligent global load balancer. A user in India is automatically routed to the nearest Azure data center.</li>
+</ul>
+
+<h3>Azure Traffic Manager</h3>
+<ul>
+  <li><span class="abbr-tag">DNS LB</span> <strong>DNS-based Load Balancer</strong> — responds to DNS queries and directs users to the right regional endpoint based on routing policy (performance, failover, geographic).</li>
+  <li><strong>Fallback:</strong> If Azure Front Door becomes unavailable, Traffic Manager acts as a <strong>backup routing mechanism</strong>.</li>
+  <li><strong>Why used?</strong> Adds an extra layer of resiliency, ensuring the application remains accessible even during partial outages.</li>
+</ul>
+
+<h3>Azure Application Gateway</h3>
+<ul>
+  <li><span class="abbr-tag">Regional WAF</span> Unlike Front Door's global WAF, this operates at the <strong>regional level</strong> providing fine-grained inspection closer to the application.</li>
+  <li><span class="abbr-tag">TLS</span> <strong>Transport Layer Security</strong> — the protocol that encrypts data in transit (the "S" in HTTPS). Application Gateway <strong>terminates TLS</strong>, meaning it decrypts incoming HTTPS traffic, inspects it, then re-encrypts before forwarding.</li>
+  <li><strong>Why used?</strong> Provides regional traffic control, URL-based routing, SSL offloading, and an additional security inspection layer close to the application.</li>
+</ul>
+
+<!-- LAYER 3 -->
+<h2><span class="layer-badge">Layer 3</span> Network and Connectivity</h2>
+<p>This layer defines the <strong>virtual networking infrastructure</strong> — the private network "plumbing" inside Azure that controls how all components communicate with each other securely.</p>
+
+<h3>Hub VNet (Hub Virtual Network)</h3>
+<ul>
+  <li><span class="abbr-tag">VNet</span> <strong>Virtual Network</strong> — Azure's isolated private network, similar to your own data center network but in the cloud.</li>
+  <li><span class="abbr-tag">Hub</span> In a <strong>Hub-and-Spoke network topology</strong>, the Hub is the central VNet that contains all shared security and connectivity services.</li>
+  <li><strong>Firewall:</strong> Azure Firewall inspects and filters all traffic flowing between networks, enforcing rules on what can talk to what.</li>
+  <li><span class="abbr-tag">ER</span> <strong>ExpressRoute</strong> — A dedicated private connection from an on-premises data center to Azure, NOT over the public internet. Used for high-security, high-bandwidth connectivity.</li>
+  <li><span class="abbr-tag">VPN</span> <strong>Virtual Private Network</strong> — An encrypted tunnel over the public internet for connecting remote offices or users to Azure.</li>
+  <li><span class="abbr-tag">DDoS</span> <strong>Distributed Denial of Service</strong> protection — Prevents attackers from overwhelming the network with massive volumes of fake traffic to make the service unavailable.</li>
+  <li><strong>Why used?</strong> The Hub acts as a <strong>central security and connectivity checkpoint</strong> for all network traffic across the entire environment.</li>
+</ul>
+
+<h3>Spoke VNet (Spoke Virtual Network)</h3>
+<ul>
+  <li>Connected to the Hub VNet via VNet Peering; contains the actual application workloads.</li>
+  <li><strong>Public AKS:</strong> The Kubernetes cluster has some public-facing components (e.g., the ingress endpoint for user traffic).</li>
+  <li><strong>Private Endpoints:</strong> Allow Azure services to be accessed over a <strong>private IP address</strong> within the VNet rather than over the public internet.</li>
+  <li><span class="abbr-tag">NAT</span> <strong>Network Address Translation</strong> — Allows resources inside the private network to initiate outbound internet connections without exposing their private IP addresses.</li>
+</ul>
+
+<h3>Private Endpoints</h3>
+<p>Specific private, isolated connections for the following services — ensuring all communication <strong>never traverses the public internet</strong>:</p>
+<ul>
+  <li><strong>SQL</strong> – Azure SQL Database</li>
+  <li><strong>Blob</strong> – Azure Blob Storage</li>
+  <li><strong>Key Vault</strong> – Secret and certificate storage</li>
+  <li><span class="abbr-tag">SMTP</span> <strong>Simple Mail Transfer Protocol</strong> – Email service endpoint</li>
+  <li><span class="abbr-tag">IdP</span> <strong>Identity Provider</strong> – Authentication service (e.g., Azure AD / Microsoft Entra ID)</li>
+  <li><span class="abbr-tag">ACR</span> <strong>Azure Container Registry</strong> – Stores Docker container images</li>
+</ul>
+
+<h3>Private DNS Zones</h3>
+<ul>
+  <li><span class="abbr-tag">DNS</span> <strong>Domain Name System</strong> — Translates human-readable names (like myapp.azure.com) into IP addresses.</li>
+  <li>Private DNS Zones resolve the <strong>private IP addresses</strong> of Private Endpoints within the VNet.</li>
+  <li><strong>Why used?</strong> Ensures that when the application calls a service name, it resolves to the private IP — never the public one — enforcing zero-trust networking.</li>
+</ul>
+
+<!-- LAYER 4 -->
+<h2><span class="layer-badge">Layer 4</span> Compute – AKS (Azure Kubernetes Service)</h2>
+<p>This is the <strong>brain of the application</strong> — where all application workloads actually run. <span class="abbr-tag">AKS</span> <strong>Azure Kubernetes Service</strong> is a fully managed Kubernetes platform. <strong>Kubernetes (K8s)</strong> is an open-source platform that automates deployment, scaling, and management of containerized applications. A <strong>container</strong> (using Docker) is a lightweight, portable unit of software that packages the application code along with all its dependencies.</p>
+
+<h3>Azure Container Registry (ACR)</h3>
+<ul>
+  <li>A <strong>private Docker image registry</strong> hosted in Azure — a secure warehouse for storing container images.</li>
+  <li><strong>Image scanning:</strong> Automatically scans container images for known security vulnerabilities (<span class="abbr-tag">CVE</span> Common Vulnerabilities and Exposures) before deployment.</li>
+  <li><strong>Why used?</strong> Public registries like Docker Hub are not suitable for enterprise security. ACR provides a private, controlled, and scanned image source.</li>
+</ul>
+
+<h3>AKS Cluster</h3>
+<ul>
+  <li><strong>Ingress Controller:</strong> Manages incoming HTTP/HTTPS traffic routing within Kubernetes — directs traffic to the correct microservice based on URL paths or hostnames.</li>
+  <li><span class="abbr-tag">CSI</span> <strong>Container Storage Interface</strong> — A standardized way for Kubernetes to interact with storage systems (like Azure Disk or Azure Files), enabling pods to mount persistent storage volumes.</li>
+  <li><span class="abbr-tag">DIDC</span> Likely refers to <strong>Distributed Identity / Distributed Configuration</strong> or workload identity management — controls how applications securely authenticate to Azure services without storing credentials in code.</li>
+</ul>
+
+<h3>NodePool: System</h3>
+<ul>
+  <li>A <strong>Node</strong> is a virtual machine that runs containers. A <strong>NodePool</strong> is a group of nodes with the same configuration.</li>
+  <li>Runs <strong>kube-system add-ons</strong> — critical Kubernetes system components like CoreDNS (internal DNS), metrics server, etc.</li>
+  <li><strong>Why used?</strong> Separating system workloads from application workloads ensures stability — a misbehaving application won't starve system-critical services of resources.</li>
+</ul>
+
+<h3>NodePool: App (Web, API)</h3>
+<ul>
+  <li><span class="abbr-tag">HPA</span> <strong>Horizontal Pod Autoscaler</strong> — Automatically increases or decreases the number of running application instances (pods) based on CPU/memory usage or custom metrics.</li>
+  <li><span class="abbr-tag">PDB</span> <strong>Pod Disruption Budget</strong> — Ensures a minimum number of pods remain available during planned maintenance or disruptions, preventing full service downtime.</li>
+  <li><strong>Probes:</strong> Health checks (Liveness, Readiness, Startup) that Kubernetes uses to know if a container is healthy and ready to serve traffic.</li>
+  <li><strong>Why used?</strong> Runs user-facing Web UI and API services that need auto-scaling and high availability guarantees.</li>
+</ul>
+
+<h3>NodePool: Worker (Export, Notification) – Isolated</h3>
+<ul>
+  <li>Runs <strong>background processing jobs</strong> like generating data exports and sending notifications.</li>
+  <li><strong>Isolated:</strong> These nodes may have different VM sizes (more CPU/memory) and are isolated so heavy batch jobs don't impact the user-facing application nodes.</li>
+  <li><strong>Why used?</strong> Export jobs can be very resource-intensive. Isolation prevents them from degrading the performance of the Web/API services.</li>
+</ul>
+
+<!-- LAYER 5 -->
+<h2><span class="layer-badge">Layer 5</span> Application Components (Microservices)</h2>
+<p>These are the individual <strong>microservices</strong> — independently deployable services that together make up the full application. Each service has a single responsibility.</p>
+
+<h3>Web UI</h3>
+<p>The <strong>front-end application</strong> that users interact with through their browser. Typically built with React, Angular, or Vue.js and served as a container from the App NodePool.</p>
+
+<h3>API Service</h3>
+<ul>
+  <li><span class="abbr-tag">RBAC</span> <strong>Role-Based Access Control</strong> — Controls what actions users can perform based on their assigned roles (e.g., Admin, Editor, Read-Only).</li>
+  <li><strong>Masking:</strong> Sensitive data such as <span class="abbr-tag">PII</span> (Personally Identifiable Information) is masked or redacted in API responses based on user permissions.</li>
+  <li><strong>Workflow:</strong> Manages multi-step business processes and orchestrates calls between other services.</li>
+  <li><strong>Why used?</strong> The central API is the gateway to all business logic, enforcing security policies and business rules for every request.</li>
+</ul>
+
+<h3>Audit Forwarder</h3>
+<ul>
+  <li><strong>Structured events:</strong> Captures and forwards all user and system actions as structured log events (JSON format) for compliance and forensic purposes.</li>
+  <li><strong>Why used?</strong> Regulations like GDPR, SOC2, and ISO27001 require detailed, tamper-evident audit trails of all data access and modification events.</li>
+</ul>
+
+<h3>Export Service</h3>
+<ul>
+  <li><strong>Policy-aware:</strong> Checks data access and export policies before allowing any data to be exported.</li>
+  <li><strong>Signed URLs:</strong> Generates temporary, cryptographically signed URLs that allow users to securely download export files from Blob Storage without needing direct Azure credentials.</li>
+  <li><strong>Why used?</strong> Handles the heavy lifting of data export operations in a secure, policy-enforced, and auditable way.</li>
+</ul>
+
+<h3>Notification Service</h3>
+<ul>
+  <li><strong>Outbox pattern:</strong> A reliability pattern where notifications are first saved to a database "outbox" table before being sent, ensuring no notifications are lost even if the service crashes mid-operation.</li>
+  <li><strong>Retry:</strong> Automatically retries failed notification deliveries with exponential backoff.</li>
+  <li><span class="abbr-tag">DLQ</span> <strong>Dead Letter Queue</strong> — Notifications that repeatedly fail to deliver are moved here for investigation, rather than being silently dropped.</li>
+  <li><strong>Why used?</strong> Ensures reliable, at-least-once delivery of notifications (emails, SMS, push notifications) even in the face of transient failures.</li>
+</ul>
+
+<h3>Queue or Service Bus</h3>
+<ul>
+  <li><strong>Azure Service Bus:</strong> An enterprise messaging service enabling <strong>asynchronous communication</strong> between microservices.</li>
+  <li><strong>Why used?</strong> Decouples services — the API doesn't need to wait for Export or Notification services to finish. It publishes a message to the queue and moves on, dramatically improving responsiveness and system resilience.</li>
+</ul>
+
+<!-- LAYER 6 -->
+<h2><span class="layer-badge">Layer 6</span> Data and Secrets</h2>
+<p>The <strong>persistence layer</strong> — where all application data and configuration secrets are stored securely.</p>
+
+<h3>Azure Key Vault</h3>
+<ul>
+  <li>Azure's secure <strong>secret management service</strong> for storing database passwords, API keys, TLS certificates, and encryption keys.</li>
+  <li><strong>Why used?</strong> Secrets should never be stored in code or configuration files. Key Vault ensures secrets are encrypted at rest, access-controlled via RBAC, and fully audited.</li>
+</ul>
+
+<h3>Azure Blob Storage</h3>
+<ul>
+  <li><span class="abbr-tag">Blob</span> <strong>Binary Large Object</strong> — used to store unstructured data like files, images, exports, and backups.</li>
+  <li>Stores export files and daily logical database backups.</li>
+  <li><strong>Why used?</strong> Cost-effective, highly scalable, and durable storage for large files that don't belong in a relational database.</li>
+</ul>
+
+<h3>Azure SQL Database – Primary (Zone Redundant)</h3>
+<ul>
+  <li>A fully managed <strong>relational database</strong> based on Microsoft SQL Server.</li>
+  <li><strong>Zone Redundant:</strong> Replicated across multiple <strong>Availability Zones</strong> — physically separate data centers within the same Azure region. If one data center fails, the database automatically fails over with <strong>zero data loss and near-zero downtime</strong>.</li>
+  <li><strong>Why used?</strong> Provides high availability within a single region.</li>
+</ul>
+
+<h3>Azure SQL Database – Secondary (Geo-Secondary)</h3>
+<ul>
+  <li>A continuously updated <strong>read replica</strong> of the primary database, located in a <strong>different Azure region</strong> (e.g., Primary in East US, Secondary in West Europe).</li>
+  <li><strong>Geo-secondary:</strong> Continuously replicates data asynchronously from the primary. If the entire primary region goes down, traffic can be failed over to this secondary.</li>
+  <li><strong>Why used?</strong> Provides <strong>disaster recovery across geographic regions</strong> — critical for business continuity planning.</li>
+</ul>
+
+<h3>Failover Group Listeners</h3>
+<ul>
+  <li><strong>Read-Write Listener:</strong> Always points to the active <strong>primary</strong> database. Applications use this for all write operations.</li>
+  <li><strong>Read-Only Listener:</strong> Always points to the <strong>secondary</strong> database, offloading read-heavy queries and distributing the load.</li>
+  <li><strong>Why used?</strong> Applications connect to the listener endpoint, not the database server directly. During a failover, the listener automatically re-points to the new primary — <strong>no application code changes required</strong>.</li>
+</ul>
+
+<!-- LAYER 7 -->
+<h2><span class="layer-badge">Layer 7</span> Backup and Disaster Recovery (DR)</h2>
+<p>This layer ensures data can be recovered from <strong>any failure scenario</strong>, from accidental deletion to complete regional outages.</p>
+
+<h3>Backup Jobs</h3>
+<ul>
+  <li>Automated daily <strong>logical exports</strong> of database data (e.g., SQL BACPAC files stored in Blob Storage).</li>
+  <li><strong>Alerting:</strong> Sends alerts to operations teams if any backup job fails, ensuring backup health is always monitored.</li>
+  <li><strong>Why used?</strong> Provides an additional, application-controlled backup on top of Azure's built-in database backups for extra assurance.</li>
+</ul>
+
+<h3>PITR – Point-in-Time Restore</h3>
+<ul>
+  <li><strong>7–35 days:</strong> Azure SQL automatically retains transaction logs for up to 35 days, allowing restoration of the database to <strong>any specific moment</strong> within that window.</li>
+  <li><strong>Why used?</strong> If someone accidentally deletes data or runs a bad update query, you can restore to exactly 5 minutes before the mistake happened — with surgical precision.</li>
+</ul>
+
+<h3>Long-Term Retention (LTR)</h3>
+<ul>
+  <li>Stores database backups for extended periods, far beyond the 35-day PITR window — <strong>up to 10 years</strong>.</li>
+  <li><strong>Why used?</strong> Required for <strong>regulatory compliance</strong> in industries like healthcare (HIPAA), finance (SOX), and government where data must be provably retained for years.</li>
+</ul>
+
+<h3>Geo-Restore</h3>
+<ul>
+  <li>The ability to restore a database backup to a <strong>completely different Azure region</strong> from geo-redundant backup copies.</li>
+  <li><strong>Why used?</strong> If an entire Azure region is lost and even the geo-secondary is affected, the database can be rebuilt in a third region from these geographically distributed backup copies.</li>
+</ul>
+
+<!-- LAYER 8 -->
+<h2><span class="layer-badge">Layer 8</span> Observability and Security</h2>
+<p><strong>Observability</strong> is the ability to understand what is happening inside a system from external signals (metrics, logs, traces). This layer is the "eyes, ears, and immune system" of the entire architecture.</p>
+
+<h3>Azure Monitor</h3>
+<ul>
+  <li>Collects <strong>metrics</strong> (CPU usage, request count, error rate, latency) and fires <strong>alerts</strong> from all Azure resources.</li>
+  <li><strong>Why used?</strong> Gives engineers a real-time view of system health and triggers automated responses (scaling, alerting on-call teams) when thresholds are breached.</li>
+</ul>
+
+<h3>Log Analytics</h3>
+<ul>
+  <li>A centralized repository and powerful query engine for <strong>logs</strong> from all services, infrastructure, and security tools.</li>
+  <li>Uses <span class="abbr-tag">KQL</span> <strong>Kusto Query Language</strong> to search and analyze log data.</li>
+  <li><strong>Why used?</strong> Aggregating logs in one place makes debugging, performance analysis, and security investigation significantly faster and more reliable.</li>
+</ul>
+
+<h3>Defender / Policies</h3>
+<ul>
+  <li><strong>Policy-as-code:</strong> Infrastructure and security policies are defined in code using Azure Policy, ensuring all resources automatically comply with organizational and regulatory standards.</li>
+  <li><strong>Image scan:</strong> Scans container images for <span class="abbr-tag">CVEs</span> (Common Vulnerabilities and Exposures) both before and after deployment.</li>
+  <li><strong>Admission control:</strong> A Kubernetes mechanism that validates or blocks resource creation requests. For example, automatically blocking deployment of container images that haven't passed security scans.</li>
+  <li><strong>Why used?</strong> Shifts security <strong>left</strong> — catching vulnerabilities early in the development pipeline rather than discovering them in production.</li>
+</ul>
+
+<h3>SIEM / Microsoft Sentinel</h3>
+<ul>
+  <li><span class="abbr-tag">SIEM</span> <strong>Security Information and Event Management</strong> — A platform that aggregates and analyzes security events across the entire environment.</li>
+  <li><span class="abbr-tag">SOAR</span> <strong>Security Orchestration, Automation, and Response</strong> — Automates responses to detected threats.</li>
+  <li><strong>Microsoft Sentinel:</strong> Azure's cloud-native SIEM+SOAR platform that uses AI/ML to detect sophisticated threats and can automatically respond to incidents.</li>
+  <li><strong>Why used?</strong> Provides a single pane of glass for security operations, detecting coordinated attacks that individual tools might miss in isolation.</li>
+</ul>
+
+<!-- LAYER 9 -->
+<h2><span class="layer-badge">Layer 9</span> CI/CD and Dev Experience</h2>
+<p>This layer automates the entire process of going from developer code to a running, secure application in production.</p>
+<ul>
+  <li><span class="abbr-tag">CI</span> <strong>Continuous Integration</strong> — Automatically building and testing code every time a developer commits changes.</li>
+  <li><span class="abbr-tag">CD</span> <strong>Continuous Deployment</strong> — Automatically deploying tested, verified code to production environments.</li>
+</ul>
+
+<h3>Source Repo (Source Repository)</h3>
+<ul>
+  <li>The <strong>Git repository</strong> (e.g., GitHub, Azure DevOps Repos) where all application source code and infrastructure-as-code is stored and version-controlled.</li>
+  <li><strong>Why used?</strong> Version control ensures every change is tracked, reviewable by peers, and fully reversible — essential for team collaboration and auditability.</li>
+</ul>
+
+<h3>Pipeline (Build, Scan, Deploy)</h3>
+<ul>
+  <li><strong>Build:</strong> Compiles source code, runs automated unit and integration tests, and creates a Docker container image.</li>
+  <li><strong>Scan:</strong> Runs multiple security scans — <span class="abbr-tag">SAST</span> (Static Application Security Testing), dependency vulnerability checks, and container image scanning against ACR.</li>
+  <li><strong>Deploy:</strong> Pushes the verified, scanned image to ACR and deploys it to AKS using tools like Helm (package manager for Kubernetes) or Flux (GitOps continuous deployment tool).</li>
+  <li><strong>Why used?</strong> Automation ensures every deployment is consistent, fully tested, and security-verified. Eliminates manual, error-prone deployment processes.</li>
+</ul>
+
+<!-- SUMMARY TABLE -->
+<h2>Key Architectural Patterns Summary</h2>
+<table>
+  <tr>
+    <th>Pattern</th>
+    <th>What it means</th>
+    <th>Where applied in this architecture</th>
+  </tr>
+  <tr>
+    <td><strong>Defense in Depth</strong></td>
+    <td>Multiple independent security layers so a single failure doesn't compromise the system</td>
+    <td>Global WAF → Regional WAF → Firewall → Private Endpoints → RBAC → Admission Control</td>
+  </tr>
+  <tr>
+    <td><strong>Zero Trust Networking</strong></td>
+    <td>Nothing is trusted by default; every request is verified and all traffic is encrypted</td>
+    <td>Private Endpoints, Private DNS, mTLS between services, RBAC on all resources</td>
+  </tr>
+  <tr>
+    <td><strong>Hub-and-Spoke Topology</strong></td>
+    <td>Centralized shared services (Hub) with isolated workload networks (Spokes)</td>
+    <td>Hub VNet (Firewall, ER/VPN) connected to Spoke VNet (AKS workloads)</td>
+  </tr>
+  <tr>
+    <td><strong>Microservices Architecture</strong></td>
+    <td>Application split into small, independently deployable services</td>
+    <td>Web UI, API Service, Export Service, Notification Service, Audit Forwarder</td>
+  </tr>
+  <tr>
+    <td><strong>GitOps / DevSecOps</strong></td>
+    <td>Security and operations embedded into every stage of the development pipeline</td>
+    <td>Source Repo → Pipeline (scan) → ACR (image scan) → AKS (admission control)</td>
+  </tr>
+  <tr>
+    <td><strong>Active-Passive DR</strong></td>
+    <td>Primary region actively serves traffic; secondary region ready to take over on failure</td>
+    <td>Primary Azure SQL (zone-redundant) + Geo-Secondary SQL in another region</td>
+  </tr>
+  <tr>
+    <td><strong>Async Messaging</strong></td>
+    <td>Services communicate via messages rather than direct calls, improving resilience</td>
+    <td>Azure Service Bus between API Service and Worker NodePool services</td>
+  </tr>
+  <tr>
+    <td><strong>Outbox Pattern</strong></td>
+    <td>Messages saved to DB before sending, guaranteeing reliable delivery even on crashes</td>
+    <td>Notification Service outbox ensuring no notifications are lost</td>
+  </tr>
+  <tr>
+    <td><strong>Observability-First</strong></td>
+    <td>Built-in monitoring, logging, and alerting across all layers from day one</td>
+    <td>Azure Monitor, Log Analytics, Microsoft Sentinel integrated throughout all layers</td>
+  </tr>
+</table>
+
+<!-- ABBREVIATIONS GLOSSARY -->
+<h2>Complete Abbreviations Glossary</h2>
+<table>
+  <tr><th>Abbreviation</th><th>Full Form</th><th>Brief Description</th></tr>
+  <tr><td>AKS</td><td>Azure Kubernetes Service</td><td>Managed Kubernetes container orchestration platform on Azure</td></tr>
+  <tr><td>ACR</td><td>Azure Container Registry</td><td>Private Docker container image registry on Azure</td></tr>
+  <tr><td>AFD</td><td>Azure Front Door</td><td>Global load balancer and WAF with anycast routing</td></tr>
+  <tr><td>APAC</td><td>Asia Pacific</td><td>Geographic region covering Asia and Pacific countries</td></tr>
+  <tr><td>AMER</td><td>Americas</td><td>Geographic region covering North and South America</td></tr>
+  <tr><td>EMEA</td><td>Europe, Middle East and Africa</td><td>Geographic region covering EMEA countries</td></tr>
+  <tr><td>RBAC</td><td>Role-Based Access Control</td><td>Permission system based on user roles</td></tr>
+  <tr><td>WAF</td><td>Web Application Firewall</td><td>Protects web apps from common exploits and vulnerabilities</td></tr>
+  <tr><td>TLS</td><td>Transport Layer Security</td><td>Cryptographic protocol for encrypted communication (HTTPS)</td></tr>
+  <tr><td>DNS</td><td>Domain Name System</td><td>Translates domain names to IP addresses</td></tr>
+  <tr><td>VNet</td><td>Virtual Network</td><td>Isolated private network within Azure</td></tr>
+  <tr><td>VPN</td><td>Virtual Private Network</td><td>Encrypted tunnel for secure remote connectivity</td></tr>
+  <tr><td>ER</td><td>ExpressRoute</td><td>Dedicated private connection from on-premises to Azure</td></tr>
+  <tr><td>DDoS</td><td>Distributed Denial of Service</td><td>Attack that overwhelms systems with traffic; Azure DDoS provides protection</td></tr>
+  <tr><td>NAT</td><td>Network Address Translation</td><td>Maps private IPs to public IPs for outbound connectivity</td></tr>
+  <tr><td>IdP</td><td>Identity Provider</td><td>Authentication service (e.g., Azure AD / Microsoft Entra ID)</td></tr>
+  <tr><td>CSI</td><td>Container Storage Interface</td><td>Standardized interface for container-to-storage communication</td></tr>
+  <tr><td>HPA</td><td>Horizontal Pod Autoscaler</td><td>Automatically scales Kubernetes pods based on load</td></tr>
+  <tr><td>PDB</td><td>Pod Disruption Budget</td><td>Ensures minimum pod availability during disruptions</td></tr>
+  <tr><td>DLQ</td><td>Dead Letter Queue</td><td>Queue for messages that repeatedly fail processing</td></tr>
+  <tr><td>PII</td><td>Personally Identifiable Information</td><td>Data that can identify an individual (name, email, ID, etc.)</td></tr>
+  <tr><td>PITR</td><td>Point-in-Time Restore</td><td>Ability to restore a database to a specific past moment</td></tr>
+  <tr><td>LTR</td><td>Long-Term Retention</td><td>Storing backups for extended compliance-driven periods</td></tr>
+  <tr><td>DR</td><td>Disaster Recovery</td><td>Strategy and tools for recovering from catastrophic failures</td></tr>
+  <tr><td>SIEM</td><td>Security Information and Event Management</td><td>Centralized security event aggregation and threat detection</td></tr>
+  <tr><td>SOAR</td><td>Security Orchestration, Automation and Response</td><td>Automated threat response platform</td></tr>
+  <tr><td>CVE</td><td>Common Vulnerabilities and Exposures</td><td>Publicly known cybersecurity vulnerabilities</td></tr>
+  <tr><td>KQL</td><td>Kusto Query Language</td><td>Query language used in Azure Log Analytics and Sentinel</td></tr>
+  <tr><td>CI/CD</td><td>Continuous Integration / Continuous Deployment</td><td>Automated pipeline for building, testing, and deploying code</td></tr>
+  <tr><td>SAST</td><td>Static Application Security Testing</td><td>Analyzing source code for security vulnerabilities without execution</td></tr>
+  <tr><td>SMTP</td><td>Simple Mail Transfer Protocol</td><td>Protocol for sending email messages</td></tr>
+  <tr><td>DIDC</td><td>Distributed Identity / Distributed Configuration</td><td>Workload identity and config management in Kubernetes</td></tr>
+  <tr><td>SaaS</td><td>Software as a Service</td><td>Cloud-hosted software delivered over the internet on subscription</td></tr>
+  <tr><td>GDPR</td><td>General Data Protection Regulation</td><td>EU data privacy and protection regulation</td></tr>
+  <tr><td>HIPAA</td><td>Health Insurance Portability and Accountability Act</td><td>US healthcare data privacy regulation</td></tr>
+  <tr><td>SOX</td><td>Sarbanes-Oxley Act</td><td>US financial reporting and data integrity regulation</td></tr>
+</table>
+
+<br>
+<p style="text-align:center; color:#999; font-size:11px; border-top:1px solid #dde; padding-top:12px;">
+  Document generated from architecture diagram analysis &nbsp;|&nbsp; Azure Multi-Layer Architecture &nbsp;|&nbsp; March 2026
+</p>
+
+<script>
+function downloadWord() {
+  const html = document.documentElement.outerHTML;
+  const blob = new Blob([html], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'Azure_Architecture_Explanation.html';
+  a.click();
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eAppraisal - Architecture Diagram</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            color: #333;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a237e, #283593);
+            color: white;
+            padding: 20px 40px;
+            text-align: center;
+        }
+        .header h1 { font-size: 28px; margin-bottom: 5px; }
+        .header p { font-size: 14px; opacity: 0.85; }
+        .diagram-container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .mermaid {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin: 20px auto;
+            max-width: 1200px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 1px solid rgba(0,0,0,0.2);
+        }
+        .info-section {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .info-section table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .info-section th {
+            background: #1a237e;
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 14px;
+        }
+        .info-section td {
+            padding: 10px 16px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+        .info-section tr:last-child td { border-bottom: none; }
+        .info-section tr:hover td { background: #f8f9ff; }
+        .flow-box {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .flow-box h3 { margin-bottom: 15px; color: #1a237e; }
+        .flow-arrow {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0;
+            justify-content: center;
+        }
+        .flow-step {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+            text-align: center;
+            min-width: 130px;
+        }
+        .flow-connector {
+            font-size: 22px;
+            color: #666;
+            padding: 0 4px;
+        }
+        .print-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1a237e;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+        .print-btn:hover { background: #283593; }
+        @media print {
+            .print-btn { display: none; }
+            body { background: white; }
+            .header { background: #1a237e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>eAppraisal System - Layered Architecture Diagram</h1>
+        <p>Nano Technologies Pvt. Ltd. | Clean Architecture | .NET 8 | 5 Projects</p>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#4A90D9"></div> Users</div>
+        <div class="legend-item"><div class="legend-color" style="background:#68C5A5"></div> Presentation Layer (Web)</div>
+        <div class="legend-item"><div class="legend-color" style="background:#F5A623"></div> API & Orchestration Layer</div>
+        <div class="legend-item"><div class="legend-color" style="background:#9B59B6"></div> Domain Services Layer</div>
+        <div class="legend-item"><div class="legend-color" style="background:#E67E22"></div> Cross-Cutting Layer</div>
+        <div class="legend-item"><div class="legend-color" style="background:#95A5A6"></div> External Services</div>
+        <div class="legend-item"><div class="legend-color" style="background:#3498DB"></div> Data Layer</div>
+        <div class="legend-item"><div class="legend-color" style="background:#F39C12"></div> Shared Domain</div>
+    </div>
+
+    <div class="diagram-container">
+        <div class="mermaid">
+graph TB
+    subgraph USERS["USERS (Browser Clients)"]
+        direction LR
+        Admin["&#128100; Admin"]
+        HR["&#128100; HR"]
+        Manager["&#128100; Manager"]
+        Employee["&#128100; Employee"]
+    end
+
+    subgraph PRESENTATION["PRESENTATION LAYER &mdash; eAppraisal.Web (Port 5200)"]
+        direction TB
+        subgraph WebControllers["MVC Controllers"]
+            AccountCtrl["AccountController<br/>Login | Logout"]
+            AdminCtrl["AdminController<br/>Users | CreateUser<br/>Lock | Unlock"]
+            HRCtrl["HRController<br/>Employees | Cycles<br/>Assign Appraisals"]
+            ManagerCtrl["ManagerController<br/>MyAppraisals | Comments<br/>Finalize"]
+            EmployeeCtrl["EmployeeController<br/>MyProfile | EditProfile<br/>MyAppraisal | Feedback"]
+            ReportsCtrl["ReportsController<br/>Upcoming | InProcess<br/>Completed"]
+        end
+        ApiClient["ApiClient<br/>(HTTP Client + Session Cookie Forwarding)"]
+    end
+
+    subgraph API["API & ORCHESTRATION LAYER &mdash; eAppraisal.Api (Port 5100)"]
+        direction TB
+        subgraph ApiControllers["REST API Controllers"]
+            AuthAPI["AuthController<br/>POST login | POST register<br/>POST logout | GET me"]
+            AdminAPI["AdminController<br/>GET users<br/>POST lock | POST unlock"]
+            EmployeesAPI["EmployeesController<br/>GET all | GET by-id<br/>POST create | PUT update"]
+            CyclesAPI["CyclesController<br/>GET all | GET open<br/>POST create | PUT update"]
+            AppraisalsAPI["AppraisalsController<br/>GET by-manager | by-employee<br/>POST assign | comment<br/>POST feedback | finalize"]
+        end
+        Middleware["Cookie Auth + Role Authorization"]
+    end
+
+    subgraph DOMAIN["DOMAIN SERVICES LAYER &mdash; eAppraisal.Application"]
+        direction TB
+        subgraph Core["Core Services"]
+            AuthSvc["AuthService<br/>Login | Logout | Register<br/>Lock | Unlock"]
+            EmpSvc["EmployeeService<br/>CRUD + Profile Updates"]
+            CycleSvc["CycleService<br/>CRUD + Open Cycles<br/>Unassigned Employees"]
+        end
+        subgraph Appraisal["Appraisal Services"]
+            WorkflowSvc["AppraisalWorkflow<br/>Service<br/>Assign | Finalize"]
+            CommentsSvc["CommentsService<br/>Manager Comments<br/>Employee Feedback<br/>Lock Comments"]
+            CtcSvc["CtcService<br/>CTC Snapshot<br/>Create | Update"]
+            ReportingSvc["ReportingService<br/>By Manager | By Employee<br/>By Status | Detail"]
+        end
+        subgraph Policy["Policy & Rules"]
+            EligibilitySvc["EligibilityRules<br/>Service<br/>Assignment | Comment<br/>Feedback | Finalization"]
+            MaskingEngine["PolicyMasking<br/>Engine<br/>PAN Masking by Role"]
+        end
+    end
+
+    subgraph CROSSCUTTING["PLATFORM & CROSS-CUTTING &mdash; eAppraisal.Infrastructure"]
+        direction TB
+        AuditSvc["AuditLogCollector<br/>Entity change tracking"]
+        NotifSvc["NotificationService<br/>Event notifications"]
+        ConfigSvc["ConfigurationService<br/>App settings wrapper"]
+        ObsSvc["ObservabilityAgent<br/>Structured logging"]
+        RateLimiter["InMemoryRateLimiter<br/>Sliding window throttle"]
+        FeatureFlags["FeatureFlagService<br/>Config-based flags"]
+    end
+
+    subgraph EXTERNAL["EXTERNAL SERVICES"]
+        direction LR
+        IdentitySvc["IdentityUserStore<br/>ASP.NET Core Identity<br/>Auth + Password Hashing"]
+        SmtpGateway["LocalSmtpGateway<br/>SMTP Stub<br/>Email Logging"]
+        HrisSvc["StubHrisPayroll<br/>Service<br/>Mock Payroll Data"]
+    end
+
+    subgraph DATA["DATA LAYER"]
+        DbContext["AppDbContext<br/>(EF Core 8)"]
+        DB[("SQLite &mdash; eappraisal.db<br/>Employees | AppraisalCycles<br/>Appraisals | Comments<br/>EmployeeFeedbacks | CtcSnapshots<br/>StageHistories | AuditEvents<br/>Notifications | AspNetUsers")]
+    end
+
+    Admin -->|":5200"| AdminCtrl
+    HR -->|":5200"| HRCtrl
+    Manager -->|":5200"| ManagerCtrl
+    Employee -->|":5200"| EmployeeCtrl
+    USERS -->|"Login"| AccountCtrl
+    USERS -->|"Reports"| ReportsCtrl
+
+    WebControllers --> ApiClient
+    ApiClient -->|"HTTP :5100<br/>JSON + Cookie"| ApiControllers
+
+    AuthAPI --> AuthSvc
+    AdminAPI --> AuthSvc
+    EmployeesAPI --> EmpSvc
+    EmployeesAPI --> MaskingEngine
+    CyclesAPI --> CycleSvc
+    AppraisalsAPI --> WorkflowSvc
+    AppraisalsAPI --> CommentsSvc
+    AppraisalsAPI --> ReportingSvc
+
+    WorkflowSvc --> CtcSvc
+    WorkflowSvc --> CommentsSvc
+    WorkflowSvc -.-> AuditSvc
+    WorkflowSvc -.-> NotifSvc
+    CommentsSvc -.-> AuditSvc
+    AuthSvc --> IdentitySvc
+    AuthSvc -.-> AuditSvc
+
+    DOMAIN --> DbContext
+    AuditSvc --> DbContext
+    NotifSvc --> DbContext
+    IdentitySvc --> DbContext
+    DbContext --> DB
+
+    classDef userStyle fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px
+    classDef presStyle fill:#68C5A5,stroke:#3D8B6B,color:#000,stroke-width:2px
+    classDef apiStyle fill:#F5A623,stroke:#C47D12,color:#000,stroke-width:2px
+    classDef domainStyle fill:#9B59B6,stroke:#6C3483,color:#fff,stroke-width:2px
+    classDef crossStyle fill:#E67E22,stroke:#A35C14,color:#fff,stroke-width:2px
+    classDef extStyle fill:#95A5A6,stroke:#617172,color:#000,stroke-width:2px
+    classDef dataStyle fill:#3498DB,stroke:#2171A9,color:#fff,stroke-width:2px
+
+    class Admin,HR,Manager,Employee userStyle
+    class AccountCtrl,AdminCtrl,HRCtrl,ManagerCtrl,EmployeeCtrl,ReportsCtrl,ApiClient presStyle
+    class AuthAPI,AdminAPI,EmployeesAPI,CyclesAPI,AppraisalsAPI,Middleware apiStyle
+    class AuthSvc,EmpSvc,CycleSvc,WorkflowSvc,CommentsSvc,CtcSvc,ReportingSvc,EligibilitySvc,MaskingEngine domainStyle
+    class AuditSvc,NotifSvc,ConfigSvc,ObsSvc,RateLimiter,FeatureFlags crossStyle
+    class IdentitySvc,SmtpGateway,HrisSvc extStyle
+    class DbContext,DB dataStyle
+        </div>
+    </div>
+
+    <div class="flow-box">
+        <h3>Data Flow (End-to-End)</h3>
+        <div class="flow-arrow">
+            <div class="flow-step" style="background:#4A90D9">Browser<br/>(User)</div>
+            <div class="flow-connector">&#10145;</div>
+            <div class="flow-step" style="background:#68C5A5;color:#000">eAppraisal.Web<br/>(MVC :5200)</div>
+            <div class="flow-connector">&#10145;</div>
+            <div class="flow-step" style="background:#68C5A5;color:#000">ApiClient<br/>(HTTP+Cookie)</div>
+            <div class="flow-connector">&#10145;</div>
+            <div class="flow-step" style="background:#F5A623;color:#000">eAppraisal.Api<br/>(REST :5100)</div>
+            <div class="flow-connector">&#10145;</div>
+            <div class="flow-step" style="background:#9B59B6">Domain<br/>Services</div>
+            <div class="flow-connector">&#10145;</div>
+            <div class="flow-step" style="background:#E67E22">Cross-Cutting<br/>(Audit/Notify)</div>
+            <div class="flow-connector">&#10145;</div>
+            <div class="flow-step" style="background:#3498DB">EF Core<br/>&#10145; SQLite</div>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <table>
+            <thead>
+                <tr><th>Layer</th><th>Project</th><th>Port</th><th>Components</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Presentation</strong></td><td>eAppraisal.Web</td><td>5200</td><td>6 MVC Controllers, Razor Views, ApiClient</td></tr>
+                <tr><td><strong>API & Orchestration</strong></td><td>eAppraisal.Api</td><td>5100</td><td>5 REST Controllers, Cookie Auth Middleware</td></tr>
+                <tr><td><strong>Domain Services</strong></td><td>eAppraisal.Application</td><td>-</td><td>9 Services (3 Core + 4 Appraisal + 2 Policy)</td></tr>
+                <tr><td><strong>Cross-Cutting</strong></td><td>eAppraisal.Infrastructure</td><td>-</td><td>6 Platform Services (Audit, Notify, Config, Logging, RateLimit, Flags)</td></tr>
+                <tr><td><strong>External Services</strong></td><td>eAppraisal.Infrastructure</td><td>-</td><td>3 Integrations (Identity, SMTP Stub, HRIS Stub)</td></tr>
+                <tr><td><strong>Data</strong></td><td>eAppraisal.Infrastructure</td><td>-</td><td>EF Core 8 + SQLite (11 Tables)</td></tr>
+                <tr><td><strong>Shared Domain</strong></td><td>eAppraisal.Domain</td><td>-</td><td>9 Entities, 7 DTOs, 18 Interfaces</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button class="print-btn" onclick="window.print()">&#128424; Print / Save as PDF</button>
+
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                fontSize: '14px',
+                fontFamily: 'Segoe UI, Tahoma, sans-serif'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis',
+                rankSpacing: 60,
+                nodeSpacing: 30
+            }
+        });
+    </script>
+</body>
+</html>

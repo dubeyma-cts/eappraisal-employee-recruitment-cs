@@ -1,0 +1,5 @@
+@model List<AppraisalDto>
+@{ ViewData["Title"] = "Completed Appraisals"; }
+<h2>Completed Appraisals</h2>
+@await Html.PartialAsync("_AppraisalTable", Model)
+<a href="/Reports" class="btn btn-secondary mt-3">Back to Reports</a>

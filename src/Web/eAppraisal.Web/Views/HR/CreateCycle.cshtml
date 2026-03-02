@@ -1,0 +1,23 @@
+@model CycleDto
+@{ ViewData["Title"] = "New Appraisal Cycle"; }
+<h2>New Appraisal Cycle</h2>
+<form method="post" class="mt-3">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="col-md-3 mb-3">
+            <label asp-for="StartDate" class="form-label"></label>
+            <input asp-for="StartDate" class="form-control" type="date" />
+        </div>
+        <div class="col-md-3 mb-3">
+            <label asp-for="EndDate" class="form-label"></label>
+            <input asp-for="EndDate" class="form-control" type="date" />
+        </div>
+    </div>
+    <input type="hidden" asp-for="State" value="Open" />
+    <button type="submit" class="btn btn-primary">Create Cycle</button>
+    <a href="/HR/Cycles" class="btn btn-secondary">Cancel</a>
+</form>

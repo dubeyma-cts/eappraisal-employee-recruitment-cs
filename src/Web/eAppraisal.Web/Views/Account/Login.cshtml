@@ -1,0 +1,49 @@
+@model LoginDto
+@{
+    ViewData["Title"] = "Login";
+    ViewData["HideSidebar"] = true;
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h4>e-Appraisal System</h4>
+                <small>Nano Technologies Pvt. Ltd.</small>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" placeholder="Enter your email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label"></label>
+                        <input asp-for="Password" type="password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </form>
+                <div class="text-center mt-3">
+                    <small class="text-muted">Contact your Admin to create a new account.</small>
+                </div>
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">
+                    <strong>Demo Accounts:</strong><br />
+                    Admin: admin@nanotechnologies.com / Admin@123<br />
+                    HR: sunita.rao@nanotechnologies.com / Hr@12345<br />
+                    Manager: ramesh.kumar@nanotechnologies.com / Manager@123<br />
+                    Employee: priya.sharma@nanotechnologies.com / Employee@123<br />
+                    <em>Contact your Admin to create new accounts.</em>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>

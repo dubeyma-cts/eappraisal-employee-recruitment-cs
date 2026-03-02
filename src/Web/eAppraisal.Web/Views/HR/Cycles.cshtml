@@ -1,0 +1,25 @@
+@model List<CycleDto>
+@{ ViewData["Title"] = "Appraisal Cycles"; }
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Appraisal Cycles</h2>
+    <a href="/HR/CreateCycle" class="btn btn-primary">New Cycle</a>
+</div>
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr><th>Name</th><th>Start Date</th><th>End Date</th><th>State</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.Name</td>
+                <td>@c.StartDate.ToString("yyyy-MM-dd")</td>
+                <td>@c.EndDate.ToString("yyyy-MM-dd")</td>
+                <td><span class="badge @(c.State == "Open" ? "bg-success" : "bg-secondary")">@c.State</span></td>
+                <td>
+                    <a href="/HR/EditCycle/@c.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

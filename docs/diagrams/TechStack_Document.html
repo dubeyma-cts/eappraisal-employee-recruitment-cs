@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eAppraisal - Technology Stack Document</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; color: #333; }
+        .header {
+            background: linear-gradient(135deg, #0d47a1, #1565c0);
+            color: white; padding: 30px 40px; text-align: center;
+        }
+        .header h1 { font-size: 30px; margin-bottom: 6px; }
+        .header p { font-size: 14px; opacity: 0.85; }
+        .header .meta { margin-top: 10px; font-size: 12px; opacity: 0.7; }
+        .nav {
+            background: white; padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 8px;
+            justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky; top: 0; z-index: 50;
+        }
+        .nav a {
+            padding: 7px 16px; border-radius: 20px; text-decoration: none; font-size: 13px;
+            font-weight: 600; color: #0d47a1; border: 2px solid #0d47a1; transition: all 0.2s;
+        }
+        .nav a:hover { background: #0d47a1; color: white; }
+        .container { max-width: 1300px; margin: 30px auto; padding: 0 20px; }
+        h2 { color: #0d47a1; font-size: 22px; margin-bottom: 16px; padding-top: 10px; }
+        h3 { color: #1565c0; font-size: 17px; margin: 20px 0 10px; }
+
+        /* Cards grid */
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; }
+        .card {
+            background: white; border-radius: 12px; padding: 20px 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06); border-left: 5px solid;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+        .card .card-icon { font-size: 28px; margin-bottom: 8px; }
+        .card h4 { font-size: 16px; margin-bottom: 4px; }
+        .card .card-version { font-size: 12px; color: #888; margin-bottom: 8px; }
+        .card .card-desc { font-size: 13px; color: #555; line-height: 1.6; }
+        .card .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+        .tag {
+            padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;
+            background: #e3f2fd; color: #0d47a1;
+        }
+        .tag.green { background: #e8f5e9; color: #2e7d32; }
+        .tag.orange { background: #fff3e0; color: #e65100; }
+        .tag.purple { background: #f3e5f5; color: #6a1b9a; }
+        .tag.red { background: #fce4ec; color: #c62828; }
+
+        /* Tables */
+        table {
+            width: 100%; border-collapse: collapse; background: white; border-radius: 10px;
+            overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 20px;
+        }
+        th { background: #0d47a1; color: white; padding: 12px 16px; text-align: left; font-size: 13px; }
+        td { padding: 10px 16px; border-bottom: 1px solid #f0f0f0; font-size: 13px; vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f8f9ff; }
+        td code {
+            background: #f5f5f5; padding: 2px 6px; border-radius: 4px; font-size: 12px;
+            font-family: 'Cascadia Code', 'Consolas', monospace;
+        }
+
+        /* Dependency Map */
+        .dep-map {
+            background: white; border-radius: 12px; padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+
+        /* Stats row */
+        .stats { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+        .stat-card {
+            flex: 1; min-width: 150px; background: white; border-radius: 10px; padding: 16px 20px;
+            text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .stat-card .stat-num { font-size: 32px; font-weight: 700; color: #0d47a1; }
+        .stat-card .stat-label { font-size: 12px; color: #888; margin-top: 4px; }
+
+        hr.divider { border: none; height: 2px; background: linear-gradient(to right, transparent, #ccc, transparent); margin: 40px 0; }
+        .mermaid {
+            background: white; border-radius: 12px; padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06); overflow-x: auto;
+        }
+        .print-btn {
+            position: fixed; bottom: 20px; right: 20px; background: #0d47a1; color: white;
+            border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 100;
+        }
+        .print-btn:hover { background: #1565c0; }
+        @media print { .print-btn, .nav { display: none; } body { background: white; } }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>eAppraisal System - Technology Stack</h1>
+    <p>Nano Technologies Pvt. Ltd. | Employee Recruitment & Appraisal Management</p>
+    <div class="meta">Document Version 1.0 | .NET 8 | Clean Architecture | 5 Projects</div>
+</div>
+
+<div class="nav">
+    <a href="#overview">Overview</a>
+    <a href="#core">Core Platform</a>
+    <a href="#data">Data Layer</a>
+    <a href="#security">Security</a>
+    <a href="#frontend">Frontend</a>
+    <a href="#services">Services</a>
+    <a href="#packages">NuGet Packages</a>
+    <a href="#projects">Project Map</a>
+    <a href="#config">Configuration</a>
+</div>
+
+<!-- ============================== OVERVIEW ============================== -->
+<div class="container" id="overview">
+    <h2>Project Overview</h2>
+    <div class="stats">
+        <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Projects</div></div>
+        <div class="stat-card"><div class="stat-num">18</div><div class="stat-label">Service Interfaces</div></div>
+        <div class="stat-card"><div class="stat-num">11</div><div class="stat-label">MVC + API Controllers</div></div>
+        <div class="stat-card"><div class="stat-num">9</div><div class="stat-label">Domain Entities</div></div>
+        <div class="stat-card"><div class="stat-num">4</div><div class="stat-label">User Roles</div></div>
+        <div class="stat-card"><div class="stat-num">11</div><div class="stat-label">Database Tables</div></div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================== CORE PLATFORM ============================== -->
+<div class="container" id="core">
+    <h2>Core Platform & Runtime</h2>
+    <div class="card-grid">
+        <div class="card" style="border-color:#512DA8">
+            <div class="card-icon">&#9881;</div>
+            <h4>.NET 8.0 (LTS)</h4>
+            <div class="card-version">Target Framework: net8.0</div>
+            <div class="card-desc">Long-Term Support release of .NET. Provides the runtime for all 5 projects. Features include minimal APIs, improved performance, and native AOT support.</div>
+            <div class="card-tags">
+                <span class="tag purple">Runtime</span>
+                <span class="tag purple">LTS until Nov 2026</span>
+                <span class="tag">C# 12</span>
+            </div>
+        </div>
+        <div class="card" style="border-color:#1565C0">
+            <div class="card-icon">&#127760;</div>
+            <h4>ASP.NET Core 8.0</h4>
+            <div class="card-version">Web Framework</div>
+            <div class="card-desc">Powers both the REST API (eAppraisal.Api) and MVC Web application (eAppraisal.Web). Handles HTTP request pipeline, routing, model binding, and middleware.</div>
+            <div class="card-tags">
+                <span class="tag">MVC Pattern</span>
+                <span class="tag">REST API</span>
+                <span class="tag">Middleware Pipeline</span>
+            </div>
+        </div>
+        <div class="card" style="border-color:#2E7D32">
+            <div class="card-icon">&#128736;</div>
+            <h4>Kestrel Web Server</h4>
+            <div class="card-version">Built-in to ASP.NET Core</div>
+            <div class="card-desc">Cross-platform web server that hosts both applications. API runs on port 5100, Web on port 5200. Configured via launchSettings.json.</div>
+            <div class="card-tags">
+                <span class="tag green">API: Port 5100</span>
+                <span class="tag green">Web: Port 5200</span>
+            </div>
+        </div>
+        <div class="card" style="border-color:#E65100">
+            <div class="card-icon">&#128218;</div>
+            <h4>C# 12</h4>
+            <div class="card-version">Language Version (with .NET 8)</div>
+            <div class="card-desc">Latest C# language features: primary constructors, collection expressions, implicit usings, nullable reference types enabled across all projects.</div>
+            <div class="card-tags">
+                <span class="tag orange">Nullable: enable</span>
+                <span class="tag orange">ImplicitUsings: enable</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================== DATA LAYER ============================== -->
+<div class="container" id="data">
+    <h2>Data Access & Storage</h2>
+    <div class="card-grid">
+        <div class="card" style="border-color:#1565C0">
+            <div class="card-icon">&#128451;</div>
+            <h4>Entity Framework Core 8.0.11</h4>
+            <div class="card-version">Microsoft.EntityFrameworkCore 8.0.11</div>
+            <div class="card-desc">Object-Relational Mapper (ORM) for database operations. Code-First approach with migrations. Provides LINQ queries, change tracking, lazy/eager loading.</div>
+            <div class="card-tags">
+                <span class="tag">Code-First</span>
+                <span class="tag">Migrations</span>
+                <span class="tag">LINQ</span>
+                <span class="tag">Change Tracking</span>
+            </div>
+        </div>
+        <div class="card" style="border-color:#0277BD">
+            <div class="card-icon">&#128450;</div>
+            <h4>SQLite</h4>
+            <div class="card-version">Microsoft.EntityFrameworkCore.Sqlite 8.0.11</div>
+            <div class="card-desc">Lightweight, file-based relational database. Zero configuration required. Database file: <code>eappraisal.db</code>. Ideal for development and single-server deployments.</div>
+            <div class="card-tags">
+                <span class="tag">File: eappraisal.db</span>
+                <span class="tag">Zero Config</span>
+                <span class="tag">Swappable to SQL Server</span>
+            </div>
+        </div>
+        <div class="card" style="border-color:#6A1B9A">
+            <div class="card-icon">&#128203;</div>
+            <h4>IAppDbContext (Repository Abstraction)</h4>
+            <div class="card-version">Custom Interface in Application Layer</div>
+            <div class="card-desc">Abstraction over EF Core's DbContext. All domain services depend on this interface, not the concrete AppDbContext. Enables testability and database swapping.</div>
+            <div class="card-tags">
+                <span class="tag purple">Dependency Inversion</span>
+                <span class="tag purple">Testable</span>
+            </div>
+        </div>
+    </div>
+
+    <h3>Database Schema (11 Tables)</h3>
+    <table>
+        <thead><tr><th>Table</th><th>Purpose</th><th>Key Relationships</th></tr></thead>
+        <tbody>
+            <tr><td><code>Employees</code></td><td>Employee master data (name, email, department, PAN, etc.)</td><td>Self-ref ManagerId, 1:N Appraisals</td></tr>
+            <tr><td><code>AppraisalCycles</code></td><td>Appraisal periods (name, start/end date, state)</td><td>1:N Appraisals</td></tr>
+            <tr><td><code>Appraisals</code></td><td>Core appraisal record linking employee to cycle</td><td>FK: EmployeeId, ManagerEmployeeId, CycleId</td></tr>
+            <tr><td><code>Comments</code></td><td>Manager comments (achievements, gaps, suggestions)</td><td>1:1 with Appraisal</td></tr>
+            <tr><td><code>EmployeeFeedbacks</code></td><td>Employee self-assessment feedback</td><td>1:1 with Appraisal</td></tr>
+            <tr><td><code>CtcSnapshots</code></td><td>CTC breakdown at finalization (Basic, DA, HRA, PF, etc.)</td><td>1:1 with Appraisal</td></tr>
+            <tr><td><code>StageHistories</code></td><td>Audit of appraisal status transitions</td><td>N:1 with Appraisal</td></tr>
+            <tr><td><code>AuditEvents</code></td><td>System-wide audit trail for all actions</td><td>Standalone</td></tr>
+            <tr><td><code>Notifications</code></td><td>Queued notifications for appraisal events</td><td>FK: AboutAppraisalId (optional)</td></tr>
+            <tr><td><code>AspNetUsers</code></td><td>ASP.NET Identity user accounts</td><td>FK: EmployeeId, custom fields</td></tr>
+            <tr><td><code>AspNetRoles</code></td><td>ASP.NET Identity roles (system-managed)</td><td>Identity default</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<hr class="divider">
+
+<!-- ============================== SECURITY ============================== -->
+<div class="container" id="security">
+    <h2>Security & Authentication</h2>
+    <div class="card-grid">
+        <div class="card" style="border-color:#C62828">
+            <div class="card-icon">&#128274;</div>
+            <h4>ASP.NET Core Identity</h4>
+            <div class="card-version">Microsoft.AspNetCore.Identity.EntityFrameworkCore 8.0.11</div>
+            <div class="card-desc">Full-featured identity system: user management, password hashing (PBKDF2), email uniqueness, custom claims (AppRole, EmployeeId, FullName).</div>
+            <div class="card-tags">
+                <span class="tag red">PBKDF2 Password Hashing</span>
+                <span class="tag red">Custom ApplicationUser</span>
+                <span class="tag red">Custom Claims Factory</span>
+            </div>
+        </div>
+        <div class="card" style="border-color:#AD1457">
+            <div class="card-icon">&#127850;</div>
+            <h4>Cookie-Based Authentication</h4>
+            <div class="card-version">eAppraisal.Auth Cookie</div>
+            <div class="card-desc">API issues HttpOnly cookies on login. Web captures and forwards cookies via session storage. 15-minute sliding expiration. SameSite=Lax.</div>
+            <div class="card-tags">
+                <span class="tag red">HttpOnly</span>
+                <span class="tag red">SameSite=Lax</span>
+                <span class="tag red">15-min Sliding Expiry</span>
+            </div>
+        </div>
+        <div class="card" style="border-color:#BF360C">
+            <div class="card-icon">&#128737;</div>
+            <h4>Role-Based Access Control (RBAC)</h4>
+            <div class="card-version">4 Roles: Admin, HR, Manager, Employee</div>
+            <div class="card-desc">Each user has an AppRole claim. Web sidebar and views are role-filtered. API endpoints use [Authorize] attribute. PAN masking is role-based.</div>
+            <div class="card-tags">
+                <span class="tag orange">Admin: User Management</span>
+                <span class="tag orange">HR: Employee + Cycle Mgmt</span>
+                <span class="tag orange">Manager: Appraisal Workflow</span>
+                <span class="tag orange">Employee: Self-Service</span>
+            </div>
+        </div>
+        <div class="card" style="border-color:#E65100">
+            <div class="card-icon">&#128272;</div>
+            <h4>Account Lockout (3-Strike Policy)</h4>
+            <div class="card-version">Custom Implementation in IdentityUserStore</div>
+            <div class="card-desc">After 3 consecutive failed login attempts, account is automatically locked. Admin can manually lock/unlock accounts. Failed attempts reset on successful login.</div>
+            <div class="card-tags">
+                <span class="tag orange">Auto-lock at 3 failures</span>
+                <span class="tag orange">Admin manual lock/unlock</span>
+            </div>
+        </div>
+    </div>
+
+    <h3>Password Policy</h3>
+    <table>
+        <thead><tr><th>Rule</th><th>Requirement</th></tr></thead>
+        <tbody>
+            <tr><td>Minimum Length</td><td>6 characters</td></tr>
+            <tr><td>Require Digit</td><td>At least one numeric character (0-9)</td></tr>
+            <tr><td>Require Lowercase</td><td>At least one lowercase letter (a-z)</td></tr>
+            <tr><td>Require Uppercase</td><td>At least one uppercase letter (A-Z)</td></tr>
+            <tr><td>Require Special Character</td><td>At least one non-alphanumeric character (@, #, $, etc.)</td></tr>
+            <tr><td>Unique Email</td><td>Each email address can only be used once</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<hr class="divider">
+
+<!-- ============================== FRONTEND ============================== -->
+<div class="container" id="frontend">
+    <h2>Frontend & UI</h2>
+    <div class="card-grid">
+        <div class="card" style="border-color:#1565C0">
+            <div class="card-icon">&#127912;</div>
+            <h4>Razor Views (Server-Side Rendering)</h4>
+            <div class="card-version">ASP.NET Core MVC Views</div>
+            <div class="card-desc">All UI rendered server-side using Razor .cshtml templates. Strongly-typed views with DTO models. Shared layout with role-based sidebar navigation.</div>
+            <div class="card-tags">
+                <span class="tag">Server-Side Rendering</span>
+                <span class="tag">Strongly-Typed Models</span>
+                <span class="tag">Shared _Layout.cshtml</span>
+            </div>
+        </div>
+        <div class="card" style="border-color:#6A1B9A">
+            <div class="card-icon">&#127912;</div>
+            <h4>Bootstrap 5</h4>
+            <div class="card-version">CSS Framework (CDN)</div>
+            <div class="card-desc">Responsive grid system, component library (cards, tables, forms, alerts, badges, buttons), and utility classes for layout and spacing.</div>
+            <div class="card-tags">
+                <span class="tag purple">Responsive Grid</span>
+                <span class="tag purple">Component Library</span>
+                <span class="tag purple">CDN-delivered</span>
+            </div>
+        </div>
+        <div class="card" style="border-color:#F9A825">
+            <div class="card-icon">&#128220;</div>
+            <h4>Vanilla JavaScript</h4>
+            <div class="card-version">No external JS framework</div>
+            <div class="card-desc">Minimal client-side JavaScript for UI interactions: form toggle (Create Employee login checkbox), field visibility controls. No jQuery, React, or Angular dependency.</div>
+            <div class="card-tags">
+                <span class="tag orange">Lightweight</span>
+                <span class="tag orange">No Framework Dependency</span>
+            </div>
+        </div>
+        <div class="card" style="border-color:#2E7D32">
+            <div class="card-icon">&#128257;</div>
+            <h4>Session-Based State Management</h4>
+            <div class="card-version">DistributedMemoryCache + Session</div>
+            <div class="card-desc">Web app stores user info (email, role, employeeId) and API auth cookie in server-side session. 15-minute idle timeout. HttpOnly, Essential cookie.</div>
+            <div class="card-tags">
+                <span class="tag green">In-Memory Cache</span>
+                <span class="tag green">15-min Timeout</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================== SERVICES ARCHITECTURE ============================== -->
+<div class="container" id="services">
+    <h2>Services Architecture (Clean Architecture)</h2>
+
+    <h3>Domain Services Layer (eAppraisal.Application)</h3>
+    <table>
+        <thead><tr><th>Service</th><th>Interface</th><th>Responsibility</th><th>Lifetime</th></tr></thead>
+        <tbody>
+            <tr><td><strong>AuthService</strong></td><td>IAuthService</td><td>Login, Logout, Register, Lock/Unlock accounts</td><td>Scoped</td></tr>
+            <tr><td><strong>EmployeeService</strong></td><td>IEmployeeService</td><td>Employee CRUD, profile updates</td><td>Scoped</td></tr>
+            <tr><td><strong>CycleService</strong></td><td>ICycleService</td><td>Appraisal cycle CRUD, open cycles, unassigned employees</td><td>Scoped</td></tr>
+            <tr><td><strong>AppraisalWorkflowService</strong></td><td>IAppraisalWorkflowService</td><td>Assign appraisals, finalize with CTC</td><td>Scoped</td></tr>
+            <tr><td><strong>CommentsService</strong></td><td>ICommentsService</td><td>Manager comments, employee feedback, lock comments</td><td>Scoped</td></tr>
+            <tr><td><strong>CtcService</strong></td><td>ICtcService</td><td>CTC snapshot creation/update</td><td>Scoped</td></tr>
+            <tr><td><strong>ReportingService</strong></td><td>IReportingService</td><td>Read/query operations (by manager, status, employee)</td><td>Scoped</td></tr>
+            <tr><td><strong>EligibilityRulesService</strong></td><td>IEligibilityRulesService</td><td>Validation rules for assignment, comments, finalization</td><td>Scoped</td></tr>
+            <tr><td><strong>PolicyMaskingEngine</strong></td><td>IPolicyMaskingEngine</td><td>PAN masking based on user role</td><td>Scoped</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Platform & Cross-Cutting Layer (eAppraisal.Infrastructure/CrossCutting)</h3>
+    <table>
+        <thead><tr><th>Service</th><th>Interface</th><th>Responsibility</th><th>Lifetime</th></tr></thead>
+        <tbody>
+            <tr><td><strong>AuditLogCollector</strong></td><td>IAuditService</td><td>Persist audit events to database</td><td>Scoped</td></tr>
+            <tr><td><strong>NotificationService</strong></td><td>INotificationService</td><td>Queue notifications for appraisal events</td><td>Scoped</td></tr>
+            <tr><td><strong>ConfigurationService</strong></td><td>IConfigurationService</td><td>Typed access to app settings & connection strings</td><td>Scoped</td></tr>
+            <tr><td><strong>ObservabilityAgent</strong></td><td>IObservabilityAgent</td><td>Structured logging with event tracking</td><td>Singleton</td></tr>
+            <tr><td><strong>InMemoryRateLimiter</strong></td><td>IRateLimiter</td><td>Sliding-window per-key rate limiting</td><td>Singleton</td></tr>
+            <tr><td><strong>InMemoryFeatureFlagService</strong></td><td>IFeatureFlagService</td><td>Config-based feature flag evaluation</td><td>Singleton</td></tr>
+        </tbody>
+    </table>
+
+    <h3>External Services (eAppraisal.Infrastructure/ExternalServices)</h3>
+    <table>
+        <thead><tr><th>Service</th><th>Interface</th><th>Responsibility</th><th>Lifetime</th></tr></thead>
+        <tbody>
+            <tr><td><strong>IdentityUserStore</strong></td><td>IUserStore</td><td>ASP.NET Identity: auth, sign-in, user CRUD</td><td>Scoped</td></tr>
+            <tr><td><strong>LocalSmtpGateway</strong></td><td>ISmtpGateway</td><td>SMTP stub - logs emails (swappable for SendGrid/SMTP)</td><td>Singleton</td></tr>
+            <tr><td><strong>StubHrisPayrollService</strong></td><td>IHrisPayrollService</td><td>HRIS stub - returns mock payroll data</td><td>Singleton</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<hr class="divider">
+
+<!-- ============================== NUGET PACKAGES ============================== -->
+<div class="container" id="packages">
+    <h2>NuGet Package Inventory</h2>
+    <table>
+        <thead><tr><th>Package</th><th>Version</th><th>Used In</th><th>Purpose</th></tr></thead>
+        <tbody>
+            <tr><td><code>Microsoft.EntityFrameworkCore</code></td><td>8.0.11</td><td>Application</td><td>ORM core library - DbContext, LINQ, change tracking</td></tr>
+            <tr><td><code>Microsoft.EntityFrameworkCore.Sqlite</code></td><td>8.0.11</td><td>Infrastructure</td><td>SQLite database provider for EF Core</td></tr>
+            <tr><td><code>Microsoft.EntityFrameworkCore.Tools</code></td><td>8.0.11</td><td>Infrastructure</td><td>EF Core CLI tools (migrations, scaffolding)</td></tr>
+            <tr><td><code>Microsoft.EntityFrameworkCore.Design</code></td><td>8.0.11</td><td>Api</td><td>Design-time EF Core support for migrations</td></tr>
+            <tr><td><code>Microsoft.AspNetCore.Identity.EntityFrameworkCore</code></td><td>8.0.11</td><td>Application, Infrastructure, Api</td><td>Identity system with EF Core storage</td></tr>
+        </tbody>
+    </table>
+    <p style="font-size:13px;color:#666;margin-top:8px;background:white;padding:12px 16px;border-radius:8px;">
+        <strong>Note:</strong> The project deliberately uses minimal NuGet dependencies. Core ASP.NET Core libraries (MVC, Routing, Session, HttpClient) are included via the framework reference <code>Microsoft.AspNetCore.App</code> and require no additional packages.
+    </p>
+</div>
+
+<hr class="divider">
+
+<!-- ============================== PROJECT MAP ============================== -->
+<div class="container" id="projects">
+    <h2>Project Dependency Map</h2>
+    <div class="mermaid">
+graph LR
+    subgraph Solution["eAppraisal.sln (5 Projects)"]
+        Domain["eAppraisal.Domain<br/><i>Shared Layer</i><br/>Entities, DTOs, Interfaces<br/>No dependencies"]
+        Application["eAppraisal.Application<br/><i>Domain Services</i><br/>9 Business Services<br/>&#8594; Domain"]
+        Infrastructure["eAppraisal.Infrastructure<br/><i>Cross-Cutting + Data</i><br/>EF Core, Identity, SQLite<br/>&#8594; Domain, Application"]
+        Api["eAppraisal.Api<br/><i>REST API Gateway</i><br/>5 Controllers, Port 5100<br/>&#8594; Domain, Application, Infrastructure"]
+        Web["eAppraisal.Web<br/><i>MVC Frontend</i><br/>6 Controllers, Port 5200<br/>&#8594; Domain only"]
+    end
+
+    Domain --> Application
+    Domain --> Infrastructure
+    Application --> Infrastructure
+    Domain --> Api
+    Application --> Api
+    Infrastructure --> Api
+    Domain --> Web
+
+    Web -.->|"HTTP calls<br/>via ApiClient"| Api
+
+    classDef shared fill:#FFF9C4,stroke:#F9A825,color:#333,stroke-width:2px
+    classDef app fill:#E8F5E9,stroke:#43A047,color:#333,stroke-width:2px
+    classDef infra fill:#E3F2FD,stroke:#1565C0,color:#333,stroke-width:2px
+    classDef api fill:#FFF3E0,stroke:#E65100,color:#333,stroke-width:2px
+    classDef web fill:#F3E5F5,stroke:#6A1B9A,color:#333,stroke-width:2px
+
+    class Domain shared
+    class Application app
+    class Infrastructure infra
+    class Api api
+    class Web web
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================== CONFIGURATION ============================== -->
+<div class="container" id="config">
+    <h2>Configuration & Middleware</h2>
+
+    <h3>API Middleware Pipeline (eAppraisal.Api)</h3>
+    <table>
+        <thead><tr><th>Order</th><th>Middleware</th><th>Purpose</th></tr></thead>
+        <tbody>
+            <tr><td>1</td><td><code>UseHttpsRedirection()</code></td><td>Redirect HTTP requests to HTTPS</td></tr>
+            <tr><td>2</td><td><code>UseAuthentication()</code></td><td>Validate auth cookie, populate HttpContext.User</td></tr>
+            <tr><td>3</td><td><code>UseAuthorization()</code></td><td>Enforce [Authorize] attributes on controllers</td></tr>
+            <tr><td>4</td><td><code>MapControllers()</code></td><td>Route requests to API controller endpoints</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Web Middleware Pipeline (eAppraisal.Web)</h3>
+    <table>
+        <thead><tr><th>Order</th><th>Middleware</th><th>Purpose</th></tr></thead>
+        <tbody>
+            <tr><td>1</td><td><code>UseExceptionHandler()</code></td><td>Global error handling (production)</td></tr>
+            <tr><td>2</td><td><code>UseHsts()</code></td><td>HTTP Strict Transport Security (production)</td></tr>
+            <tr><td>3</td><td><code>UseStaticFiles()</code></td><td>Serve wwwroot static files (CSS, JS, images)</td></tr>
+            <tr><td>4</td><td><code>UseRouting()</code></td><td>Enable endpoint routing</td></tr>
+            <tr><td>5</td><td><code>UseSession()</code></td><td>Enable session for auth cookie + user info storage</td></tr>
+            <tr><td>6</td><td><code>MapControllerRoute()</code></td><td>MVC route: {controller=Account}/{action=Index}/{id?}</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Key Configuration Settings</h3>
+    <table>
+        <thead><tr><th>Setting</th><th>Value</th><th>Location</th></tr></thead>
+        <tbody>
+            <tr><td>API Base URL</td><td><code>http://localhost:5100</code></td><td>Web appsettings.json (ApiBaseUrl)</td></tr>
+            <tr><td>Web URL</td><td><code>http://localhost:5200</code></td><td>Web launchSettings.json</td></tr>
+            <tr><td>Database Connection</td><td><code>Data Source=eappraisal.db</code></td><td>API appsettings.json (DefaultConnection)</td></tr>
+            <tr><td>Auth Cookie Name</td><td><code>eAppraisal.Auth</code></td><td>API Program.cs</td></tr>
+            <tr><td>Session Timeout</td><td><code>15 minutes</code></td><td>Both Web and API</td></tr>
+            <tr><td>Cookie SameSite</td><td><code>Lax</code></td><td>API Program.cs</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<button class="print-btn" onclick="window.print()">&#128424; Print / Save as PDF</button>
+
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: { fontSize: '14px', fontFamily: 'Segoe UI, Tahoma, sans-serif' },
+        flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' }
+    });
+</script>
+</body>
+</html>

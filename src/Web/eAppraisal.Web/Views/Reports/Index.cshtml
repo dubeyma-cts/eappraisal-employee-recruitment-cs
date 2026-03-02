@@ -1,0 +1,31 @@
+@{ ViewData["Title"] = "Reports"; }
+<h2>Appraisal Reports</h2>
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card border-warning mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Upcoming</h5>
+                <p class="card-text">Appraisals in Draft status</p>
+                <a href="/Reports/Upcoming" class="btn btn-outline-warning btn-sm">View</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">In Process</h5>
+                <p class="card-text">Appraisals being reviewed</p>
+                <a href="/Reports/InProcess" class="btn btn-outline-primary btn-sm">View</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Completed</h5>
+                <p class="card-text">Finalized appraisals</p>
+                <a href="/Reports/Completed" class="btn btn-outline-success btn-sm">View</a>
+            </div>
+        </div>
+    </div>
+</div>
